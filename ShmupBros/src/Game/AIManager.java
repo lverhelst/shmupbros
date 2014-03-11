@@ -28,8 +28,17 @@ public class AIManager {
     }
     
     public void update() {
+        int count = GameState.getEntities().size();
         for(int i = 0; i < ai.size(); ++i) {
             move(ai.get(i));
+            for(Physical e : GameState.getEntities()){
+                
+                if(e != ai.get(i) && !e.getType().equals("Projectile")){
+                    System.out.println("Distance from " + ai.get(i).getIdentifier() + " to " + e.getType() + " " + e.getIdentifier() + ":" + ai.get(i).getDistanceToEntity(e));
+                    System.out.println("Rotation from " + ai.get(i).getIdentifier() + " to " + e.getType() + " " + e.getIdentifier() + ":" + ai.get(i).getRotationToEntity(e));
+                }
+            }
+            
         }
     }
     

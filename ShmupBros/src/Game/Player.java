@@ -25,6 +25,7 @@ public class Player {
      */
     public Player(String name) {
         target = new Playable(32);
+        target.setIdentifier(name + "1");
         this.name = name;
         lastShot = System.currentTimeMillis();
         

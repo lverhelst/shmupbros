@@ -110,4 +110,22 @@ public class Entity {
      * @param g graphics object
      */
     public void render(Graphics g) { }
+    
+    /**
+     * Calculate rotation needed to face the target entity
+     * @param ent The target entity
+     * @return Rotation needed
+     */
+    public float getRotationToEntity(Entity ent){
+        return (float) Math.max(ent.rotation, this.rotation) - Math.min(ent.rotation, this.rotation);
+    }
+    
+    /**
+     * Calculate the distance to the target entity
+     * @param ent The Target entity
+     * @return Distance
+     */
+    public float getDistanceToEntity(Entity ent){
+        return (float) Math.sqrt((ent.y - this.y) * (ent.y - this.y) + (ent.x - this.x) * (ent.x - this.x));
+    }
 }

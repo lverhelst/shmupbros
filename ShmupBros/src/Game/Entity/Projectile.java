@@ -37,6 +37,7 @@ public class Projectile extends Physical{
         anim.addFrame(sprite2, 100);
         anim.addFrame(sprite3, 100);
         anim.addFrame(sprite4, 100);
+        anim.setLooping(true);
     }
     
     public static void init() {
