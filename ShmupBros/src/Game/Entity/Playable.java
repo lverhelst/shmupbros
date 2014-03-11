@@ -27,6 +27,7 @@ public class Playable extends Physical{
         
         health = 0;
         color = new Color(256,256,256);
+       
     }
     
     /**

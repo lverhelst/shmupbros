@@ -20,7 +20,7 @@ public class Concrete extends Tile {
         try{
             tile = new Image("Assets/Concrete.png");
         } catch(SlickException e) {
-            System.out.println("Failed to load player image: " + e.toString());
+            System.out.println("Failed to load concrete image: " + e.toString());
         }
     }
     

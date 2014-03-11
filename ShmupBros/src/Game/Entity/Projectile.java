@@ -28,9 +28,9 @@ public class Projectile extends Physical{
         setX(owner.getX()); //retrieves the owners position and rotation
         setY(owner.getY());
         setRotation(owner.getRotation());
-        modPosition(48, getRotation()); //moves away from owner
+        modPosition(01, getRotation()); //moves away from owner
         
-        applyForce(16, getRotation());
+        applyForce(48, getRotation());
         
         anim = new Animation();
         anim.addFrame(sprite, 100);
@@ -61,7 +61,15 @@ public class Projectile extends Physical{
      * @param col Physical object which has been collided with
      */
     @Override public void Collide(Physical col) {
+        
+        //Don't collide with owner
+       if(col.getID() == owner.getID()){
+           return;
+       }
+        
+        
         col.damage(damage);
+        
         
         if(col.getType().equals("Playable") && !col.getCollidable())
             owner.addKill();            

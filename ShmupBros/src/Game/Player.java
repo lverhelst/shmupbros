@@ -92,7 +92,7 @@ public class Player {
         }
         
         if (controls.isKeyDown(Input.KEY_RCONTROL)) {
-            if (lastShot+350 < System.currentTimeMillis()) {
+            if (lastShot+100 < System.currentTimeMillis()) {
                 target.attack(new Projectile(32,target));
                 lastShot = System.currentTimeMillis();
                 if (MCManager.getSender() != null)

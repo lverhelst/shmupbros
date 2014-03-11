@@ -24,6 +24,7 @@ public class AIManager {
     
     public void addAI(Playable bot) {
         ai.add(bot);
+        GameState.addEntity(bot);
     }
     
     public void update() {

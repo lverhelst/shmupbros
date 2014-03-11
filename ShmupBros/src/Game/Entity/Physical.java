@@ -9,6 +9,7 @@ public class Physical extends Entity {
     private float forceY;
     private float size;
     private boolean collidable;
+    private String identifier;
     
     /**
      * Default constructor for creating collidable entities
@@ -20,6 +21,7 @@ public class Physical extends Entity {
         
         this.size = size/2;
         collidable = true;
+        identifier = "ID:" + System.nanoTime();
     }
     
     /**
@@ -180,5 +182,19 @@ public class Physical extends Entity {
      */
     public float getForce() {
         return (float)Math.sqrt((forceX*forceX) + (forceY*forceY));
+    }
+
+    /**
+     * @return the identifier
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }

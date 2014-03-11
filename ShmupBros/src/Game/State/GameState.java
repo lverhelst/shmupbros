@@ -47,6 +47,14 @@ public class GameState extends BasicGameState {
         ID = id;
         player = new Player("test");
         ai = new AIManager();
+        int num_bots = 3;
+        for(int i = 0; i < num_bots; i++){
+            Playable p = new Playable((float)32.0);
+            ai.addAI(p);
+        }
+        
+        
+    
     }
     
     public void connect(String group, int port) {
