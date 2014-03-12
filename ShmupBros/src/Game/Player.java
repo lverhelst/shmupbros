@@ -94,7 +94,7 @@ public class Player {
         
         if (controls.isKeyDown(Input.KEY_RCONTROL)) {
             if (lastShot+100 < System.currentTimeMillis()) {
-                target.attack(new Projectile(32,target));
+                target.attack(new Projectile(12,target));
                 lastShot = System.currentTimeMillis();
                 if (MCManager.getSender() != null)
                     MCManager.getSender().sendAttack(target.getID()); //calls attack and sends the result

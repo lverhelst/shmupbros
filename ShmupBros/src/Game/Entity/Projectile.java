@@ -12,7 +12,7 @@ import org.newdawn.slick.SlickException;
  */
 
 public class Projectile extends Physical{
-    private static Image sprite, sprite2, sprite3, sprite4;
+    private static Image sprite;
     private Animation anim;
     private Playable owner;
     private float damage;
@@ -28,24 +28,18 @@ public class Projectile extends Physical{
         setX(owner.getX()); //retrieves the owners position and rotation
         setY(owner.getY());
         setRotation(owner.getRotation());
-        modPosition(01, getRotation()); //moves away from owner
+        modPosition(owner.getSize()/2 + 6, getRotation()); //moves away from owner
         
-        applyForce(48, getRotation());
+        applyForce(24, getRotation());
         
         anim = new Animation();
         anim.addFrame(sprite, 100);
-        anim.addFrame(sprite2, 100);
-        anim.addFrame(sprite3, 100);
-        anim.addFrame(sprite4, 100);
         anim.setLooping(true);
     }
     
     public static void init() {
         try {
-            sprite = new Image("Assets/Sprites/Bullet1.png");
-            sprite2 = new Image("Assets/Sprites/Bullet2.png");
-            sprite3 = new Image("Assets/Sprites/Bullet3.png");
-            sprite4 = new Image("Assets/Sprites/Bullet4.png");            
+            sprite = new Image("Assets/Sprites/bullet-blue.png");          
         } catch (SlickException slickEX) {
             System.out.println("Failed to load remote player image: " + slickEX.toString());
         }
