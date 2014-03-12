@@ -6,9 +6,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
-import Communications.MCReceive;
-import Communications.MCSend;
 import Game.AIManager;
+import Game.Bot;
 import Game.Entity.Explosion;
 
 import Game.Entity.Physical;
@@ -20,8 +19,6 @@ import Game.Map.Map;
 
 import java.util.ArrayList;
 import java.util.Random;
-import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.Input;
 
 /**
  * GameState: Used to start and perform the game logic
@@ -49,8 +46,9 @@ public class GameState extends BasicGameState {
         ai = new AIManager();
         int num_bots = 1;
         for(int i = 0; i < num_bots; i++){
-            Playable p = new Playable((float)32.0);
+            Bot p = new Bot((float)32.0);
             p.setIdentifier("BOT" + i);
+            p.setTarget(player.getTarget());
             ai.addAI(p);
         }
         

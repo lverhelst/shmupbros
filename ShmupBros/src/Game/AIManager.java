@@ -14,7 +14,7 @@ import org.newdawn.slick.Input;
 */
 
 public class AIManager {
-    private ArrayList<Playable> ai;
+    private ArrayList<Bot> ai;
     private Random rand;
     
     public AIManager() {
@@ -22,27 +22,18 @@ public class AIManager {
         rand = new Random();
     }
     
-    public void addAI(Playable bot) {
+    public void addAI(Bot bot) {
         ai.add(bot);
         GameState.addEntity(bot);
     }
     
     public void update() {
-        int count = GameState.getEntities().size();
         for(int i = 0; i < ai.size(); ++i) {
-            move(ai.get(i));
-            for(Physical e : GameState.getEntities()){
-                
-                if(e != ai.get(i) && !e.getType().equals("Projectile")){
-                    System.out.println("Distance from " + ai.get(i).getIdentifier() + " to " + e.getType() + " " + e.getIdentifier() + ":" + ai.get(i).getDistanceToEntity(e));
-                    System.out.println("Rotation from " + ai.get(i).getIdentifier() + " to " + e.getType() + " " + e.getIdentifier() + ":" + ai.get(i).getRotationToEntity(e));
-                }
-            }
-            
+            move(ai.get(i));          
         }
     }
     
-    public void move(Playable bot) {
+    public void move(Bot bot) {
         int choice = rand.nextInt(4);
         
         if(!bot.isAlive())
@@ -50,16 +41,18 @@ public class AIManager {
         
         switch(choice) {
             case 0:
-                bot.applyForce(2, bot.getRotation());
+                //zombie
+                bot.faceTarget();
                 break;
             case 1:
-                bot.applyForce(2, bot.getRotation());
+                //zombie
+                bot.faceTarget();
                 break;
             case 2:
-                bot.modRotation(-10);
+                bot.applyForce(2, bot.getRotation());
                 break;
             case 3:
-                bot.modRotation(10);
+                bot.applyForce(2, bot.getRotation());
                 break;
         }
         

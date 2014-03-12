@@ -117,7 +117,11 @@ public class Entity {
      * @return Rotation needed
      */
     public float getRotationToEntity(Entity ent){
-        return (float) Math.max(ent.rotation, this.rotation) - Math.min(ent.rotation, this.rotation);
+        //return (float) Math.max(ent.rotation, this.rotation) - Math.min(ent.rotation, this.rotation);
+        float x = ent.x - this.x;
+        float y = ent.y - this.y;
+        System.out.println((Math.atan2(y, x) * 180 / Math.PI) + " Degrees");
+        return (float)(Math.atan2(y, x) * 180 / Math.PI);
     }
     
     /**
