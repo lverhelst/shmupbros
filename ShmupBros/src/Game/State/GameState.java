@@ -48,8 +48,10 @@ public class GameState extends BasicGameState {
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot((float)32.0);
             p.setIdentifier("BOT" + i);
-            p.setTarget(player.getTarget());
+            
+           
             ai.addAI(p);
+            
         }
         
         

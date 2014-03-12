@@ -56,7 +56,11 @@ public class AIManager {
                 break;
         }
         
-        if(rand.nextInt(20) == 10)
+        if(rand.nextInt(20) == 10){
             bot.attack(new Projectile(12, bot));
+        }
+        
+        if(rand.nextInt(100) == 1)
+            bot.chooseRandTarget();
     }
 }

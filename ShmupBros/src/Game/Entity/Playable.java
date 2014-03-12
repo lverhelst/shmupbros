@@ -24,7 +24,6 @@ public class Playable extends Physical{
     public Playable(float size) {
         super(size);
         setType("Playable");
-        
         health = 0;
         color = new Color(256,256,256);
        
