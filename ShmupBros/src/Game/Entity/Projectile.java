@@ -66,10 +66,10 @@ public class Projectile extends Physical{
         col.damage(damage);
         
         
-        if(col.getType().equals("Playable") && !col.getCollidable())
+        if(col.getType().equals("Playable"))// && !col.getCollidable())
             owner.addKill();            
         
-        setCollidable(false);
+       setCollidable(false);
     }
     
     /**

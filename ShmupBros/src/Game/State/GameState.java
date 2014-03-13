@@ -19,6 +19,9 @@ import Game.Map.Map;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.awt.Font;
+import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.gui.TextField;
 
 /**
  * GameState: Used to start and perform the game logic
@@ -35,6 +38,8 @@ public class GameState extends BasicGameState {
     private MCManager server; 
     private AIManager ai;
     private long curtime;
+    private TextField log;
+    private Font m_font;
     
     /**
     * Constructor which takes an integer parameter for state ID
@@ -47,15 +52,11 @@ public class GameState extends BasicGameState {
         int num_bots = 1;
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot((float)32.0);
-            p.setIdentifier("BOT" + i);
-            
-           
+            p.setIdentifier("BOT" + i);     
             ai.addAI(p);
-            
+            p.setTarget(player.getTarget());
         }
-        
-        
-    
+       
     }
     
     public void connect(String group, int port) {
@@ -75,6 +76,11 @@ public class GameState extends BasicGameState {
         
         map = new Map("Assets/level.map", gc.getScreenWidth()/32, (gc.getScreenHeight())/32);
         curtime = System.currentTimeMillis();
+        
+        m_font = new Font("Verdana", Font.BOLD, 32);
+        TrueTypeFont ttf = new TrueTypeFont(m_font, true);
+        log = new TextField(gc, ttf , 0, 0, 100, 100);
+        log.setText("What");
 
         Projectile.init();
         Playable.init();

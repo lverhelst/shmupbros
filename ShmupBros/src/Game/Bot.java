@@ -36,6 +36,15 @@ public class Bot extends Playable {
         //face the target
          this.setRotation(this.getRotationToEntity(target));
     }
+    
+    public void rotateToTarget()
+    {   
+        System.out.println(this.getRotationToEntity(target));
+        if(this.getRotationToEntity(target) != this.getRotation())
+            this.modRotation((float)(this.getRotationToEntity(target) / Math.PI));
+        
+    }
+    
     /**
      * Chooses random Entity as target
      */

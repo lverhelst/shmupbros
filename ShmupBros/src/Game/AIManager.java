@@ -34,7 +34,7 @@ public class AIManager {
     }
     
     public void move(Bot bot) {
-        int choice = rand.nextInt(4);
+        int choice = rand.nextInt(10);
         
         if(!bot.isAlive())
             GameState.spawn(bot);
@@ -42,25 +42,26 @@ public class AIManager {
         switch(choice) {
             case 0:
                 //zombie
-                bot.faceTarget();
+                //bot.faceTarget();
                 break;
             case 1:
                 //zombie
-                bot.faceTarget();
+                //bot.faceTarget();
+                bot.rotateToTarget();
                 break;
             case 2:
-                bot.applyForce(2, bot.getRotation());
+                bot.applyForce(1, bot.getRotation());
                 break;
             case 3:
-                bot.applyForce(2, bot.getRotation());
+                bot.applyForce(1, bot.getRotation());
                 break;
         }
         
-        if(rand.nextInt(20) == 10){
+        if(rand.nextInt(200) == 10){
             bot.attack(new Projectile(12, bot));
         }
         
-        if(rand.nextInt(100) == 1)
+        if(rand.nextInt(100) == 101)
             bot.chooseRandTarget();
     }
 }
