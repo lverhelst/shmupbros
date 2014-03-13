@@ -115,6 +115,8 @@ public class Player {
      * @param graphics The SLick2d/LWJGL graphics
      */
     public void render(Graphics graphics) {
+               
+        
         graphics.setColor(Color.white);
         graphics.drawString("Kills: " + target.getKills(), 900, 20);
         

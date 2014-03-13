@@ -50,7 +50,7 @@ public class GameState extends BasicGameState {
     */
     public GameState(int id){ 
         ID = id;
-        player = new Player("test");
+        player = new Player("PLAYER");
         ai = new AIManager();
         int num_bots = 4;
         for(int i = 0; i < num_bots; i++){
@@ -166,7 +166,7 @@ public class GameState extends BasicGameState {
                 !map.getPassable(x, y+1) || !map.getPassable(x+1, y+1)) 
                 check = false;
         }
-        
+        GameState.addEntity(col);
         col.respawn();
     }
     
@@ -210,6 +210,7 @@ public class GameState extends BasicGameState {
         
             for(int j = entities.size()-1; j >= 0; j--) {
                 checkCollisions(entities.get(j));
+                
                 entities.get(j).update();
             }
         
@@ -238,6 +239,7 @@ public class GameState extends BasicGameState {
         map.render(graphics, activeX, activeY); //draws the map
 
         graphics.resetTransform();
+
         player.render(graphics);     
         
         graphics.drawRect(gc.getWidth() - 352, gc.getHeight() - 90, 350, 100);

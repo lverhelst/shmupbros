@@ -84,6 +84,25 @@ public class Playable extends Physical{
         }
     }
     
+    
+    @Override public void Collide(Physical col){
+        if(isAlive()){
+            float x = col.getForceX();
+            float y = col.getForceY();
+            col.setForceX(getForceX());
+            col.setForceY(getForceY());
+            setForceX(x);
+            setForceY(y);
+        }
+    }
+    
+    @Override public void Collide(){
+        if(isAlive()){
+            setForceX(-getForceX());
+            setForceY(-getForceY());
+        }
+    }
+    
     /**
      * Used to allow vehicle to perform an attack
      */
@@ -133,8 +152,10 @@ public class Playable extends Physical{
      */
     @Override public void render(Graphics graphics) {
         if (!isAlive())
+        {
+            GameState.removeEntity(this);
             return;
-        
+        }
         sprite.setRotation(getRotation());
         sprite2.setRotation(getRotation());
         if(System.nanoTime()/100 % 2 == 0)
