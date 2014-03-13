@@ -4,29 +4,31 @@ import Game.Entity.Physical;
 import Game.Entity.Playable;
 import Game.State.GameState;
 import java.util.Random;
+import org.newdawn.slick.Color;
 
 /**
  *
  * @author Leon Verhelst
  */
 public class Bot extends Playable {
-    private Physical target;
+    private Playable target;
     
     public Bot(float f){
         super(f);
+        super.setColor(Color.orange);
     }
 
     /**
      * @return the target
      */
-    public Physical getTarget() {
+    public Playable getTarget() {
         return target;
     }
 
     /**
      * @param target the target to set
      */
-    public void setTarget(Physical target) {
+    public void setTarget(Playable target) {
         this.target = target;
     }
     /**
@@ -38,11 +40,12 @@ public class Bot extends Playable {
     }
     
     public void rotateToTarget()
-    {   
-        System.out.println(this.getRotationToEntity(target));
-        if(this.getRotationToEntity(target) != this.getRotation())
-            this.modRotation((float)(this.getRotationToEntity(target) / Math.PI));
-        
+    {
+        float angleToFace = this.getRotationToEntity(target);               
+        if((this.getRotation() + 5 < angleToFace || this.getRotation() - 5 > angleToFace)){
+            //can rotate 15 degrees at a time
+            this.modRotation(angleToFace % 15);
+        }
     }
     
     /**
@@ -56,9 +59,9 @@ public class Bot extends Playable {
         int size = GameState.getEntities().size();
         while(index == thisInd ){
             index = rng.nextInt(size);
-            if(GameState.getEntities().get(index).getType().equals("Projectile"))
+            if(!GameState.getEntities().get(index).getType().equals("Playable"))
                 index = thisInd;
         }
-        target = GameState.getEntities().get(index);
+        target = (Playable)GameState.getEntities().get(index);
     }
 }

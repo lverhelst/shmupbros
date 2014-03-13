@@ -6,6 +6,7 @@ import Game.Entity.Playable;
 import Game.Entity.Projectile;
 import Game.State.GameState;
 import java.util.ArrayList;
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -32,6 +33,8 @@ public class Player {
         //temporary default location
         target.setX(512);
         target.setY(512);
+        
+       
     }
     
     /**
@@ -93,8 +96,8 @@ public class Player {
         }
         
         if (controls.isKeyDown(Input.KEY_RCONTROL)) {
-            if (lastShot+100 < System.currentTimeMillis()) {
-                target.attack(new Projectile(12,target));
+            if (lastShot + 101 < System.currentTimeMillis()) {
+                target.attack(new Projectile(16,target));
                 lastShot = System.currentTimeMillis();
                 if (MCManager.getSender() != null)
                     MCManager.getSender().sendAttack(target.getID()); //calls attack and sends the result
@@ -112,12 +115,14 @@ public class Player {
      * @param graphics The SLick2d/LWJGL graphics
      */
     public void render(Graphics graphics) {
+               
+        
         graphics.setColor(Color.white);
         graphics.drawString("Kills: " + target.getKills(), 900, 20);
         
         //render health bar
         graphics.drawRect(19, 560, 201, 20);
         graphics.setColor(Color.red);
-        graphics.fillRect(20, 561, target.getHealth()*2 , 19);
+        graphics.fillRect(20, 561, target.getHealth() / target.getTotalHealth() * 200 , 19);
     }
 }

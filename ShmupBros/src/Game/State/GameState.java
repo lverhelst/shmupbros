@@ -5,6 +5,7 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.*;
 
 import Game.AIManager;
 import Game.Bot;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.awt.Font;
 import org.newdawn.slick.TrueTypeFont;
+
 import org.newdawn.slick.gui.TextField;
 
 /**
@@ -33,6 +35,7 @@ public class GameState extends BasicGameState {
     private static ArrayList<Physical> entities = new ArrayList();
     private static Random rand = new Random();
     private static Map map;
+    private static String logString = "Welcome to SHMUPBROS";
     private float offsetX, offsetY;
     private Player player;
     private MCManager server; 
@@ -41,18 +44,23 @@ public class GameState extends BasicGameState {
     private TextField log;
     private Font m_font;
     
+    TrueTypeFont font;
+    
+    
+    
     /**
     * Constructor which takes an integer parameter for state ID
     * @param id Tells which state the game is in
     */
     public GameState(int id){ 
         ID = id;
-        player = new Player("test");
+        player = new Player("PLAYER");
         ai = new AIManager();
-        int num_bots = 1;
+        int num_bots = 4;
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot((float)32.0);
             p.setIdentifier("BOT" + i);     
+
             ai.addAI(p);
             p.setTarget(player.getTarget());
         }
@@ -89,6 +97,8 @@ public class GameState extends BasicGameState {
         
         spawn(player.getTarget());
         addEntity(player.getTarget());
+        
+        font = new TrueTypeFont(new java.awt.Font(java.awt.Font.SERIF,java.awt.Font.BOLD , 10), false);
     }
     
     /**
@@ -140,6 +150,10 @@ public class GameState extends BasicGameState {
         entities = newentities;
     }
     
+    public static synchronized void addText(String text){
+        logString  = text + "\r\n" + logString;
+    }
+    
     public static void spawn(Playable col) {
         boolean check = false; 
         
@@ -160,7 +174,7 @@ public class GameState extends BasicGameState {
                 !map.getPassable(x, y+1) || !map.getPassable(x+1, y+1)) 
                 check = false;
         }
-        
+        GameState.addEntity(col);
         col.respawn();
     }
     
@@ -204,6 +218,7 @@ public class GameState extends BasicGameState {
         
             for(int j = entities.size()-1; j >= 0; j--) {
                 checkCollisions(entities.get(j));
+                
                 entities.get(j).update();
             }
         
@@ -232,6 +247,17 @@ public class GameState extends BasicGameState {
         map.render(graphics, activeX, activeY); //draws the map
 
         graphics.resetTransform();
-        player.render(graphics);        
+
+        player.render(graphics);     
+        
+        graphics.drawRect(gc.getWidth() - 352, gc.getHeight() - 90, 350, 100);
+        graphics.setColor(Color.white);
+        graphics.setFont(font);
+        drawString(graphics, logString, gc.getWidth() - 350, gc.getHeight() - 100);
+    }
+    
+    private void drawString(Graphics g, String text, int x, int y) {
+        for (String line : text.split("\n"))
+            g.drawString(line, x, y += font.getHeight(line));
     }
 }

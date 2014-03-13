@@ -1,6 +1,7 @@
 package Game.Entity;
 
 import Game.State.GameState;
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -14,6 +15,7 @@ import org.newdawn.slick.SlickException;
 public class Playable extends Physical{
     private static Image sprite, sprite2;
     private float health;
+    private final int TOTAL_HEALTH = 100;
     private Color color;
     private int kills, deaths;
     
@@ -26,7 +28,6 @@ public class Playable extends Physical{
         setType("Playable");
         health = 0;
         color = new Color(256,256,256);
-       
     }
     
     /**
@@ -76,10 +77,31 @@ public class Playable extends Physical{
             health -= amount;
         
         if (!isAlive() && getCollidable()){
+            setCollidable(false);
             health = 0;
+            if(GameState.getEntities().contains(this))
+                GameState.removeEntity(this);
             GameState.addEntity(new Explosion(32, this));
             deaths++;
-            setCollidable(false);
+        }
+    }
+    
+    
+    @Override public void Collide(Physical col){
+        if(isAlive()){
+            float x = col.getForceX();
+            float y = col.getForceY();
+            col.setForceX(getForceX());
+            col.setForceY(getForceY());
+            setForceX(x);
+            setForceY(y);
+        }
+    }
+    
+    @Override public void Collide(){
+        if(isAlive()){
+            setForceX(-getForceX());
+            setForceY(-getForceY());
         }
     }
     
@@ -99,8 +121,12 @@ public class Playable extends Physical{
      * Respawn the player 
      */
     public void respawn() { 
-        health = 100;
+        health = TOTAL_HEALTH;
         setCollidable(true);
+    }
+    
+    public int getTotalHealth(){
+        return TOTAL_HEALTH;
     }
     
     /**
@@ -128,11 +154,16 @@ public class Playable extends Physical{
      */
     @Override public void render(Graphics graphics) {
         if (!isAlive())
+        {
+            GameState.removeEntity(this);
             return;
-        
+        }
         sprite.setRotation(getRotation());
         sprite2.setRotation(getRotation());
-        
-        sprite.draw(getX()-getSize(), getY()-getSize(), color);
+        if(System.nanoTime()/100 % 2 == 0)
+            sprite.draw(getX()-getSize(), getY()-getSize(), color);
+        else
+            sprite2.draw(getX()-getSize(), getY()-getSize(), color);
+       
     }
 }
