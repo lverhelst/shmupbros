@@ -11,7 +11,33 @@ import org.newdawn.slick.Color;
  * @author Leon Verhelst
  */
 public class Bot extends Playable {
+
+    /**
+     * @return the mode
+     */
+    public MODE getMode() {
+        return mode;
+    }
+
+    /**
+     * @param mode the mode to set
+     */
+    public void setMode(MODE mode) {
+        this.mode = mode;
+    }
+    public enum MODE{
+        AGGRESSIVE, //HUNT AND KILL
+        PASSIVE, //STAY STILL
+        SEARCH, //AQUIRE TARGET
+        STUCK, //PATHFIND AROUND OBSTACLE OR SUICIDE AND RESPAWN
+        DEAD, //DEAD
+        RANDOM //RANDOM MOVES
+    }
+    
+    
     private Playable target;
+    private MODE mode;
+    
     
     public Bot(float f){
         super(f);

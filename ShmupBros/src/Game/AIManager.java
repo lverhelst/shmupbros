@@ -1,5 +1,6 @@
 package Game;
 
+import Game.Bot.MODE;
 import Game.Entity.Physical;
 import Game.Entity.Playable;
 import Game.Entity.Projectile;
@@ -36,6 +37,11 @@ public class AIManager {
     public void move(Bot bot) {
         int choice = rand.nextInt(10);
         
+        MODE m = bot.getMode();
+        if( m == MODE.AGGRESSIVE){
+            
+        }
+        
         if(!bot.isAlive())
             GameState.spawn(bot);
         
@@ -65,11 +71,11 @@ public class AIManager {
                 break;
         }
         
-        if(rand.nextInt(12) < 3){
+        if(rand.nextInt(120) < 3){
             bot.attack(new Projectile(12, bot));
         }
         
-        if(rand.nextInt(50) == -1)
+        if(rand.nextInt(500) == 1)
             bot.chooseRandTarget();
     }
 }
