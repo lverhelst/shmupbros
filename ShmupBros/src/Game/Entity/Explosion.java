@@ -29,6 +29,7 @@ public class Explosion extends Physical {
         anim.addFrame(sprite6, 100);
         anim.addFrame(sprite7, 100);
         anim.setLooping(false);
+        this.setCollidable(false);
     }
     
     public static void init() {

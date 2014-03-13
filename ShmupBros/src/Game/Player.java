@@ -6,6 +6,7 @@ import Game.Entity.Playable;
 import Game.Entity.Projectile;
 import Game.State.GameState;
 import java.util.ArrayList;
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -32,6 +33,8 @@ public class Player {
         //temporary default location
         target.setX(512);
         target.setY(512);
+        
+       
     }
     
     /**
@@ -93,8 +96,8 @@ public class Player {
         }
         
         if (controls.isKeyDown(Input.KEY_RCONTROL)) {
-            if (lastShot+100 < System.currentTimeMillis()) {
-                target.attack(new Projectile(12,target));
+            if (lastShot + 101 < System.currentTimeMillis()) {
+                target.attack(new Projectile(16,target));
                 lastShot = System.currentTimeMillis();
                 if (MCManager.getSender() != null)
                     MCManager.getSender().sendAttack(target.getID()); //calls attack and sends the result

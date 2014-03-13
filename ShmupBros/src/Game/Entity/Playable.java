@@ -1,6 +1,7 @@
 package Game.Entity;
 
 import Game.State.GameState;
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -26,7 +27,6 @@ public class Playable extends Physical{
         setType("Playable");
         health = 0;
         color = new Color(256,256,256);
-       
     }
     
     /**
@@ -76,10 +76,11 @@ public class Playable extends Physical{
             health -= amount;
         
         if (!isAlive() && getCollidable()){
+            setCollidable(false);
             health = 0;
             GameState.addEntity(new Explosion(32, this));
             deaths++;
-            setCollidable(false);
+            
         }
     }
     
@@ -132,7 +133,10 @@ public class Playable extends Physical{
         
         sprite.setRotation(getRotation());
         sprite2.setRotation(getRotation());
-        
-        sprite.draw(getX()-getSize(), getY()-getSize(), color);
+        if(System.nanoTime()/100 % 2 == 0)
+            sprite.draw(getX()-getSize(), getY()-getSize(), color);
+        else
+            sprite2.draw(getX()-getSize(), getY()-getSize(), color);
+       
     }
 }
