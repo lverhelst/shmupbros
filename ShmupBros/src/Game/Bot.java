@@ -38,6 +38,17 @@ public class Bot extends Playable {
         //face the target
          this.setRotation(this.getRotationToEntity(target));
     }
+    
+    public void rotateToTarget()
+    {
+        float angleToFace = this.getRotationToEntity(target);
+        System.out.println(this.getRotation() + "  "  + angleToFace);                
+        if((this.getRotation() + 5 < angleToFace || this.getRotation() - 5 > angleToFace)){
+            //can rotate 15 degrees at a time
+            this.modRotation(angleToFace % 15);
+        }
+    }
+    
     /**
      * Chooses random Entity as target
      */

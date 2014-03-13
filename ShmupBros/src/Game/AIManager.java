@@ -39,16 +39,17 @@ public class AIManager {
         if(!bot.isAlive())
             GameState.spawn(bot);
         
-        if(bot.getTarget() != null && !bot.getTarget().isAlive())
-            bot.chooseRandTarget();
+       // if(bot.getTarget() != null && !bot.getTarget().isAlive())
+         //   bot.chooseRandTarget();
         
         switch(choice) {
             case 0:
                 //zombie
-                bot.faceTarget();
+              //  bot.faceTarget();
                 break;
             case 1:
                 //zombie
+                bot.rotateToTarget();
                 bot.applyForce(1, bot.getRotation());
                 break;
             case 2:
@@ -56,15 +57,16 @@ public class AIManager {
                 bot.applyForce(1, bot.getRotation());
                 break;
             case 3:
+                bot.rotateToTarget();
                 bot.applyForce(3, bot.getRotation());
                 break;
         }
         
-        if(rand.nextInt(12) > 10){
+        if(rand.nextInt(12) < 3){
             bot.attack(new Projectile(12, bot));
         }
         
-        if(rand.nextInt(50) == 10)
+        if(rand.nextInt(50) == -1)
             bot.chooseRandTarget();
     }
 }
