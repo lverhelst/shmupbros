@@ -43,7 +43,7 @@ public class GameState extends BasicGameState {
     private long curtime;
     private TextField log;
     private Font m_font;
-    
+
     TrueTypeFont font;
     
     
@@ -56,7 +56,7 @@ public class GameState extends BasicGameState {
         ID = id;
         player = new Player("PLAYER");
         ai = new AIManager();
-        int num_bots = 10;
+        int num_bots = 1;
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot((float)32.0);
             p.setIdentifier("BOT" + i);     
@@ -204,6 +204,7 @@ public class GameState extends BasicGameState {
         checkMapCollisions(col);
     }
     
+    
     /**
       * Update the current player every 15 milliseconds
       * @param gc GameState container
@@ -254,6 +255,9 @@ public class GameState extends BasicGameState {
         graphics.setColor(Color.white);
         graphics.setFont(font);
         drawString(graphics, logString, gc.getWidth() - 350, gc.getHeight() - 100);
+        
+       
+        
     }
     
     private void drawString(Graphics g, String text, int x, int y) {

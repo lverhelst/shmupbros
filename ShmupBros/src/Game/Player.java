@@ -2,6 +2,7 @@ package Game;
 
 import Communications.MCManager;
 import Communications.MCSend;
+import Game.Entity.Physical;
 import Game.Entity.Playable;
 import Game.Entity.Projectile;
 import Game.State.GameState;
@@ -19,6 +20,7 @@ public class Player {
     private Playable target;
     private String name;
     private long lastShot;
+    private boolean showScore;
     
     /**
      * Default contructor which sets the defaults and the players name
@@ -69,6 +71,13 @@ public class Player {
     public void update(Input controls){
         boolean updatedLocation = false;  
          
+        if(controls.isKeyDown(Input.KEY_TAB)){
+            showScore = true;
+        }
+        else{
+            showScore = false;
+        }
+        
         if(!target.isAlive()){
             if(controls.isKeyPressed(Input.KEY_ENTER)){
                 GameState.spawn(target);
@@ -104,6 +113,7 @@ public class Player {
             }
         }        
    
+        
         //only sends updates if player has moved
         if (updatedLocation & MCManager.getSender() != null) {
             MCManager.getSender().sendPosition(target);
@@ -124,5 +134,28 @@ public class Player {
         graphics.drawRect(19, 560, 201, 20);
         graphics.setColor(Color.red);
         graphics.fillRect(20, 561, target.getHealth() / target.getTotalHealth() * 200 , 19);
+        
+         if(showScore){
+            //render health bar
+                 graphics.drawRect(49,69, 201, 201);
+                 graphics.setColor(Color.white);
+                 String score = "Score:\r\n";
+                 int i = 1;
+                 for(Physical e : GameState.getEntities()){
+                     if(e.getType().equals("Playable")){
+                        score += i + ": " + e.getIdentifier() + " " + ((Playable)e).getKills() + "\r\n";
+                        i++;
+                        if(i > 9)
+                             break;
+                     }
+                 }
+                 drawString(graphics, score, 51, 51);
+                 //graphics.fillRect(50,50, 200 , 200);
+        }
+    }
+    
+    private void drawString(Graphics g, String text, int x, int y) {
+        for (String line : text.split("\n"))
+            g.drawString(line, x, y += 20);
     }
 }

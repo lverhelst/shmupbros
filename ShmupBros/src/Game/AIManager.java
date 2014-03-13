@@ -39,7 +39,7 @@ public class AIManager {
         
         MODE m = bot.getMode();
         if( m == MODE.AGGRESSIVE){
-            
+           
         }
         
         if(!bot.isAlive())
@@ -51,7 +51,7 @@ public class AIManager {
         switch(choice) {
             case 0:
                 //zombie
-                //bot.faceTarget();
+                bot.faceTarget();
 
                 bot.rotateToTarget();
                 bot.applyForce(2, bot.getRotation());
