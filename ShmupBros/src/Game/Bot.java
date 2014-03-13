@@ -41,8 +41,7 @@ public class Bot extends Playable {
     
     public void rotateToTarget()
     {
-        float angleToFace = this.getRotationToEntity(target);
-        System.out.println(this.getRotation() + "  "  + angleToFace);                
+        float angleToFace = this.getRotationToEntity(target);               
         if((this.getRotation() + 5 < angleToFace || this.getRotation() - 5 > angleToFace)){
             //can rotate 15 degrees at a time
             this.modRotation(angleToFace % 15);

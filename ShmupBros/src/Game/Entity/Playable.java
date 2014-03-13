@@ -15,6 +15,7 @@ import org.newdawn.slick.SlickException;
 public class Playable extends Physical{
     private static Image sprite, sprite2;
     private float health;
+    private final int TOTAL_HEALTH = 100;
     private Color color;
     private int kills, deaths;
     
@@ -80,7 +81,6 @@ public class Playable extends Physical{
             health = 0;
             GameState.addEntity(new Explosion(32, this));
             deaths++;
-            
         }
     }
     
@@ -100,8 +100,12 @@ public class Playable extends Physical{
      * Respawn the player 
      */
     public void respawn() { 
-        health = 500;
+        health = TOTAL_HEALTH;
         setCollidable(true);
+    }
+    
+    public int getTotalHealth(){
+        return TOTAL_HEALTH;
     }
     
     /**

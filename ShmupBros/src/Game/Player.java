@@ -121,6 +121,6 @@ public class Player {
         //render health bar
         graphics.drawRect(19, 560, 201, 20);
         graphics.setColor(Color.red);
-        graphics.fillRect(20, 561, target.getHealth()*2 , 19);
+        graphics.fillRect(20, 561, target.getHealth() / target.getTotalHealth() * 200 , 19);
     }
 }
