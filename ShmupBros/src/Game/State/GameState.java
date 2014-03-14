@@ -56,7 +56,7 @@ public class GameState extends BasicGameState {
         ID = id;
         player = new Player("PLAYER");
         ai = new AIManager();
-        int num_bots = 1;
+        int num_bots = 10;
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot((float)32.0);
             p.setIdentifier("BOT" + i);     

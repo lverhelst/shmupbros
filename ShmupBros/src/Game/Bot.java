@@ -79,15 +79,22 @@ public class Bot extends Playable {
      */
     public void chooseRandTarget(){
         Random rng = new Random();
-        
-        int thisInd = GameState.getEntities().indexOf(this);
-        int index = thisInd;
-        int size = GameState.getEntities().size();
-        while(index == thisInd ){
-            index = rng.nextInt(size);
-            if(!GameState.getEntities().get(index).getType().equals("Playable"))
-                index = thisInd;
+        int i = 0; 
+        for(Physical p : GameState.getEntities()){
+            if(p.getType().equals("Playable"))
+                i++;
         }
-        target = (Playable)GameState.getEntities().get(index);
+        //Ensure there are entities to choose from
+        if(i > 1){
+            int thisInd = GameState.getEntities().indexOf(this);
+            int index = thisInd;
+            int size = GameState.getEntities().size();
+            while(index == thisInd ){
+                index = rng.nextInt(size);
+                if(!GameState.getEntities().get(index).getType().equals("Playable"))
+                    index = thisInd;
+            }
+            target = (Playable)GameState.getEntities().get(index);
+        }
     }
 }

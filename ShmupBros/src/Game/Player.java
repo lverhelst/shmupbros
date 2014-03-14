@@ -1,13 +1,13 @@
 package Game;
 
 import Communications.MCManager;
-import Communications.MCSend;
 import Game.Entity.Physical;
 import Game.Entity.Playable;
 import Game.Entity.Projectile;
 import Game.State.GameState;
 import java.util.ArrayList;
-import org.newdawn.slick.Animation;
+import java.util.Collections;
+import java.util.Comparator;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -78,6 +78,10 @@ public class Player {
             showScore = false;
         }
         
+        if(controls.isKeyPressed(Input.KEY_C))
+            target.setShowName(!target.isShowName());
+    
+        
         if(!target.isAlive()){
             if(controls.isKeyPressed(Input.KEY_ENTER)){
                 target.respawn();
@@ -104,6 +108,9 @@ public class Player {
             target.modRotation(3);
             updatedLocation = true;
         }
+        
+        
+        
         
         if (controls.isKeyDown(Input.KEY_RCONTROL)) {
             if (lastShot + 101 < System.currentTimeMillis()) {
@@ -142,13 +149,22 @@ public class Player {
                  graphics.setColor(Color.white);
                  String score = "Score:\r\n";
                  int i = 1;
+                 ArrayList<Playable> p = new ArrayList<>();
                  for(Physical e : GameState.getEntities()){
                      if(e.getType().equals("Playable")){
-                        score += i + ": " + e.getIdentifier() + " " + ((Playable)e).getKills() + "\r\n";
-                        i++;
-                        if(i > 9)
-                             break;
+                         p.add((Playable)e);
+                        
                      }
+                 }
+                 Collections.sort(p, new Comparator<Playable>(){
+                    public int compare(Playable a, Playable b){
+                        return b.getKills() - a.getKills() ;
+                    } 
+                 });
+                 for(Playable pl: p){
+                     score += i + ": " + pl.getIdentifier() + " " + ((Playable)pl).getKills() + "\r\n";
+                        i++;
+
                  }
                  drawString(graphics, score, 51, 51);
                  //graphics.fillRect(50,50, 200 , 200);

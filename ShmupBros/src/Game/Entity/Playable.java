@@ -1,7 +1,6 @@
 package Game.Entity;
 
 import Game.State.GameState;
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -14,10 +13,13 @@ import org.newdawn.slick.SlickException;
 
 public class Playable extends Physical{
     private static Image sprite, sprite2;
+
+    
     private float health;
     private final int TOTAL_HEALTH = 100;
     private Color color;
     private int kills, deaths;
+    private static boolean  showName;
     
     /**
      * Default constructor creates the vehicle for us in game
@@ -147,6 +149,20 @@ public class Playable extends Physical{
     }
     
     /**
+     * @return the showName
+     */
+    public static boolean isShowName() {
+        return showName;
+    }
+
+    /**
+     * @param aShowName the showName to set
+     */
+    public static void setShowName(boolean aShowName) {
+        showName = aShowName;
+    }
+    
+    /**
      * Renders the current frame for  the vehicle
      * @param graphics The SLick2d/LWJGL graphics
      */
@@ -156,6 +172,8 @@ public class Playable extends Physical{
             this.setCollidable(false);
             return;
         }
+        if(showName)
+            graphics.drawString(this.getIdentifier(), getX(), getY() - 2 * getSize());
         sprite.setRotation(getRotation());
         sprite2.setRotation(getRotation());
         if(System.nanoTime()/100 % 2 == 0)

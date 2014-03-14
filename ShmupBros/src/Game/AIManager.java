@@ -44,8 +44,8 @@ public class AIManager {
         if(!bot.isAlive())
             GameState.spawn(bot);
         
-       // if(bot.getTarget() != null && !bot.getTarget().isAlive())
-         //   bot.chooseRandTarget();
+        if(bot.getTarget() != null && !bot.getTarget().isAlive())
+            bot.chooseRandTarget();
         double dist = bot.getDistanceToEntity(bot.getTarget());
        // if( dist > 0)
          //System.out.println(dist + "  " + FuzzyRule.forceFromDistance(dist));
@@ -53,15 +53,15 @@ public class AIManager {
         switch(choice) {
             case 0:
                 //zombie
-                bot.faceTarget();
+               // bot.faceTarget();
                 bot.applyForce((int)FuzzyRule.forceFromDistance(dist), bot.getRotation());
-                //bot.rotateToTarget();
+                bot.rotateToTarget();
                 break;
             case 1:
                 //zombie
-                 bot.faceTarget();
+                // bot.faceTarget();
                  bot.applyForce((int)FuzzyRule.forceFromDistance(dist), bot.getRotation());
-               //bot.rotateToTarget();
+               bot.rotateToTarget();
                 break;
             case 2:
                 //zombie
@@ -73,11 +73,11 @@ public class AIManager {
                 break;
         }
         
-        if(rand.nextInt(120) < 30){
+        if(rand.nextInt(120) < 20){
             bot.attack(new Projectile(12, bot));
         }
         
-        //if(rand.nextInt(500) == 11)
-          //  bot.chooseRandTarget();
+       if(rand.nextInt(1000) == 11)
+          bot.chooseRandTarget();
     }
 }
