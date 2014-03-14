@@ -47,8 +47,8 @@ public class AIManager {
        // if(bot.getTarget() != null && !bot.getTarget().isAlive())
          //   bot.chooseRandTarget();
         double dist = bot.getDistanceToEntity(bot.getTarget());
-        if( dist > 0)
-         System.out.println(dist + "  " + FuzzyRule.forceFromDistance(dist));
+       // if( dist > 0)
+         //System.out.println(dist + "  " + FuzzyRule.forceFromDistance(dist));
         
         switch(choice) {
             case 0:
@@ -73,7 +73,7 @@ public class AIManager {
                 break;
         }
         
-        if(rand.nextInt(120) < 3){
+        if(rand.nextInt(120) < 30){
             bot.attack(new Projectile(12, bot));
         }
         

@@ -153,7 +153,7 @@ public class Playable extends Physical{
     @Override public void render(Graphics graphics) {
         if (!isAlive())
         {
-            GameState.removeEntity(this);
+            this.setCollidable(false);
             return;
         }
         sprite.setRotation(getRotation());
