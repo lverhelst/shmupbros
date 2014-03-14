@@ -96,7 +96,7 @@ public class GameState extends BasicGameState {
         Explosion.init();
         
         spawn(player.getTarget());
-        addEntity(player.getTarget());
+       // addEntity(player.getTarget());
         
         font = new TrueTypeFont(new java.awt.Font(java.awt.Font.SERIF,java.awt.Font.BOLD , 10), false);
     }
@@ -174,7 +174,8 @@ public class GameState extends BasicGameState {
                 !map.getPassable(x, y+1) || !map.getPassable(x+1, y+1)) 
                 check = false;
         }
-        GameState.addEntity(col);
+        if(!entities.contains(col))
+            GameState.addEntity(col);
         col.respawn();
     }
     

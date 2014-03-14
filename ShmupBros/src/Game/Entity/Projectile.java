@@ -66,7 +66,7 @@ public class Projectile extends Physical{
         
         if(col.getType().equals("Playable") && !col.getCollidable()){
             owner.addKill();         
-             GameState.addText(owner.getIdentifier() + " KILLED " + col.getIdentifier());
+            GameState.addText(owner.getIdentifier() + " KILLED " + col.getIdentifier());
             
         }
         setCollidable(false);

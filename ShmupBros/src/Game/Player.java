@@ -80,6 +80,7 @@ public class Player {
         
         if(!target.isAlive()){
             if(controls.isKeyPressed(Input.KEY_ENTER)){
+                target.respawn();
                 GameState.spawn(target);
             }
             return;

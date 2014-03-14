@@ -79,8 +79,6 @@ public class Playable extends Physical{
         if (!isAlive() && getCollidable()){
             setCollidable(false);
             health = 0;
-            if(GameState.getEntities().contains(this))
-                GameState.removeEntity(this);
             GameState.addEntity(new Explosion(32, this));
             deaths++;
         }
