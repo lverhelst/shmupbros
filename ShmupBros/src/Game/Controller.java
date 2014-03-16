@@ -23,6 +23,7 @@ public class Controller {
         FIRE,
         RESPAWN,
         SHOWSCORE,
+        HIDESCORE, 
         SHOWNAMES        
     }
     
@@ -33,11 +34,13 @@ public class Controller {
      */
     public static void update(Playable target, MOVE move){
         boolean updatedLocation = false;        
-        
         switch(move) {   
             case SHOWSCORE:
-                 showScore = !showScore;
+                 showScore = true;
                 break;         
+            case HIDESCORE:
+                 showScore = false;
+                break;
             case SHOWNAMES:
                 target.setShowName(!target.isShowName());
                 break;

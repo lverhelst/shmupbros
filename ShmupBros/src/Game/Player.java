@@ -68,30 +68,36 @@ public class Player {
      * collisions
      * @param controls 
      */
-    public void update(Input controls){         
-        if(controls.isKeyPressed(Input.KEY_TAB))
+    public void update(Input controls){   
+        
+        if(controls.isKeyDown(Input.KEY_TAB))
             Controller.update(target, Controller.MOVE.SHOWSCORE);
-                
+        else
+            Controller.update(target, Controller.MOVE.HIDESCORE);
+        
         if(controls.isKeyPressed(Input.KEY_C))            
             Controller.update(target, Controller.MOVE.SHOWNAMES);    
-        
-        if(controls.isKeyPressed(Input.KEY_ENTER))
-            Controller.update(target, Controller.MOVE.RESPAWN);        
-        
-        if (controls.isKeyDown(Input.KEY_W)) 
-            Controller.update(target, Controller.MOVE.UP);
-        
-        if (controls.isKeyDown(Input.KEY_S)) 
-            Controller.update(target, Controller.MOVE.DOWN);        
-        
-        if (controls.isKeyDown(Input.KEY_A)) 
-            Controller.update(target, Controller.MOVE.ROTLEFT);        
-        
-        if (controls.isKeyDown(Input.KEY_D)) 
-            Controller.update(target, Controller.MOVE.ROTRIGHT);        
-        
-        if (controls.isKeyDown(Input.KEY_RCONTROL)) 
-            Controller.update(target, Controller.MOVE.FIRE); 
+        //ensure movement only happens when alive
+        //ensure respawning only happens when dead
+        if(target.isAlive()){
+            if (controls.isKeyDown(Input.KEY_W)) 
+                Controller.update(target, Controller.MOVE.UP);
+
+            if (controls.isKeyDown(Input.KEY_S)) 
+                Controller.update(target, Controller.MOVE.DOWN);        
+
+            if (controls.isKeyDown(Input.KEY_A)) 
+                Controller.update(target, Controller.MOVE.ROTLEFT);        
+
+            if (controls.isKeyDown(Input.KEY_D)) 
+                Controller.update(target, Controller.MOVE.ROTRIGHT);        
+
+            if (controls.isKeyDown(Input.KEY_RCONTROL)) 
+                Controller.update(target, Controller.MOVE.FIRE); 
+        }else{
+            if(controls.isKeyPressed(Input.KEY_ENTER))
+                Controller.update(target, Controller.MOVE.RESPAWN);   
+        }
     }
     
     /**

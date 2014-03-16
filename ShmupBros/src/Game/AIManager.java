@@ -126,8 +126,8 @@ public class AIManager {
                 }
                 break;
         }
-        
-       Controller.update(bot, Controller.MOVE.FIRE);
+        if(rand.nextInt(100) == 11)
+            Controller.update(bot, Controller.MOVE.FIRE);
         
        if(rand.nextInt(1000) == 11)
           bot.chooseRandTarget();
