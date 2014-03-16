@@ -1,19 +1,17 @@
 package Game;
 
 import Ai.FuzzyRule;
-import Communications.MCManager;
 import Game.Bot.MODE;
-import Game.Entity.Projectile;
+import Game.Entity.Entity;
 import Game.State.GameState;
 import java.util.ArrayList;
 import java.util.Random;
 
 /**
 * AIManager
-* @author Emery Berg
+* @author Emery Berg and Leon Verhelst
 */
 public class AIManager {
-    private long lastShot;
     private ArrayList<Bot> ai;
     private Random rand;
     
@@ -37,7 +35,6 @@ public class AIManager {
     public AIManager() {
         ai = new ArrayList();
         rand = new Random();
-        lastShot = System.currentTimeMillis();
     }
     
     /**
@@ -47,6 +44,16 @@ public class AIManager {
     public void addAI(Bot bot) {
         ai.add(bot);
        // GameState.addEntity(bot);
+        
+        //test path for the bots
+        for(int i = 0; i < 10; ++i) {
+            int x = rand.nextInt(1000) + 32;
+            int y = rand.nextInt(1000) + 32;
+            Entity node = new Entity(1);
+            node.setX(x);
+            node.setY(y);
+            bot.addPathNode(node);
+        }
     }
     
     /**
@@ -63,8 +70,8 @@ public class AIManager {
      * @param bot the both to move
      */
     public void move(Bot bot) {
-        int choice = 0;
-//        int choice = rand.nextInt(10);
+        int choice = 3;
+//        int choice = rand.nextInt(10);        
         
         MODE m = bot.getMode();
         if( m == MODE.AGGRESSIVE){
@@ -101,8 +108,22 @@ public class AIManager {
                 bot.applyForce((int)FuzzyRule.forceFromDistance(dist), bot.getRotation());
                 break;
             case 3:
-               // bot.rotateToTarget();
-                 bot.applyForce((int)FuzzyRule.forceFromDistance(dist), bot.getRotation());
+                if(bot.hasPath()) {
+                    Entity node = bot.getPathNode();
+                    double distNode = bot.getDistanceToEntity(node);
+                    double angleNode = bot.getRotationToEntity(node);
+                    
+                    Controller.update(bot, Controller.MOVE.UP);
+                    
+                    if(bot.getRotation() + 2 < angleNode)
+                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
+                    else if(bot.getRotation() - 2 > angleNode)
+                        Controller.update(bot, Controller.MOVE.ROTLEFT);
+                    
+                    //if at node, get mext node
+                    if(distNode < bot.getSize()) 
+                        bot.nextPathNode();                    
+                }
                 break;
         }
         

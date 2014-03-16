@@ -1,20 +1,26 @@
 package Game;
 
+import Game.Entity.Entity;
 import Game.Entity.Physical;
 import Game.Entity.Playable;
 import Game.State.GameState;
 import java.util.Random;
 import org.newdawn.slick.Color;
 import Game.Entity.Entity.TYPE;
+import java.util.ArrayList;
 
 /**
- *
- * @author Leon Verhelst
+ * @author Leon Verhelst and Emery
  */
 public class Bot extends Playable {
+    private ArrayList<Entity> path;
     private Playable target;
     private MODE mode;    
     
+    /*
+    We might want to change these to float values, that way we can have a mixed mode
+    Not 100% sure about that yet, but could allow combo modes
+    */
     public enum MODE{
         AGGRESSIVE, //HUNT AND KILL
         PASSIVE, //STAY STILL
@@ -27,6 +33,7 @@ public class Bot extends Playable {
     public Bot(float f){
         super(f);
         super.setColor(Color.orange);
+        path = new ArrayList();
     }
     
     /**
@@ -41,7 +48,39 @@ public class Bot extends Playable {
      */
     public void setMode(MODE mode) {
         this.mode = mode;
-    }    
+    }
+    
+    /**
+     * Add a node to the current path
+     * @param node the node to add
+     */
+    public void addPathNode(Entity node) {
+        path.add(node);
+    }
+    
+    /**
+     * Used to get the next path node
+     * @return the next path node
+     */
+    public Entity getPathNode() {
+        return path.get(0);
+    }
+    
+    /**
+     * Used to move to the next node
+     */
+    public void nextPathNode() {
+        if(!path.isEmpty())
+            path.remove(0);
+    }
+    
+    /**
+     * Used to find out if the bot has a path or not
+     * @return true if a path current exist
+     */
+    public boolean hasPath() {
+        return !path.isEmpty();
+    }
 
     /**
      * @return the target
