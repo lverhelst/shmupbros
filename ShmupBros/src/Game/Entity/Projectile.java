@@ -19,7 +19,7 @@ public class Projectile extends Physical{
     
     public Projectile(float size, Playable owner) {
         super(size);
-        setType("Projectile");
+        setType(Entity.TYPE.PROJECTILE);
         
         this.owner = owner;
         
@@ -37,6 +37,9 @@ public class Projectile extends Physical{
         anim.setLooping(true);
     }
     
+    /**
+     * Initiates the object as is required by slick
+     */
     public static void init() {
         try {
             sprite = new Image("Assets/Sprites/bullet-blue.png");          
@@ -55,19 +58,17 @@ public class Projectile extends Physical{
      * Base function used when objects collide
      * @param col Physical object which has been collided with
      */
-    @Override public void Collide(Physical col) {
-        
+    @Override public void Collide(Physical col) {        
         //Don't collide with owner
-       if(col.getID() == owner.getID()){
-           return;
-       }
+        if(col.getID() == owner.getID()){
+            return;
+        }
         
         col.damage(damage);
         
-        if(col.getType().equals("Playable") && !col.getCollidable()){
+        if(col.getType() == Entity.TYPE.PLAYABLE && !((Playable)col).isAlive()){
             owner.addKill();     
-            GameState.addText(owner.getIdentifier() + " KILLED " + col.getIdentifier());
-            
+            GameState.addText(owner.getIdentifier() + " KILLED " + col.getIdentifier());            
         }
         setCollidable(false);
     }
@@ -92,6 +93,6 @@ public class Projectile extends Physical{
      * @param graphics The SLick2d/LWJGL graphics
      */
     @Override public void render(Graphics graphics) {
-        anim.draw(getX()-getSize()/2, getY()-getSize()/2);
+        anim.draw(getX()-getSize()/2, getY()-getSize()/2, getSize(), getSize());
     }
 }

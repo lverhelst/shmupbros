@@ -29,7 +29,6 @@ import org.newdawn.slick.gui.TextField;
  * GameState: Used to start and perform the game logic
  * @authors Daniel, Emery, Leon
  */
-
 public class GameState extends BasicGameState {
     public final int ID; //holds the current states ID
     private static ArrayList<Physical> entities = new ArrayList();
@@ -150,13 +149,22 @@ public class GameState extends BasicGameState {
         entities = newentities;
     }
     
+    /**
+     * Adds a text message to the log area
+     * @param text 
+     */
     public static synchronized void addText(String text){
         logString  = text + "\r\n" + logString;
     }
     
+    /**
+     * Searches the play area for a safe spawn zone
+     * @param col the entity to spawn in the game world
+     */
     public static void spawn(Playable col) {
         boolean check = false; 
         
+        //look until a position is found
         while(!check) {
             check = true;
             
@@ -174,33 +182,43 @@ public class GameState extends BasicGameState {
                 !map.getPassable(x, y+1) || !map.getPassable(x+1, y+1)) 
                 check = false;
         }
+        //ensure the entity list has the entity
         if(!entities.contains(col))
             GameState.addEntity(col);
+        
         col.respawn();
     }
     
+    /**
+     * Check if the entity is colliding with the world
+     * @param col the entity to check if colliding
+     */
     public void checkMapCollisions(Physical col) {
         int x = (int)((col.getX() + col.getForceX() - col.getSize())/32);
         int y = (int)((col.getY() + col.getForceY() - col.getSize())/32);
         
-        if(!map.getPassable(x, y) || !map.getPassable(x+1, y) || 
+        if(col.getCollidable() && !map.getPassable(x, y) || !map.getPassable(x+1, y) || 
                 !map.getPassable(x, y+1) || !map.getPassable(x+1, y+1)) 
             col.Collide();
     }
     
+    /**
+     * Check if the entity is colliding with another entity
+     * @param col the entity to check
+     */
     public void checkCollisions(Physical col) {
+        //ensure the object can collide
         if(!col.getCollidable())
            return;
         
         for(int i = entities.size()-1; i >= 0; --i)
-            if(col != entities.get(i) && col.isColliding(entities.get(i))) {
+            if(entities.get(i).getCollidable() && col != entities.get(i) && col.isColliding(entities.get(i))) {
                 col.Collide(entities.get(i));
                 
-                if(entities.get(i).getType().equals("Projectile") 
+                if(entities.get(i).getClass() == Projectile.class 
                         && entities.get(i).getCollidable())
                     entities.get(i).Collide(col);
-            }
-                
+            }                
         
         checkMapCollisions(col);
     }
@@ -219,11 +237,9 @@ public class GameState extends BasicGameState {
         
         
             for(int j = entities.size()-1; j >= 0; j--) {
-                checkCollisions(entities.get(j));
-                
+                checkCollisions(entities.get(j));                
                 entities.get(j).update();
-            }
-        
+            }        
             ai.update();
         }
     }
@@ -256,9 +272,6 @@ public class GameState extends BasicGameState {
         graphics.setColor(Color.white);
         graphics.setFont(font);
         drawString(graphics, logString, gc.getWidth() - 350, gc.getHeight() - 100);
-        
-       
-        
     }
     
     private void drawString(Graphics g, String text, int x, int y) {

@@ -17,7 +17,7 @@ public class Physical extends Entity {
      */
     public Physical(float size) { 
         super(System.nanoTime());
-        setType("Physical");
+        setType(Entity.TYPE.PHYSICAL);
         
         this.size = size/2;
         collidable = true;
@@ -52,20 +52,24 @@ public class Physical extends Entity {
      * @param col Physical object which has been collided with
      */
     public void Collide(Physical col) {
-        float x = col.getForceX();
-        float y = col.getForceY();
-        col.setForceX(getForceX());
-        col.setForceY(getForceY());
-        setForceX(x);
-        setForceY(y);
+        if(collidable) {
+            float x = col.getForceX();
+            float y = col.getForceY();
+            col.setForceX(getForceX());
+            col.setForceY(getForceY());
+            setForceX(x);
+            setForceY(y);
+        }
     }
     
     /**
      * Base function used when an object collides with the world
      */
     public void Collide() {
-        setForceX(-getForceX());
-        setForceY(-getForceY());
+        if(collidable) {
+            setForceX(-getForceX());
+            setForceY(-getForceY());
+        }
     }
     
     /**
@@ -74,7 +78,7 @@ public class Physical extends Entity {
      * @return returns true if objects are colliding
      */
     public boolean isColliding(Physical col) {
-        if(intersectsWidth(col) && intersectsDepth(col))
+        if(collidable && intersectsWidth(col) && intersectsDepth(col))
             return true;
         return false;
     }
@@ -85,7 +89,7 @@ public class Physical extends Entity {
      * @return returns true if objects are colliding
      */
     public boolean intersectsWidth(Physical col) {
-        if(getX() - getSize() < col.getX() + col.getSize() &&
+        if(collidable && getX() - getSize() < col.getX() + col.getSize() &&
                 getX() + getSize() > col.getX() - col.getSize())
             return true;
         return false;
@@ -97,7 +101,7 @@ public class Physical extends Entity {
      * @return returns true if objects are colliding
      */
     public boolean intersectsDepth(Physical col) {
-        if(getY() - getSize() < col.getY() + col.getSize() &&
+        if(collidable && getY() - getSize() < col.getY() + col.getSize() &&
                 getY() + getSize() > col.getY() - col.getSize())
             return true;
         return false;
@@ -105,7 +109,7 @@ public class Physical extends Entity {
     
     /**
      * Used to set if the object can be collided with
-     * @param collidable a boolean value true if collidable
+     * @param collide a boolean value true if collidable
      */
     public void setCollidable(boolean collide) { this.collidable = collide;}
     

@@ -12,9 +12,7 @@ import org.newdawn.slick.SlickException;
 */
 
 public class Playable extends Physical{
-    private static Image sprite, sprite2;
-
-    
+    private static Image sprite, sprite2;    
     private float health;
     private final int TOTAL_HEALTH = 100;
     private Color color;
@@ -27,7 +25,7 @@ public class Playable extends Physical{
      */
     public Playable(float size) {
         super(size);
-        setType("Playable");
+        setType(Entity.TYPE.PLAYABLE);
         health = 0;
         color = new Color(256,256,256);
     }
@@ -78,32 +76,14 @@ public class Playable extends Physical{
         if (health > 0)
             health -= amount;
         
+        //has been killed
         if (!isAlive() && getCollidable()){
             setCollidable(false);
             health = 0;
-            GameState.addEntity(new Explosion(32, this));
+            GameState.addEntity(new Explosion(128, this));
             deaths++;
         }
-    }
-    
-    
-    @Override public void Collide(Physical col){
-        if(isAlive()){
-            float x = col.getForceX();
-            float y = col.getForceY();
-            col.setForceX(getForceX());
-            col.setForceY(getForceY());
-            setForceX(x);
-            setForceY(y);
-        }
-    }
-    
-    @Override public void Collide(){
-        if(isAlive()){
-            setForceX(-getForceX());
-            setForceY(-getForceY());
-        }
-    }
+    }  
     
     /**
      * Used to allow vehicle to perform an attack
@@ -143,9 +123,11 @@ public class Playable extends Physical{
      * @param gc The Current Game Container (screen)
      */
     @Override public void update() {
-        applyFriction();
-        modX(getForceX());
-        modY(getForceY());
+        if(isAlive()) {
+            applyFriction();
+            modX(getForceX());
+            modY(getForceY());
+        }
     }
     
     /**
@@ -172,14 +154,15 @@ public class Playable extends Physical{
             this.setCollidable(false);
             return;
         }
+        
         if(showName)
             graphics.drawString(this.getIdentifier(), getX(), getY() - 2 * getSize());
+        
         sprite.setRotation(getRotation());
         sprite2.setRotation(getRotation());
         if(System.nanoTime()/100 % 2 == 0)
             sprite.draw(getX()-getSize(), getY()-getSize(), color);
         else
-            sprite2.draw(getX()-getSize(), getY()-getSize(), color);
-       
+            sprite2.draw(getX()-getSize(), getY()-getSize(), color);       
     }
 }

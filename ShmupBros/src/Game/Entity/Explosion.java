@@ -10,11 +10,15 @@ import org.newdawn.slick.SlickException;
 * Explosion
 * @author Emery Berg
 */
-
 public class Explosion extends Physical {
     private static Image sprite, sprite2, sprite3, sprite4, sprite5, sprite6, sprite7;
     private Animation anim;
     
+    /**
+     * Creates an explosion
+     * @param size, the size of the explosion
+     * @param owner the owner of the explosion (Used to set location)
+     */
     public Explosion(float size, Entity owner) {
         super(size);
         setX(owner.getX());
@@ -32,6 +36,9 @@ public class Explosion extends Physical {
         this.setCollidable(false);
     }
     
+    /**
+     * Initiates the object as is required by slick
+     */
     public static void init() {
         try {
             sprite = new Image("Assets/Sprites/Expl1.png");
@@ -59,6 +66,6 @@ public class Explosion extends Physical {
      * @param graphics The SLick2d/LWJGL graphics
      */
     @Override public void render(Graphics graphics) {
-        anim.draw(getX()-getSize()/2, getY()-getSize()/2);
+        anim.draw(getX()-getSize()/2, getY()-getSize()/2, getSize(), getSize());
     }
 }

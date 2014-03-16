@@ -1,24 +1,29 @@
 package Game.Entity;
 
-import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
 /**
  * Entity: Base class for items in the game
  * @author Daniel Finke, Emery Berg, Leon Verhelst
  */
-
 public class Entity {
     private float x,y,rotation;
-    private String type;
+    private TYPE type;
     private long ID;
+    
+    public enum TYPE {
+        ENTITY,
+        PLAYABLE,
+        PHYSICAL,
+        PROJECTILE        
+    }
     
     /**
      * Default constructor for Entity base class
      * @param id used to set the ID of the entity
      */
     public Entity(long id) {
-        type = "Entity";
+        type = TYPE.ENTITY;
         ID = id;
     }
 
@@ -38,13 +43,13 @@ public class Entity {
      * Used to retrieve the entity type
      * @return the type of entity
      */
-    public String getType() { return type; }
+    public TYPE getType() { return type; }
     
     /**
      * Used to set the entity type
-     * @param type a string contain the entity type
+     * @param type a TYPE contain the entity type
      */
-    public void setType(String type) { this.type = type; }
+    public void setType(TYPE type) { this.type = type; }
     
     /**
      * Used to set the entity's x location
@@ -132,6 +137,9 @@ public class Entity {
      * @return Distance
      */
     public float getDistanceToEntity(Entity ent){
+        if(ent == null)
+            return 0;
+        
         return (float) Math.sqrt((ent.y - this.y) * (ent.y - this.y) + (ent.x - this.x) * (ent.x - this.x));
     }
 }
