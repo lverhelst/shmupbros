@@ -1,14 +1,11 @@
 package Game;
 
-import Communications.MCManager;
 import Game.Entity.Physical;
 import Game.Entity.Playable;
 import Game.State.GameState;
 import java.util.Random;
 import org.newdawn.slick.Color;
 import Game.Entity.Entity.TYPE;
-import Game.Entity.Projectile;
-import org.newdawn.slick.Input;
 
 /**
  *
@@ -59,6 +56,7 @@ public class Bot extends Playable {
     public void setTarget(Playable target) {
         this.target = target;
     }
+    
     /**
      * Fact the target
      */
@@ -67,6 +65,9 @@ public class Bot extends Playable {
          this.setRotation(this.getRotationToEntity(target));
     }
     
+    /**
+     * Method to rotate bot to face its target (for basic AI, fuzzy will use RotationToEntity)
+     */
     public void rotateToTarget() {
         float angleToFace = this.getRotationToEntity(target);               
         if((this.getRotation() + 5 < angleToFace || this.getRotation() - 5 > angleToFace)){
@@ -75,11 +76,15 @@ public class Bot extends Playable {
         }
     }
     
+    /**
+     * Method to return if the bot is facing its target (for basic AI, fuzzy will use RotationToEntity)
+     * @return 0 if facing, -1 or 1 if not
+     */
     public int isFacingTarget() {
         float angleToFace = getRotationToEntity(target);               
-        if(getRotation() + 5 < angleToFace)
+        if(getRotation() + 2 < angleToFace)
             return -1;
-        if(getRotation() - 5 > angleToFace)
+        if(getRotation() - 2 > angleToFace)
             return 1;
         
         return 0;
@@ -93,8 +98,9 @@ public class Bot extends Playable {
         int size = GameState.getEntities().size();
         int answer = rng.nextInt(size);
         
+        //Will find a playable object which is alive randomly
         for(Physical p : GameState.getEntities()){
-            if(p.getType() == TYPE.PLAYABLE &&  rng.nextInt(size) == answer)
+            if(p.getType() == TYPE.PLAYABLE && ((Playable)p).isAlive() && rng.nextInt(size) == answer)
                 target = (Playable)p;
         }
         
