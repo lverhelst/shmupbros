@@ -45,19 +45,19 @@ public class Controller {
                 GameState.spawn(target);
                 break;
             case UP:
-                target.applyForce(2, target.getRotation());
+                target.applyForce(target.getSpeed(), target.getRotation());
                 updatedLocation = true;
                 break;
             case DOWN:
-                target.applyForce(-2, target.getRotation());
+                target.applyForce(-target.getSpeed(), target.getRotation());
                 updatedLocation = true;
                 break;
             case ROTLEFT:
-                target.modRotation(-3);
+                target.modRotation(-target.getRotationSpeed());
                 updatedLocation = true;
                 break;
             case ROTRIGHT:
-                target.modRotation(3);
+                target.modRotation(target.getRotationSpeed());
                 updatedLocation = true;
                 break;
             case FIRE:

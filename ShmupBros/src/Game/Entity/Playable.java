@@ -14,7 +14,7 @@ import org.newdawn.slick.SlickException;
 
 public class Playable extends Physical{
     private static Image sprite, sprite2;    
-    private float health;
+    private float health, rotationSpeed, speed;
     private final int TOTAL_HEALTH = 100;
     private Color color;
     private int kills, deaths;
@@ -30,6 +30,8 @@ public class Playable extends Physical{
         setType(Entity.TYPE.PLAYABLE);
         health = 0;
         color = new Color(256,256,256);
+        rotationSpeed = 3;
+        speed = 2;
     }
     
     /**
@@ -63,6 +65,18 @@ public class Playable extends Physical{
      * @return returns the number of kills the play currently has
      */
     public int getKills() { return kills; }
+    
+    /**
+     * Gets the speed of the playable object
+     * @return the speed of the object
+     */
+    public float getSpeed() { return speed; }
+    
+    /**
+     * Gets the rotationspeed of the playable object
+     * @return the rotationspeed of the object
+     */
+    public float getRotationSpeed() { return rotationSpeed; }
     
     /**
      * sets the players current color
