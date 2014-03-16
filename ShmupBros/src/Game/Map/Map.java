@@ -3,7 +3,6 @@ package Game.Map;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 /**

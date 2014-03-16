@@ -3,7 +3,6 @@ package Game;
 import Communications.MCManager;
 import Game.Entity.Physical;
 import Game.Entity.Playable;
-import Game.Entity.Projectile;
 import Game.State.GameState;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +10,8 @@ import java.util.Comparator;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
+import Game.Entity.Entity.TYPE;
+import Game.State.Option;
 
 /**
  * Player: Used to view and manage the local player and game
@@ -19,8 +20,6 @@ import org.newdawn.slick.Input;
 public class Player {
     private Playable target;
     private String name;
-    private long lastShot;
-    private boolean showScore;
     
     /**
      * Default contructor which sets the defaults and the players name
@@ -30,13 +29,14 @@ public class Player {
         target = new Playable(32);
         target.setIdentifier(name + "1");
         this.name = name;
-        lastShot = System.currentTimeMillis();
+        
+        if(Option.vehicle != null) {
+            target.setColor(Option.vehicle.getColor());
+        }
         
         //temporary default location
         target.setX(512);
         target.setY(512);
-        
-       
     }
     
     /**
@@ -68,64 +68,30 @@ public class Player {
      * collisions
      * @param controls 
      */
-    public void update(Input controls){
-        boolean updatedLocation = false;  
-         
-        if(controls.isKeyDown(Input.KEY_TAB)){
-            showScore = true;
-        }
-        else{
-            showScore = false;
-        }
+    public void update(Input controls){         
+        if(controls.isKeyPressed(Input.KEY_TAB))
+            Controller.update(target, Controller.MOVE.SHOWSCORE);
+                
+        if(controls.isKeyPressed(Input.KEY_C))            
+            Controller.update(target, Controller.MOVE.SHOWNAMES);    
         
-        if(controls.isKeyPressed(Input.KEY_C))
-            target.setShowName(!target.isShowName());
-    
+        if(controls.isKeyPressed(Input.KEY_ENTER))
+            Controller.update(target, Controller.MOVE.RESPAWN);        
         
-        if(!target.isAlive()){
-            if(controls.isKeyPressed(Input.KEY_ENTER)){
-                target.respawn();
-                GameState.spawn(target);
-            }
-            return;
-        }
+        if (controls.isKeyDown(Input.KEY_W)) 
+            Controller.update(target, Controller.MOVE.UP);
         
-        if (controls.isKeyDown(Input.KEY_W)) {
-            target.applyForce(2, target.getRotation());
-            updatedLocation = true;
-        }
-        if (controls.isKeyDown(Input.KEY_S)) {
-            target.applyForce(-2, target.getRotation());
-            updatedLocation = true;
-        }
+        if (controls.isKeyDown(Input.KEY_S)) 
+            Controller.update(target, Controller.MOVE.DOWN);        
         
-        if (controls.isKeyDown(Input.KEY_A)) {
-            target.modRotation(-3);
-            updatedLocation = true;
-        }
+        if (controls.isKeyDown(Input.KEY_A)) 
+            Controller.update(target, Controller.MOVE.ROTLEFT);        
         
-        if (controls.isKeyDown(Input.KEY_D)) {
-            target.modRotation(3);
-            updatedLocation = true;
-        }
+        if (controls.isKeyDown(Input.KEY_D)) 
+            Controller.update(target, Controller.MOVE.ROTRIGHT);        
         
-        
-        
-        
-        if (controls.isKeyDown(Input.KEY_RCONTROL)) {
-            if (lastShot + 101 < System.currentTimeMillis()) {
-                target.attack(new Projectile(16,target));
-                lastShot = System.currentTimeMillis();
-                if (MCManager.getSender() != null)
-                    MCManager.getSender().sendAttack(target.getID()); //calls attack and sends the result
-            }
-        }        
-   
-        
-        //only sends updates if player has moved
-        if (updatedLocation & MCManager.getSender() != null) {
-            MCManager.getSender().sendPosition(target);
-        }
+        if (controls.isKeyDown(Input.KEY_RCONTROL)) 
+            Controller.update(target, Controller.MOVE.FIRE); 
     }
     
     /**
@@ -133,8 +99,6 @@ public class Player {
      * @param graphics The SLick2d/LWJGL graphics
      */
     public void render(Graphics graphics) {
-               
-        
         graphics.setColor(Color.white);
         graphics.drawString("Kills: " + target.getKills(), 900, 20);
         
@@ -143,34 +107,41 @@ public class Player {
         graphics.setColor(Color.red);
         graphics.fillRect(20, 561, target.getHealth() / target.getTotalHealth() * 200 , 19);
         
-         if(showScore){
-            //render health bar
-                 graphics.drawRect(49,69, 201, 201);
-                 graphics.setColor(Color.white);
-                 String score = "Score:\r\n";
-                 int i = 1;
-                 ArrayList<Playable> p = new ArrayList<>();
-                 for(Physical e : GameState.getEntities()){
-                     if(e.getType().equals("Playable")){
-                         p.add((Playable)e);
-                        
-                     }
-                 }
-                 Collections.sort(p, new Comparator<Playable>(){
-                    public int compare(Playable a, Playable b){
-                        return b.getKills() - a.getKills() ;
-                    } 
-                 });
-                 for(Playable pl: p){
-                     score += i + ": " + pl.getIdentifier() + " " + ((Playable)pl).getKills() + "\r\n";
-                        i++;
-
-                 }
-                 drawString(graphics, score, 51, 51);
-                 //graphics.fillRect(50,50, 200 , 200);
+        //shows the scoreboard if option is selected
+         if(Controller.showScore){
+            graphics.setColor(Color.white);
+            String score = "Score:\r\n";
+            int i = 1;
+            ArrayList<Playable> p = new ArrayList<>();
+            
+            for(Physical e : GameState.getEntities()){
+                if(e.getType() == TYPE.PLAYABLE){
+                    p.add((Playable)e);                        
+                }
+            }
+            
+            //orders the players based on scores
+            Collections.sort(p, new Comparator<Playable>(){
+               public int compare(Playable a, Playable b){
+                   return b.getKills() - a.getKills() ;
+               } 
+            });
+            
+            for(Playable pl: p){
+                score += i + ": " + pl.getIdentifier() + " " + ((Playable)pl).getKills() + "\r\n";
+                   i++;
+            }
+            drawString(graphics, score, 51, 51);
         }
     }
     
+    /**
+     * Used to render text at a location
+     * @param g the graphics object
+     * @param text the string to display
+     * @param x the x location
+     * @param y the y location
+     */
     private void drawString(Graphics g, String text, int x, int y) {
         for (String line : text.split("\n"))
             g.drawString(line, x, y += 20);

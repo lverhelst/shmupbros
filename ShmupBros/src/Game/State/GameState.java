@@ -17,6 +17,7 @@ import Game.Entity.Projectile;
 import Game.Map.Concrete;
 import Game.Player;
 import Game.Map.Map;
+import Game.Entity.Entity.TYPE;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -42,10 +43,7 @@ public class GameState extends BasicGameState {
     private long curtime;
     private TextField log;
     private Font m_font;
-
-    TrueTypeFont font;
-    
-    
+    TrueTypeFont font;    
     
     /**
     * Constructor which takes an integer parameter for state ID
@@ -55,17 +53,22 @@ public class GameState extends BasicGameState {
         ID = id;
         player = new Player("PLAYER");
         ai = new AIManager();
+        
         int num_bots = 10;
         for(int i = 0; i < num_bots; i++){
-            Bot p = new Bot((float)32.0);
+            Bot p = new Bot(32f);
             p.setIdentifier("BOT" + i);     
 
             ai.addAI(p);
             p.setTarget(player.getTarget());
-        }
-       
+        }       
     }
     
+    /**
+     * Used to connect the play to any active games running
+     * @param group the group to connect to
+     * @param port the port to connect on
+     */
     public void connect(String group, int port) {
         server = new MCManager();
         server.connect(group, port, player.getTarget().getID());
@@ -95,7 +98,6 @@ public class GameState extends BasicGameState {
         Explosion.init();
         
         spawn(player.getTarget());
-       // addEntity(player.getTarget());
         
         font = new TrueTypeFont(new java.awt.Font(java.awt.Font.SERIF,java.awt.Font.BOLD , 10), false);
     }
@@ -211,18 +213,18 @@ public class GameState extends BasicGameState {
         if(!col.getCollidable())
            return;
         
-        for(int i = entities.size()-1; i >= 0; --i)
+        for(int i = entities.size()-1; i >= 0; --i) {
             if(entities.get(i).getCollidable() && col != entities.get(i) && col.isColliding(entities.get(i))) {
                 col.Collide(entities.get(i));
                 
-                if(entities.get(i).getClass() == Projectile.class 
+                if(entities.get(i).getType() == TYPE.PROJECTILE 
                         && entities.get(i).getCollidable())
                     entities.get(i).Collide(col);
             }                
+        }
         
         checkMapCollisions(col);
-    }
-    
+    }    
     
     /**
       * Update the current player every 15 milliseconds
@@ -235,11 +237,13 @@ public class GameState extends BasicGameState {
             player.update(gc.getInput()); //limites the speed at which update occur
             curtime = System.currentTimeMillis();
         
-        
+            //check the gameworld for collisions
             for(int j = entities.size()-1; j >= 0; j--) {
                 checkCollisions(entities.get(j));                
                 entities.get(j).update();
-            }        
+            }  
+            
+            //update the ai players
             ai.update();
         }
     }
@@ -274,6 +278,13 @@ public class GameState extends BasicGameState {
         drawString(graphics, logString, gc.getWidth() - 350, gc.getHeight() - 100);
     }
     
+    /**
+     * Used to render text at a location
+     * @param g the graphics object
+     * @param text the string to display
+     * @param x the x location
+     * @param y the y location
+     */
     private void drawString(Graphics g, String text, int x, int y) {
         for (String line : text.split("\n"))
             g.drawString(line, x, y += font.getHeight(line));

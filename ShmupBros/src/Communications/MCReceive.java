@@ -158,6 +158,6 @@ public class MCReceive extends Thread {
         somePlayer = findSelected();
         
         if(somePlayer != null)
-            ((Playable)somePlayer).attack(new Projectile(8, (Playable)somePlayer));
+            ((Playable)somePlayer).attack();
     }
 }

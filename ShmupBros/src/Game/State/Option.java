@@ -10,15 +10,18 @@ import org.newdawn.slick.state.StateBasedGame;
 * Options used to display and control the menu state
 * @authors Daniel Finke, Emery Berg, Leon Verhelst
 */
-
 public class Option extends BasicGameState {
+    public static Playable vehicle;
     private final int ID;
     private MenuItem option;
     private MenuItem name;
     private MenuItem back;
     private MenuItem color;
-    private Playable vehicle;
     
+    /**
+     * Default construct
+     * @param id requirement of BasicGameState
+     */
     public Option(int id) {
         ID=id;
     }
@@ -44,7 +47,7 @@ public class Option extends BasicGameState {
         int mouseX = input.getMouseX();
         int mouseY = input.getMouseY();
         
-        if(name.contains(mouseX, mouseY));
+//        if(name.contains(mouseX, mouseY));
         if(back.contains(mouseX, mouseY) && input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
             game.enterState(StateManager.MENU);
         if(color.contains(mouseX, mouseY) && input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {

@@ -1,5 +1,6 @@
 package Game.Entity;
 
+import Communications.MCManager;
 import Game.State.GameState;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -18,6 +19,7 @@ public class Playable extends Physical{
     private Color color;
     private int kills, deaths;
     private static boolean  showName;
+    private long lastShot;
     
     /**
      * Default constructor creates the vehicle for us in game
@@ -88,8 +90,14 @@ public class Playable extends Physical{
     /**
      * Used to allow vehicle to perform an attack
      */
-    public void attack(Projectile bullet) {
-        GameState.addEntity(bullet);
+    public void attack() {
+        if (lastShot + 101 < System.currentTimeMillis()) {
+            GameState.addEntity(new Projectile(16,this));
+            lastShot = System.currentTimeMillis();
+
+            if (MCManager.getSender() != null)
+                MCManager.getSender().sendAttack(getID()); //calls attack and sends the result
+        }            
     }
     
     /**
@@ -120,7 +128,6 @@ public class Playable extends Physical{
     
     /**
      * Updates the rotation of the sprite and applies any forces acting on it
-     * @param gc The Current Game Container (screen)
      */
     @Override public void update() {
         if(isAlive()) {
@@ -149,9 +156,7 @@ public class Playable extends Physical{
      * @param graphics The SLick2d/LWJGL graphics
      */
     @Override public void render(Graphics graphics) {
-        if (!isAlive())
-        {
-            this.setCollidable(false);
+        if (!isAlive()) {
             return;
         }
         
