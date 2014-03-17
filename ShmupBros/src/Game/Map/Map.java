@@ -81,6 +81,10 @@ public class Map {
      */
     public int getHeight() { return map[0].length; }
     
+    public Tile getTile(int x, int y){
+        return map[x][y];
+    }
+    
     /**
      * Check if location denoted by i and j is passable on the linked map addresser
      * @param i X-Coordinate to check

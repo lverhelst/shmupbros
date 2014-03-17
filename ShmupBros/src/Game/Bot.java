@@ -27,7 +27,8 @@ public class Bot extends Playable {
         SEARCH, //AQUIRE TARGET
         STUCK, //PATHFIND AROUND OBSTACLE OR SUICIDE AND RESPAWN
         DEAD, //DEAD
-        RANDOM //RANDOM MOVES
+        RANDOM, //RANDOM MOVES
+        ZOMBIE  //Move in straight lines
     }
         
     public Bot(float f){
@@ -94,6 +95,8 @@ public class Bot extends Playable {
      */
     public void setTarget(Playable target) {
         this.target = target;
+        //generate route to target
+       
     }
     
     /**
@@ -140,7 +143,7 @@ public class Bot extends Playable {
         //Will find a playable object which is alive randomly
         for(Physical p : GameState.getEntities()){
             if(p.getType() == TYPE.PLAYABLE && ((Playable)p).isAlive() && rng.nextInt(size) == answer)
-                target = (Playable)p;
+                setTarget((Playable)p);
         }
         
 //        Random rng = new Random();

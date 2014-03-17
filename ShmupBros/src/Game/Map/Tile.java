@@ -10,12 +10,16 @@ public class Tile {
     private float x;
     private float y;
     private boolean passable;
+    public boolean pathnode;
+    public Tile parent;
+    
 	
 	// Tile constructor
     public Tile(float x, float y, boolean pass) { 
         passable = pass;
         this.x = x;
         this.y = y;
+        parent = null;
     }
     
     public float getX() { return x; }
@@ -28,5 +32,10 @@ public class Tile {
      * Base render method
      * @param graphics The SLick2d/LWJGL graphics
      */
-    public void render(Graphics graphics) { }
+    public void render(Graphics graphics) { 
+        if(pathnode){
+            graphics.drawRect(x, y, 12, 12);
+        }
+    
+    }
 }

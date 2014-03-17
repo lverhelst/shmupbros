@@ -8,6 +8,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.*;
 
 import Game.AIManager;
+import Game.AStar;
 import Game.Bot;
 import Game.Entity.Explosion;
 
@@ -18,6 +19,7 @@ import Game.Map.Concrete;
 import Game.Player;
 import Game.Map.Map;
 import Game.Entity.Entity.TYPE;
+import Game.Map.Tile;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -43,7 +45,10 @@ public class GameState extends BasicGameState {
     private long curtime;
     private TextField log;
     private Font m_font;
-    TrueTypeFont font;    
+    TrueTypeFont font;  
+    
+    private boolean findpath = true;
+     ArrayList<Tile> path = new ArrayList<Tile>();        
     
     /**
     * Constructor which takes an integer parameter for state ID
@@ -54,13 +59,18 @@ public class GameState extends BasicGameState {
         player = new Player("PLAYER");
         ai = new AIManager();
         
-        int num_bots = 10;
+        int num_bots = 1;
+        Bot b = null;
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);
             p.setIdentifier("BOT" + i);     
-
+            p.setTarget(player.getTarget());
             ai.addAI(p);
-        }       
+            b = p;
+        } 
+        
+       
+        
     }
     
     /**
@@ -97,6 +107,9 @@ public class GameState extends BasicGameState {
         Explosion.init();
         
         spawn(player.getTarget());
+        spawn(ai.getBot(0));
+        
+           
         
         font = new TrueTypeFont(new java.awt.Font(java.awt.Font.SERIF,java.awt.Font.BOLD , 10), false);
     }
@@ -275,6 +288,24 @@ public class GameState extends BasicGameState {
         graphics.setColor(Color.white);
         graphics.setFont(font);
         drawString(graphics, logString, gc.getWidth() - 350, gc.getHeight() - 100);
+        
+        Playable one = player.getTarget();
+        Playable two = ai.getBot(0);
+       
+        if(one != null && two != null && findpath){
+            findpath = false;
+            AStar astar = new AStar(); 
+            path = astar.pathFind(one, two);
+        }
+        
+        for(Tile t : path){   
+
+            graphics.setColor(Color.green);
+            t.pathnode = true;
+        }   
+        
+        
+        
     }
     
     /**

@@ -45,6 +45,8 @@ public class AIManager {
         ai.add(bot);
        // GameState.addEntity(bot);
         
+              
+        
         //test path for the bots
         for(int i = 0; i < 10; ++i) {
             int x = rand.nextInt(1000) + 32;
@@ -54,6 +56,13 @@ public class AIManager {
             node.setY(y);
             bot.addPathNode(node);
         }
+        
+        
+        
+    }
+    
+    public Bot getBot(int i){
+        return ai.get(i);
     }
     
     /**
@@ -70,7 +79,11 @@ public class AIManager {
      * @param bot the both to move
      */
     public void move(Bot bot) {
-        int choice = 3;
+        if(true || bot.hasPath())
+             return;
+        
+        
+        int choice = 0;
 //        int choice = rand.nextInt(10);        
         
         MODE m = bot.getMode();
