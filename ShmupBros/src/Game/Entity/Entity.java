@@ -1,5 +1,6 @@
 package Game.Entity;
 
+import Game.Map.Tile;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -132,8 +133,8 @@ public class Entity {
     }
     
     /**
-     * Calculate the distance to the target entity
-     * @param ent The Target entity
+     * Calculate the distance to the target tile
+     * @param ent The Target tile
      * @return Distance
      */
     public float getDistanceToEntity(Entity ent){
@@ -141,5 +142,26 @@ public class Entity {
             return 0;
         
         return (float) Math.sqrt((ent.y - this.y) * (ent.y - this.y) + (ent.x - this.x) * (ent.x - this.x));
+    }
+    
+    
+    public float getDistanceToTile(Tile t){
+         return (float) Math.sqrt((t.getY() - this.y) * (t.getY() - this.y) + (t.getX() - this.x) * (t.getX() - this.x));
+    }
+    
+    
+    /**
+     * Calculate rotation needed to face the target tile
+     * @param ent The target tile
+     * @return Rotation needed
+     */
+    public float getRotationToTile(Tile t){
+        //return (float) Math.max(ent.rotation, this.rotation) - Math.min(ent.rotation, this.rotation);
+        if(t == null)
+            return 0;
+        
+        float x = t.getX() - this.x;
+        float y = t.getY() - this.y;
+        return (float)(Math.atan2(y, x) * 180 / Math.PI);
     }
 }

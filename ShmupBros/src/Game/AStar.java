@@ -33,7 +33,8 @@ public class AStar {
         if(!(x >= 0 && y >= 0))
             return null;
         openList.add(map.getTile(x, y));
-        
+        if(target == null)
+            return null;
         
         x = (int)((target.getX() + target.getForceX() - target.getSize())/32);
         y = (int)((target.getY() + target.getForceY() - target.getSize())/32);
@@ -58,6 +59,12 @@ public class AStar {
                     pth.add(cur);
                     cur = cur.parent;
                 }
+                //remove target location nodes
+                pth.remove(pth.size() -1);
+              //  if(pth.size() > 0)
+              //      pth.remove(pth.size() -1);
+                
+                
                 //Path found
                 return pth;
             }

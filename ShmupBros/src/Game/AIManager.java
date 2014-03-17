@@ -3,6 +3,7 @@ package Game;
 import Ai.FuzzyRule;
 import Game.Bot.MODE;
 import Game.Entity.Entity;
+import Game.Map.Tile;
 import Game.State.GameState;
 import java.util.ArrayList;
 import java.util.Random;
@@ -77,7 +78,7 @@ public class AIManager {
      */
     public void move(Bot bot) {
 
-        int choice = 0;
+        int choice = 2;
 //        int choice = rand.nextInt(10);        
         
         MODE m = bot.getMode();
@@ -111,8 +112,37 @@ public class AIManager {
                bot.rotateToTarget();
                 break;
             case 2:
-                //zombie
-                bot.applyForce((int)FuzzyRule.forceFromDistance(dist), bot.getRotation());
+                if(bot.path2 != null &&  !bot.path2.isEmpty()){
+                    Tile t = bot.path2.get(bot.path2.size() - 1);
+                    double distNode = bot.getDistanceToTile(t);
+                    double angleNode = bot.getRotationToTile(t);
+                    //if at node, get mext node
+                    if(distNode < bot.getSize() || bot.path2.size() > 2) {
+                       // t = bot.path2.get(bot.path2.size() - 2);
+                        double angleNode2 = bot.getRotationToTile(t);
+                        //average rotation
+                       // angleNode = (angleNode2 + angleNode) / 2;
+                        /*if(bot.path2.size() > 3){
+                            double angleNode3 = bot.getDistanceToTile(bot.path2.get(bot.path2.size() - 3));
+                            angleNode = (angleNode + angleNode2 + angleNode3) /2;
+                            
+                        }*/
+                        
+                    }
+                    bot.setRotation((float)angleNode);
+                    bot.setX(t.getX() + 16);
+                    bot.setY(t.getY() + 16);
+                    bot.rotateToTarget();
+                    //if(bot.isFacingTile(t) == 0)
+                  
+                        //Controller.update(bot, Controller.MOVE.UP);
+                    
+                   /* if(bot.isFacingTile(t) == -1)
+                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
+                    else if(bot.isFacingTile(t) == 1)
+                        Controller.update(bot, Controller.MOVE.ROTLEFT);
+                    */
+                }
                 break;
             case 3:
                 if(bot.hasPath()) {
@@ -133,13 +163,13 @@ public class AIManager {
                 }
                 break;
         }
-        if(rand.nextInt(100) == 11){
-            Controller.update(bot, Controller.MOVE.FIRE);
+        if(rand.nextInt(100) <= 111){
+           // Controller.update(bot, Controller.MOVE.FIRE);
             bot.generatePathToTarget();
         }
         
-       if(rand.nextInt(1000) == 11)
-          bot.chooseRandTarget();
+       //if(rand.nextInt(1000) == 11)
+       //   bot.chooseRandTarget();
        
        
     }    

@@ -14,6 +14,7 @@ import java.util.Random;
  */
 public class Bot extends Playable {
     private ArrayList<Entity> path;
+    public ArrayList<Tile> path2;
     private Playable target;
     private MODE mode; 
     private AStar astar;
@@ -36,7 +37,9 @@ public class Bot extends Playable {
         super(f);
         super.setColor(Color.orange);
         path = new ArrayList<>();
+        path2 = new ArrayList<>();
         astar = new AStar(); 
+        
     }
     
     /**
@@ -107,9 +110,9 @@ public class Bot extends Playable {
         if(GameState.getMap() != null){
             astar.setMap(GameState.getMap());
             
-            ArrayList<Tile> pth = astar.pathFind(this, target);
-            if(pth != null){
-                for(Tile t : pth){   
+            path2 = astar.pathFind(this, target);
+            if(path2 != null){
+                for(Tile t : path2){   
                     t.pathnode = true;
                 }   
             }
@@ -135,6 +138,13 @@ public class Bot extends Playable {
         }
     }
     
+    public void rotateToAngle(float angle){
+         if((this.getRotation() + 5 < angle || this.getRotation() - 5 > angle)){
+            //can rotate 15 degrees at a time
+            this.modRotation(angle % 15);
+        }
+    }
+    
     /**
      * Method to return if the bot is facing its target (for basic AI, fuzzy will use RotationToEntity)
      * @return 0 if facing, -1 or 1 if not
@@ -144,6 +154,16 @@ public class Bot extends Playable {
         if(getRotation() + 2 < angleToFace)
             return -1;
         if(getRotation() - 2 > angleToFace)
+            return 1;
+        
+        return 0;
+    }
+    
+    public int isFacingTile(Tile t){
+        float angleToFace = getRotationToTile(t);               
+        if(getRotation() + 1 < angleToFace)
+            return -1;
+        if(getRotation() - 1 > angleToFace)
             return 1;
         
         return 0;
