@@ -56,11 +56,21 @@ public class AStar {
                 ArrayList<Tile> pth = new ArrayList<Tile>();
                 Tile cur = targetTile;
                 while(cur != null){
-                    pth.add(cur);
+                    double slope = 0.0;
+                    if(cur.parent != null)
+                    {
+                         slope = (cur.parent.getY() - cur.getY())/(cur.parent.getX() - cur.getX());
+                    }
+                    
+                    
+                   // if(slope != -1 && slope != 0.0 && slope != 1)
+                        pth.add(cur);
+                    
                     cur = cur.parent;
                 }
                 //remove target location nodes
-                pth.remove(pth.size() -1);
+               // if(pth.size() > 1)
+                 //   pth.remove(pth.size() -1);
               //  if(pth.size() > 0)
               //      pth.remove(pth.size() -1);
                 
@@ -96,6 +106,7 @@ public class AStar {
         Tile lowest = null;
         double lowscore = 999.0;
         for(Tile t : openList){
+            //TODO better score heuristic
             double score = Math.abs(currentSquare.getX() - t.getX() + currentSquare.getY() - t.getY());
             if(score < lowscore){
                 lowscore = score;

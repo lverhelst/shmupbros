@@ -78,7 +78,7 @@ public class AIManager {
      */
     public void move(Bot bot) {
 
-        int choice = 2;
+        int choice = 1;
 //        int choice = rand.nextInt(10);        
         
         MODE m = bot.getMode();
@@ -107,9 +107,9 @@ public class AIManager {
                 break;
             case 1:
                 //zombie
-                // bot.faceTarget();
-                 bot.applyForce((int)FuzzyRule.forceFromDistance(dist), bot.getRotation());
-               bot.rotateToTarget();
+                 bot.faceTarget();
+                // bot.applyForce((int)FuzzyRule.forceFromDistance(dist), bot.getRotation());
+              // bot.rotateToTarget();
                 break;
             case 2:
                 if(bot.path2 != null &&  !bot.path2.isEmpty()){
@@ -117,8 +117,8 @@ public class AIManager {
                     double distNode = bot.getDistanceToTile(t);
                     double angleNode = bot.getRotationToTile(t);
                     //if at node, get mext node
-                    if(distNode < bot.getSize() || bot.path2.size() > 2) {
-                       // t = bot.path2.get(bot.path2.size() - 2);
+                    if(distNode < bot.getSize() && bot.path2.size() > 2) {
+                        t = bot.path2.get(bot.path2.size() - 2);
                         double angleNode2 = bot.getRotationToTile(t);
                         //average rotation
                        // angleNode = (angleNode2 + angleNode) / 2;
@@ -129,19 +129,19 @@ public class AIManager {
                         }*/
                         
                     }
-                    bot.setRotation((float)angleNode);
-                    bot.setX(t.getX() + 16);
-                    bot.setY(t.getY() + 16);
-                    bot.rotateToTarget();
+                    //bot.setRotation((float)angleNode);
+                  //  bot.setX(t.getX() + 16);
+                   // bot.setY(t.getY() + 16);
+                    //bot.faceTarget();
                     //if(bot.isFacingTile(t) == 0)
-                  
-                        //Controller.update(bot, Controller.MOVE.UP);
+                    if(rand.nextInt(100) < 30 )
+                        Controller.update(bot, Controller.MOVE.UP);
                     
-                   /* if(bot.isFacingTile(t) == -1)
+                    if(bot.isFacingTile(t) == -1)
                        Controller.update(bot, Controller.MOVE.ROTRIGHT);
                     else if(bot.isFacingTile(t) == 1)
                         Controller.update(bot, Controller.MOVE.ROTLEFT);
-                    */
+                    
                 }
                 break;
             case 3:
@@ -163,9 +163,10 @@ public class AIManager {
                 }
                 break;
         }
-        if(rand.nextInt(100) <= 111){
+        if(rand.nextInt(100) <= 11){
            // Controller.update(bot, Controller.MOVE.FIRE);
             bot.generatePathToTarget();
+        
         }
         
        //if(rand.nextInt(1000) == 11)
