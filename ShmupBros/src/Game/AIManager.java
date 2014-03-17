@@ -132,9 +132,9 @@ public class AIManager {
                     //bot.setRotation((float)angleNode);
                   //  bot.setX(t.getX() + 16);
                    // bot.setY(t.getY() + 16);
-                    //if(bot.isFacingTile(t) == 0)
-                    //if(rand.nextInt(100) < 30 )
-                   //     Controller.update(bot, Controller.MOVE.UP);
+                    if(bot.isFacingTile(t) == 0)
+                    if(rand.nextInt(100) < 30 )
+                        Controller.update(bot, Controller.MOVE.UP);
                    
                     if(bot.isFacingTile(t) == -1)
                        Controller.update(bot, Controller.MOVE.ROTRIGHT);

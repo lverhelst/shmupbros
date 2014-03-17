@@ -160,8 +160,8 @@ public class Entity {
         if(t == null)
             return 0;
         
-        float x = t.getX() - this.x;
-        float y = t.getY() - this.y;
+        float x = t.getX()+16 - this.x;
+        float y = t.getY()+16 - this.y;
         return (float)(Math.atan2(y, x) * 180 / Math.PI);
     }
 }
