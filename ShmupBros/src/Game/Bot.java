@@ -162,9 +162,9 @@ public class Bot extends Playable {
     
     public int isFacingTile(Tile t){
         float angleToFace = getRotationToTile(t);               
-        if(getRotation() + 1 < angleToFace)
+        if(getRotation() + 2 < angleToFace)
             return -1;
-        if(getRotation() - 1 > angleToFace)
+        if(getRotation() - 2 > angleToFace)
             return 1;
         
         return 0;
