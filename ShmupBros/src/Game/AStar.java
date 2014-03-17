@@ -95,25 +95,26 @@ public class AStar {
     
     private ArrayList<Tile> getAdjacents(Tile current){
         ArrayList<Tile> adj = new ArrayList<>();
-        Tile t = map.getTile((int)current.getX()/32, (int)current.getY()/32 + 1);
-        if(t.getPassable()){
-            adj.add(t);
+        int x = (int)current.getX()/32;
+        int y = (int)current.getY()/32 + 1;
+        if(map.getPassable(x, y)){
+            adj.add(map.getTile(x, y));
             
         }
-        t = map.getTile((int)current.getX()/32, (int)current.getY()/32 - 1);
-        if(t.getPassable()){
-            adj.add(t);
-
+        y -= 2;
+        if(map.getPassable(x, y)){
+            adj.add(map.getTile(x, y));
+            
         }
-        t = map.getTile((int)current.getX()/32 - 1, (int)current.getY()/32);
-        if(t.getPassable()){
-            adj.add(t);
-
+        y += 1;
+        x += 1;
+        if(map.getPassable(x, y)){
+            adj.add(map.getTile(x, y));
+            
         }
-        t = map.getTile((int)current.getX()/32 + 1, (int)current.getY()/32);
-        if(t.getPassable()){
-            adj.add(t);
-
+        x -= 2;
+        if(map.getPassable(x, y)){
+            adj.add(map.getTile(x, y));
         }
         return adj;
     }

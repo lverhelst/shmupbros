@@ -59,18 +59,14 @@ public class GameState extends BasicGameState {
         player = new Player("PLAYER");
         ai = new AIManager();
         
-        int num_bots = 1;
-        Bot b = null;
+        int num_bots = 9;
+
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);
             p.setIdentifier("BOT" + i);     
             p.setTarget(player.getTarget());
             ai.addAI(p);
-            b = p;
         } 
-        
-       
-        
     }
     
     /**
@@ -292,7 +288,7 @@ public class GameState extends BasicGameState {
         Playable one = player.getTarget();
         Playable two = ai.getBot(0);
        
-        if(one != null && two != null && (System.currentTimeMillis() - lastpathfind) > 500){
+        if(one != null && two != null && (System.currentTimeMillis() - lastpathfind) > 50){
             findpath = false;
             AStar astar = new AStar(); 
             path = astar.pathFind(one, two);
