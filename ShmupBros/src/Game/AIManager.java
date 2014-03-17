@@ -78,7 +78,7 @@ public class AIManager {
      */
     public void move(Bot bot) {
 
-        int choice = 1;
+        int choice = 2;
 //        int choice = rand.nextInt(10);        
         
         MODE m = bot.getMode();
@@ -132,15 +132,15 @@ public class AIManager {
                     //bot.setRotation((float)angleNode);
                   //  bot.setX(t.getX() + 16);
                    // bot.setY(t.getY() + 16);
-                    //bot.faceTarget();
                     //if(bot.isFacingTile(t) == 0)
-                    if(rand.nextInt(100) < 30 )
-                        Controller.update(bot, Controller.MOVE.UP);
-                    
+                    //if(rand.nextInt(100) < 30 )
+                   //     Controller.update(bot, Controller.MOVE.UP);
+                   
                     if(bot.isFacingTile(t) == -1)
                        Controller.update(bot, Controller.MOVE.ROTRIGHT);
                     else if(bot.isFacingTile(t) == 1)
                         Controller.update(bot, Controller.MOVE.ROTLEFT);
+                    
                     
                 }
                 break;

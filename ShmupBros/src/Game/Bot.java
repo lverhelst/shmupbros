@@ -209,7 +209,6 @@ public class Bot extends Playable {
         graphics.setColor(Color.cyan);
         
         float theta = (float)((this.getRotation() * Math.PI)/180);
-        System.out.println(theta);
         float r = (float)48.0 ;
         float x2 = (float)( r * Math.cos(theta) + this.getX());
         float y2 =(float)(r * Math.sin(theta) + this.getY());
