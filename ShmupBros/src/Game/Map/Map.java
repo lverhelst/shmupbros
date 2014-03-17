@@ -122,4 +122,13 @@ public class Map {
             }
         }
     }
+    
+    public void resetTiles(){
+        for (Tile[] map1 : map) {
+            for (Tile t : map1) {
+                t.parent = null;
+                t.pathnode = false;
+            }
+        }
+    }
 }

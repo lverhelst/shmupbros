@@ -79,10 +79,7 @@ public class AIManager {
      * @param bot the both to move
      */
     public void move(Bot bot) {
-        if(true || bot.hasPath())
-             return;
-        
-        
+
         int choice = 0;
 //        int choice = rand.nextInt(10);        
         

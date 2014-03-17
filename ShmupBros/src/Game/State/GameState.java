@@ -42,7 +42,7 @@ public class GameState extends BasicGameState {
     private Player player;
     private MCManager server; 
     private AIManager ai;
-    private long curtime;
+    private long curtime, lastpathfind;
     private TextField log;
     private Font m_font;
     TrueTypeFont font;  
@@ -292,17 +292,19 @@ public class GameState extends BasicGameState {
         Playable one = player.getTarget();
         Playable two = ai.getBot(0);
        
-        if(one != null && two != null && findpath){
+        if(one != null && two != null && (System.currentTimeMillis() - lastpathfind) > 500){
             findpath = false;
             AStar astar = new AStar(); 
             path = astar.pathFind(one, two);
+            lastpathfind = System.currentTimeMillis();
         }
-        
-        for(Tile t : path){   
+        if(path != null){
+            for(Tile t : path){   
 
-            graphics.setColor(Color.green);
-            t.pathnode = true;
-        }   
+                graphics.setColor(Color.green);
+                t.pathnode = true;
+            }   
+        }
         
         
         

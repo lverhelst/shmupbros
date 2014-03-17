@@ -38,6 +38,9 @@ public class AStar {
         y = (int)((target.getY() + target.getForceY() - target.getSize())/32);
         Tile targetTile = map.getTile(x, y);
         Tile currentSquare = openList.get(0);
+        map.resetTiles();
+        
+        
         ArrayList<Tile> adjacents = new ArrayList<Tile>();
         do{
             currentSquare = getLowestScore(currentSquare);
@@ -51,7 +54,6 @@ public class AStar {
                 while(cur != null){
                     pth.add(cur);
                     cur = cur.parent;
-                    System.out.println(cur);
                 }
                 //Path found
                 return pth;
@@ -88,7 +90,6 @@ public class AStar {
                 lowest = t;
             }   
         }
-        System.out.println(lowscore);
         return lowest;
     }
     
