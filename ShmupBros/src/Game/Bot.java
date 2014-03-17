@@ -4,10 +4,10 @@ import Game.Entity.Entity;
 import Game.Entity.Physical;
 import Game.Entity.Playable;
 import Game.State.GameState;
-import java.util.Random;
 import org.newdawn.slick.Color;
-import Game.Entity.Entity.TYPE;
+import Game.Map.Tile;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * @author Leon Verhelst and Emery
@@ -15,7 +15,8 @@ import java.util.ArrayList;
 public class Bot extends Playable {
     private ArrayList<Entity> path;
     private Playable target;
-    private MODE mode;    
+    private MODE mode; 
+    private AStar astar;
     
     /*
     We might want to change these to float values, that way we can have a mixed mode
@@ -34,7 +35,8 @@ public class Bot extends Playable {
     public Bot(float f){
         super(f);
         super.setColor(Color.orange);
-        path = new ArrayList();
+        path = new ArrayList<>();
+        astar = new AStar(); 
     }
     
     /**
@@ -95,8 +97,23 @@ public class Bot extends Playable {
      */
     public void setTarget(Playable target) {
         this.target = target;
+        
+        GameState.addText(this.getIdentifier() + " targeted " + target.getIdentifier());
+        generatePathToTarget();
+    }
+    
+    public void generatePathToTarget(){
         //generate route to target
-       
+        if(GameState.getMap() != null){
+            astar.setMap(GameState.getMap());
+            
+            ArrayList<Tile> pth = astar.pathFind(this, target);
+            if(pth != null){
+                for(Tile t : pth){   
+                    t.pathnode = true;
+                }   
+            }
+        }
     }
     
     /**
@@ -142,7 +159,7 @@ public class Bot extends Playable {
         
         //Will find a playable object which is alive randomly
         for(Physical p : GameState.getEntities()){
-            if(p.getType() == TYPE.PLAYABLE && ((Playable)p).isAlive() && rng.nextInt(size) == answer)
+            if(p.getType() == TYPE.PLAYABLE && ((Playable)p).isAlive() && rng.nextInt(size) == answer && ((Playable)p) != this)
                 setTarget((Playable)p);
         }
         

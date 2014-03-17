@@ -30,12 +30,15 @@ public class AStar {
         closedList = new ArrayList<Tile>();
         int x = (int)((source.getX() + source.getForceX() - source.getSize())/32);
         int y = (int)((source.getY() + source.getForceY() - source.getSize())/32);
-
+        if(!(x >= 0 && y >= 0))
+            return null;
         openList.add(map.getTile(x, y));
         
         
         x = (int)((target.getX() + target.getForceX() - target.getSize())/32);
         y = (int)((target.getY() + target.getForceY() - target.getSize())/32);
+        if(!(x >= 0 && y >= 0))
+            return null;
         Tile targetTile = map.getTile(x, y);
         Tile currentSquare = openList.get(0);
         map.resetTiles();
@@ -60,6 +63,8 @@ public class AStar {
             }
             adjacents.clear();
             adjacents = getAdjacents(currentSquare);
+            if(adjacents == null)
+                return null;
             for(Tile ent : adjacents){
                 if(closedList.contains(ent))
                     continue;
@@ -95,6 +100,9 @@ public class AStar {
     
     private ArrayList<Tile> getAdjacents(Tile current){
         ArrayList<Tile> adj = new ArrayList<>();
+        if(current == null)
+            return null;
+        
         int x = (int)current.getX()/32;
         int y = (int)current.getY()/32 + 1;
         if(map.getPassable(x, y)){
@@ -117,6 +125,13 @@ public class AStar {
             adj.add(map.getTile(x, y));
         }
         return adj;
+    }
+
+    /**
+     * @param map the map to set
+     */
+    public void setMap(Map map) {
+        this.map = map;
     }
     
     

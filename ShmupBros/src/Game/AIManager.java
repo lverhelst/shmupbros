@@ -44,9 +44,6 @@ public class AIManager {
     public void addAI(Bot bot) {
         ai.add(bot);
        // GameState.addEntity(bot);
-        
-              
-        
         //test path for the bots
         for(int i = 0; i < 10; ++i) {
             int x = rand.nextInt(1000) + 32;
@@ -136,10 +133,14 @@ public class AIManager {
                 }
                 break;
         }
-        if(rand.nextInt(100) == 11)
+        if(rand.nextInt(100) == 11){
             Controller.update(bot, Controller.MOVE.FIRE);
+            bot.generatePathToTarget();
+        }
         
        if(rand.nextInt(1000) == 11)
           bot.chooseRandTarget();
+       
+       
     }    
 }

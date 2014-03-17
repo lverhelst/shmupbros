@@ -64,7 +64,6 @@ public class GameState extends BasicGameState {
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);
             p.setIdentifier("BOT" + i);     
-            p.setTarget(player.getTarget());
             ai.addAI(p);
         } 
     }
@@ -103,9 +102,6 @@ public class GameState extends BasicGameState {
         Explosion.init();
         
         spawn(player.getTarget());
-        spawn(ai.getBot(0));
-        
-           
         
         font = new TrueTypeFont(new java.awt.Font(java.awt.Font.SERIF,java.awt.Font.BOLD , 10), false);
     }
@@ -285,22 +281,6 @@ public class GameState extends BasicGameState {
         graphics.setFont(font);
         drawString(graphics, logString, gc.getWidth() - 350, gc.getHeight() - 100);
         
-        Playable one = player.getTarget();
-        Playable two = ai.getBot(0);
-       
-        if(one != null && two != null && (System.currentTimeMillis() - lastpathfind) > 50){
-            findpath = false;
-            AStar astar = new AStar(); 
-            path = astar.pathFind(one, two);
-            lastpathfind = System.currentTimeMillis();
-        }
-        if(path != null){
-            for(Tile t : path){   
-
-                graphics.setColor(Color.green);
-                t.pathnode = true;
-            }   
-        }
         
         
         

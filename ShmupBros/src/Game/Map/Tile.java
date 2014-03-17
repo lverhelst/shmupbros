@@ -1,5 +1,6 @@
 package Game.Map;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 /**
@@ -34,7 +35,8 @@ public class Tile {
      */
     public void render(Graphics graphics) { 
         if(pathnode){
-            graphics.drawRect(x, y, 12, 12);
+            graphics.setColor(Color.green);
+            graphics.drawRect(x + 16, y + 16, 2, 2);
         }
     
     }
