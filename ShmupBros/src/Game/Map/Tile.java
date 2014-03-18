@@ -1,5 +1,6 @@
 package Game.Map;
 
+import Game.State.GameState;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
@@ -34,7 +35,7 @@ public class Tile {
      * @param graphics The SLick2d/LWJGL graphics
      */
     public void render(Graphics graphics) { 
-        if(pathnode){
+        if(pathnode && GameState.isShowPath()){
             graphics.setColor(Color.green);
             graphics.drawRect(x, y, 32, 32);
         }

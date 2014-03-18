@@ -33,6 +33,20 @@ import org.newdawn.slick.gui.TextField;
  * @authors Daniel, Emery, Leon
  */
 public class GameState extends BasicGameState {
+
+    /**
+     * @return the showPath
+     */
+    public static boolean isShowPath() {
+        return showPath;
+    }
+
+    /**
+     * @return the showDirections
+     */
+    public static boolean isShowDirections() {
+        return showDirections;
+    }
     public final int ID; //holds the current states ID
     private static ArrayList<Physical> entities = new ArrayList();
     private static Random rand = new Random();
@@ -45,6 +59,9 @@ public class GameState extends BasicGameState {
     private long curtime, lastpathfind;
     private TextField log;
     private Font m_font;
+    private static boolean showPath, showDirections;
+    
+    
     TrueTypeFont font;  
     
     private boolean findpath = true;
@@ -66,6 +83,9 @@ public class GameState extends BasicGameState {
             p.setIdentifier("BOT" + i);     
             ai.addAI(p);
         } 
+        
+        showPath = false;
+        showDirections = false;
     }
     
     /**

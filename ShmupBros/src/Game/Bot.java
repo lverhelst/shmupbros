@@ -206,49 +206,50 @@ public class Bot extends Playable {
     
     
     @Override public void render(Graphics graphics){
-        graphics.setColor(Color.cyan);
-        
-        float theta = (float)((this.getRotation() * Math.PI)/180);
-        float r = (float)48.0 ;
-        float x2 = (float)( r * Math.cos(theta) + this.getX());
-        float y2 =(float)(r * Math.sin(theta) + this.getY());
-        
-        graphics.drawLine(this.getX(), this.getY(), x2, y2);
-        graphics.drawRect(x2, y2, 3, 3);
-        
-        //0.0 degrees
-        graphics.setColor(Color.red);
-        theta = (float)0.0;
-        r = (float)48.0;
-        x2 = (float)( r * Math.cos(theta) + this.getX());
-        y2 =(float)(r * Math.sin(theta) + this.getY());
-        graphics.drawLine(this.getX(), this.getY(), x2, y2);
-        graphics.drawRect(x2, y2, 3, 3);
-        //90.0 degrees
-        graphics.setColor(Color.yellow);
-        theta = (float)(0.5 * Math.PI);
-        r = (float)48.0;
-        x2 = (float)( r * Math.cos(theta) + this.getX());
-        y2 =(float)(r * Math.sin(theta) + this.getY());
-        graphics.drawLine(this.getX(), this.getY(), x2, y2);
-        graphics.drawRect(x2, y2, 3, 3);
-        //180.0 degrees
-        graphics.setColor(Color.blue);
-        theta = (float)Math.PI;
-        r = (float)48.0;
-        x2 = (float)( r * Math.cos(theta) + this.getX());
-        y2 =(float)(r * Math.sin(theta) + this.getY());
-        graphics.drawLine(this.getX(), this.getY(), x2, y2);
-        graphics.drawRect(x2, y2, 3, 3);
-        //270.0 degrees
-        graphics.setColor(Color.magenta);
-        theta = (float)(1.5 * Math.PI);
-        r = (float)48.0;
-        x2 = (float)( r * Math.cos(theta) + this.getX());
-        y2 =(float)(r * Math.sin(theta) + this.getY());
-        graphics.drawLine(this.getX(), this.getY(), x2, y2);
-        graphics.drawRect(x2, y2, 3, 3);
-        
+        if(GameState.isShowDirections()){
+            graphics.setColor(Color.cyan);
+
+            float theta = (float)((this.getRotation() * Math.PI)/180);
+            float r = (float)48.0 ;
+            float x2 = (float)( r * Math.cos(theta) + this.getX());
+            float y2 =(float)(r * Math.sin(theta) + this.getY());
+
+            graphics.drawLine(this.getX(), this.getY(), x2, y2);
+            graphics.drawRect(x2, y2, 3, 3);
+
+            //0.0 degrees
+            graphics.setColor(Color.red);
+            theta = (float)0.0;
+            r = (float)48.0;
+            x2 = (float)( r * Math.cos(theta) + this.getX());
+            y2 =(float)(r * Math.sin(theta) + this.getY());
+            graphics.drawLine(this.getX(), this.getY(), x2, y2);
+            graphics.drawRect(x2, y2, 3, 3);
+            //90.0 degrees
+            graphics.setColor(Color.yellow);
+            theta = (float)(0.5 * Math.PI);
+            r = (float)48.0;
+            x2 = (float)( r * Math.cos(theta) + this.getX());
+            y2 =(float)(r * Math.sin(theta) + this.getY());
+            graphics.drawLine(this.getX(), this.getY(), x2, y2);
+            graphics.drawRect(x2, y2, 3, 3);
+            //180.0 degrees
+            graphics.setColor(Color.blue);
+            theta = (float)Math.PI;
+            r = (float)48.0;
+            x2 = (float)( r * Math.cos(theta) + this.getX());
+            y2 =(float)(r * Math.sin(theta) + this.getY());
+            graphics.drawLine(this.getX(), this.getY(), x2, y2);
+            graphics.drawRect(x2, y2, 3, 3);
+            //270.0 degrees
+            graphics.setColor(Color.magenta);
+            theta = (float)(1.5 * Math.PI);
+            r = (float)48.0;
+            x2 = (float)( r * Math.cos(theta) + this.getX());
+            y2 =(float)(r * Math.sin(theta) + this.getY());
+            graphics.drawLine(this.getX(), this.getY(), x2, y2);
+            graphics.drawRect(x2, y2, 3, 3);
+        }
         super.render(graphics);
         
     }
