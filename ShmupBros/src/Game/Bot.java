@@ -151,22 +151,36 @@ public class Bot extends Playable {
      * @return 0 if facing, -1 or 1 if not
      */
     public int isFacingTarget() {
-        float angleToFace = getRotationToEntity(target);               
-        if(getRotation() + 2 < angleToFace)
-            return -1;
-        if(getRotation() - 2 > angleToFace)
-            return 1;
+        float angleToFace = getRotationToEntity(target) ;               
+        float rotationNeeded = getRotation() - angleToFace;
         
+        if(Math.abs(rotationNeeded) > 180)
+            rotationNeeded += rotationNeeded > 0 ? -360 : 360;
+ 
+        if(rotationNeeded + 2 < 0)
+            return -1;
+        else if(rotationNeeded - 2 > 0)
+            return 1;
         return 0;
     }
     
     public int isFacingTile(Tile t){
-        float angleToFace = getRotationToTile(t);               
-        if(getRotation() + 2 < angleToFace)
+        float angleToFace = getRotationToTile(t) ;               
+        float rotationNeeded = getRotation() - angleToFace;
+        
+        if(Math.abs(rotationNeeded) > 180)
+            rotationNeeded += rotationNeeded > 0 ? -360 : 360;
+ 
+        if(rotationNeeded + 2 < 0)
             return -1;
-        if(getRotation() - 2 > angleToFace)
+        else if(rotationNeeded - 2 > 0)
             return 1;
         
+       /* if((getRotation() * Math.PI /180) + 2 * Math.PI/180 < angleToFace)
+            return -1;
+        if((getRotation()  * Math.PI /180) -  2 * Math.PI/180  > angleToFace)
+            return 1;
+        */
         return 0;
     }
     

@@ -84,8 +84,8 @@ public class GameState extends BasicGameState {
             ai.addAI(p);
         } 
         
-        showPath = false;
-        showDirections = false;
+        showPath = true;
+        showDirections = true;
     }
     
     /**
