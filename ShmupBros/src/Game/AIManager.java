@@ -112,28 +112,11 @@ public class AIManager {
               // bot.rotateToTarget();
                 break;
             case 2:
+                //ASTAR PATHFINDING!!!
                 if(bot.path2 != null &&  !bot.path2.isEmpty()){
                     Tile t = bot.path2.get(bot.path2.size() - 1);
-                    double distNode = bot.getDistanceToTile(t);
-                    double angleNode = bot.getRotationToTile(t);
-                    //if at node, get mext node
-                    if(distNode < bot.getSize() && bot.path2.size() > 2) {
-                        t = bot.path2.get(bot.path2.size() - 2);
-                        double angleNode2 = bot.getRotationToTile(t);
-                        //average rotation
-                       // angleNode = (angleNode2 + angleNode) / 2;
-                        /*if(bot.path2.size() > 3){
-                            double angleNode3 = bot.getDistanceToTile(bot.path2.get(bot.path2.size() - 3));
-                            angleNode = (angleNode + angleNode2 + angleNode3) /2;
-                            
-                        }*/
-                        
-                    }
-                    //bot.setRotation((float)angleNode);
-                  //  bot.setX(t.getX() + 16);
-                   // bot.setY(t.getY() + 16);
-                    if(bot.isFacingTile(t) == 0)
-                      //if(rand.nextInt(100) < 45)
+                    
+                    if(rand.nextInt(100) < 45)
                         Controller.update(bot, Controller.MOVE.UP);
                    
                     if(bot.isFacingTile(t) == -1)
