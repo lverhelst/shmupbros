@@ -13,7 +13,9 @@ public class Tile {
     private float y;
     private boolean passable;
     public boolean pathnode;
+    public boolean isClosed;
     public Tile parent;
+    public double score; //plz dont kill me emery
     
 	
 	// Tile constructor
@@ -35,9 +37,18 @@ public class Tile {
      * @param graphics The SLick2d/LWJGL graphics
      */
     public void render(Graphics graphics) { 
+        if(isClosed && score < -50){
+            graphics.setColor(Color.cyan);
+            graphics.drawRect(x, y, 32, 32);
+            
+            graphics.drawString((int)score +"", x, y);
+        }
+        
         if(pathnode && GameState.isShowPath()){
             graphics.setColor(Color.green);
             graphics.drawRect(x, y, 32, 32);
+            
+            graphics.drawString((int)score +"", x, y);
         }
     
     }

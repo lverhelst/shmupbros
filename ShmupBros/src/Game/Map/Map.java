@@ -128,6 +128,8 @@ public class Map {
             for (Tile t : map1) {
                 t.parent = null;
                 t.pathnode = false;
+                t.isClosed = false;
+                t.score = 0;
             }
         }
     }

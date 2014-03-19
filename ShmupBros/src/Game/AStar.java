@@ -52,6 +52,7 @@ public class AStar {
         ArrayList<Tile> adjacents = new ArrayList<Tile>();
         do{
             currentSquare = getLowestScore(currentSquare);
+            currentSquare.isClosed = true;
             closedList.add(currentSquare);
             openList.remove(currentSquare);
             
@@ -60,23 +61,14 @@ public class AStar {
                 ArrayList<Tile> pth = new ArrayList<Tile>();
                 Tile cur = targetTile;
                 while(cur != null){
-                    double slope = 0.0;
-                    if(cur.parent != null)
-                    {
-                         slope = (cur.parent.getY() - cur.getY())/(cur.parent.getX() - cur.getX());
-                    }
-                    
-                    
-                   // if(slope != -1 && slope != 0.0 && slope != 1)
-                        pth.add(cur);
-                    
+                    pth.add(cur);
                     cur = cur.parent;
                 }
                 //remove target location nodes
-                 if(pth.size() >= 1)
+                if(pth.size() >= 1)
                    pth.remove(pth.size() -1);
-                 if(pth.size() >= 1)
-                    pth.remove(pth.size() -1);
+                //if(pth.size() >= 1)
+                //    pth.remove(pth.size() -1);
                 if(pth.size() > 0)
                    pth.remove(0);
                 
@@ -94,11 +86,11 @@ public class AStar {
                 if(!openList.contains(ent)){
                     ent.parent = currentSquare;
                     openList.add(ent);
-                    
-                    
                 }else{
                     // test if using the current G score make the ent F score lower, if yes update the parent because it means its a better path
-                    
+                    //if(ent.score <= currentSquare.score){
+                    //    currentSquare.parent = ent.parent;
+                    //}
                 }
             }
             
@@ -110,13 +102,24 @@ public class AStar {
     
     private Tile getLowestScore(Tile currentSquare){
         Tile lowest = null;
-        double lowscore = 999.0;
+        double lowscore = Double.MAX_VALUE;
         for(Tile t : openList){
             //TODO better score heuristic
             //direct is better (above, below, left, right)
             //angles are not
+            int diffx = (int) (currentSquare.getX() - t.getX())/32;
+            int diffy = (int) (currentSquare.getY() - t.getY())/32;
+            //Manhatten distance 
+            double diffdist = Math.abs(currentSquare.getX() - tar.getX()) + Math.abs(tar.getY() - currentSquare.getY());
+            double score = (diffx == 0 || diffy == 0) ? 10 : 14;
+            //diffdist = 0;
+            score += (diffdist/32 + ((t.parent == null) ? 0 : t.parent.score));
             
-            double score = Math.abs(currentSquare.getX() - t.getX() + currentSquare.getY() - t.getY());
+         //   System.out.println(score);
+            
+            //Only calculate once
+            if(t.score == 0)
+                t.score = score;
             if(score < lowscore){
                 lowscore = score;
                 lowest = t;
@@ -159,36 +162,36 @@ public class AStar {
             if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
                 adj.add(map.getTile(x, y));
         }
-      /*  
+       
         //upper left?
         y += 1;
         if(map.getPassable(x, y)){
-            if(map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1))
-            adj.add(map.getTile(x, y));
+            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+                adj.add(map.getTile(x, y));
             
         }
         //upper right
         x+= 2;
         if(map.getPassable(x, y)){
-            if(map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1))
-            adj.add(map.getTile(x, y));
+            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+                  adj.add(map.getTile(x, y));
             
         }
         //lower right
         y -= 2;
         if(map.getPassable(x, y)){
-            if(map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1))
-            adj.add(map.getTile(x, y));
+            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+                adj.add(map.getTile(x, y));
             
         }
         //lower left
         x-=2;
         if(map.getPassable(x, y)){
-            if(map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1))
-            adj.add(map.getTile(x, y));
+            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+                adj.add(map.getTile(x, y));
             
         }
-        */
+       
         
         
         return adj;

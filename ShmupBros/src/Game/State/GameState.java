@@ -40,6 +40,10 @@ public class GameState extends BasicGameState {
     public static boolean isShowPath() {
         return showPath;
     }
+    
+    public static void setShowPath(Boolean bool){
+        showPath = bool;
+    }
 
     /**
      * @return the showDirections
@@ -85,7 +89,7 @@ public class GameState extends BasicGameState {
         } 
         
         showPath = true;
-        showDirections = true;
+        showDirections = false;
     }
     
     /**

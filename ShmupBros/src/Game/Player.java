@@ -77,7 +77,11 @@ public class Player {
         
         if(controls.isKeyPressed(Input.KEY_C))            
             Controller.update(target, Controller.MOVE.SHOWNAMES);    
-        //ensure movement only happens when alive
+        
+        if(controls.isKeyPressed(Input.KEY_V))            
+            GameState.setShowPath(!GameState.isShowPath());
+            
+            //ensure movement only happens when alive
         //ensure respawning only happens when dead
         if(target.isAlive()){
             if (controls.isKeyDown(Input.KEY_W)) 

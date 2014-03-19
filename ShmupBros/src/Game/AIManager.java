@@ -86,9 +86,10 @@ public class AIManager {
            
         }
         
-        if(!bot.isAlive())
+        if(!bot.isAlive()){
             GameState.spawn(bot);
-        
+             
+        }
         if(bot.getTarget() == null || !bot.getTarget().isAlive()) {
             bot.chooseRandTarget();
         } 
@@ -116,15 +117,19 @@ public class AIManager {
                 if(bot.path2 != null &&  !bot.path2.isEmpty()){
                     Tile t = bot.path2.get(bot.path2.size() - 1);
                     
-                    if(rand.nextInt(100) < 45)
+                    if(rand.nextInt(100) < 100)
                         Controller.update(bot, Controller.MOVE.UP);
                    
                     if(bot.isFacingTile(t) == -1)
                        Controller.update(bot, Controller.MOVE.ROTRIGHT);
                     else if(bot.isFacingTile(t) == 1)
                         Controller.update(bot, Controller.MOVE.ROTLEFT);
+                    else
+                        Controller.update(bot, Controller.MOVE.FIRE);
                     
-                    
+                    if(bot.isFacingTarget() == 0)
+                        Controller.update(bot, Controller.MOVE.FIRE);
+                   
                 }
                 break;
             case 3:
@@ -146,7 +151,7 @@ public class AIManager {
                 }
                 break;
         }
-        if(rand.nextInt(100) <= 11){
+        if(rand.nextInt(100) <= 111){
            // Controller.update(bot, Controller.MOVE.FIRE);
             bot.generatePathToTarget();
         
