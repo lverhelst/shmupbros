@@ -130,6 +130,9 @@ public class AIManager {
                     if(bot.isFacingTarget() == 0)
                         Controller.update(bot, Controller.MOVE.FIRE);
                    
+                }else{
+                    bot.rotateToTarget();
+                    Controller.update(bot, Controller.MOVE.FIRE);
                 }
                 break;
             case 3:

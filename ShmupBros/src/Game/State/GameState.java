@@ -80,7 +80,7 @@ public class GameState extends BasicGameState {
         player = new Player("PLAYER");
         ai = new AIManager();
         
-        int num_bots = 1;
+        int num_bots = 4;
 
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);
@@ -88,7 +88,7 @@ public class GameState extends BasicGameState {
             ai.addAI(p);
         } 
         
-        showPath = true;
+        showPath = false;
         showDirections = false;
     }
     
