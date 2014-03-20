@@ -80,7 +80,7 @@ public class GameState extends BasicGameState {
         player = new Player("PLAYER");
         ai = new AIManager();
         
-        int num_bots = 4;
+        int num_bots = 8;
 
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);
@@ -273,6 +273,7 @@ public class GameState extends BasicGameState {
             
             //update the ai players
             ai.update();
+
         }
     }
    
@@ -304,10 +305,6 @@ public class GameState extends BasicGameState {
         graphics.setColor(Color.white);
         graphics.setFont(font);
         drawString(graphics, logString, gc.getWidth() - 350, gc.getHeight() - 100);
-        
-        
-        
-        
     }
     
     /**

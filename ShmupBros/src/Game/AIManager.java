@@ -1,11 +1,12 @@
 package Game;
 
-import Ai.FuzzyRule;
 import Game.Bot.MODE;
 import Game.Entity.Entity;
 import Game.Map.Tile;
 import Game.State.GameState;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.Random;
 
 /**
@@ -14,6 +15,7 @@ import java.util.Random;
 */
 public class AIManager {
     private ArrayList<Bot> ai;
+    private LinkedList<MyThread> threads;
     private Random rand;
     
     /**
@@ -35,6 +37,7 @@ public class AIManager {
      */
     public AIManager() {
         ai = new ArrayList();
+        threads = new LinkedList();
         rand = new Random();
     }
     
@@ -44,6 +47,7 @@ public class AIManager {
      */
     public void addAI(Bot bot) {
         ai.add(bot);
+        threads.add(new MyThread(bot));
        // GameState.addEntity(bot);
         //test path for the bots
         for(int i = 0; i < 10; ++i) {
@@ -68,7 +72,7 @@ public class AIManager {
      */
     public void update() {
         for(int i = 0; i < ai.size(); ++i) {
-            move(ai.get(i));          
+            move(ai.get(i), i);          
         }
     }
     
@@ -76,7 +80,7 @@ public class AIManager {
      * Let the AI manager choose how to move the bot
      * @param bot the both to move
      */
-    public void move(Bot bot) {
+    public void move(Bot bot, int index) {
 
         int choice = 2;
 //        int choice = rand.nextInt(10);        
@@ -154,15 +158,48 @@ public class AIManager {
                 }
                 break;
         }
-        if(rand.nextInt(100) <= 111){
+
            // Controller.update(bot, Controller.MOVE.FIRE);
-            bot.generatePathToTarget();
-        
+           
+        //Threading for Path Generation
+        //FIFO path finding queue
+        if(threads.peek().getState() == Thread.State.NEW)
+             threads.peek().start(); 
+        else if(threads.peek().getState() == Thread.State.TERMINATED){
+            Bot b = threads.pop().bot;
+            threads.add(new MyThread(b));
         }
+        
+             
+       //add to end of queue
+        
+     
+
         
        //if(rand.nextInt(1000) == 11)
        //   bot.chooseRandTarget();
-       
-       
-    }    
+    }
+    
+    
+    public class MyThread extends Thread {
+        private final Bot bot;
+        public long last_locked;
+        
+        MyThread(final Bot b){
+            bot = b;
+            this.setName(b.getIdentifier() + " Thread");
+        }
+        
+        @Override public void run(){
+               // System.out.println(bot.getIdentifier() + " is running");
+                bot.generatePathToTarget();
+       }
+        
+        @Override public String toString(){
+            return this.getName();
+        }
+        
+      
+    }
+    
 }

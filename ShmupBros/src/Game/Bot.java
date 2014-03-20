@@ -1,5 +1,6 @@
 package Game;
 
+import Game.AIManager.MyThread;
 import Game.Entity.Entity;
 import Game.Entity.Physical;
 import Game.Entity.Playable;
@@ -9,6 +10,8 @@ import org.newdawn.slick.Graphics;
 import Game.Map.Tile;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Leon Verhelst and Emery
@@ -18,7 +21,8 @@ public class Bot extends Playable {
     public ArrayList<Tile> path2;
     private Playable target;
     private MODE mode; 
-    private AStar astar;
+    private static AStar astar;
+     private static Lock lock = new ReentrantLock();
     
     /*
     We might want to change these to float values, that way we can have a mixed mode
@@ -39,7 +43,8 @@ public class Bot extends Playable {
         super.setColor(Color.orange);
         path = new ArrayList<>();
         path2 = new ArrayList<>();
-        astar = new AStar(); 
+        if(astar == null)
+            astar = new AStar(); 
         
     }
     
@@ -103,19 +108,37 @@ public class Bot extends Playable {
         this.target = target;
         
         GameState.addText(this.getIdentifier() + " targeted " + target.getIdentifier());
-        generatePathToTarget();
+        //generatePathToTarget();
     }
     
     public void generatePathToTarget(){
         //generate route to target
         if(GameState.getMap() != null){
-            astar.setMap(GameState.getMap());
+            if(astar.getMap() == null){
+                astar.setMap(GameState.getMap());
+            }
+            //Ensure only one thread can generate a path at a time
+            //This ensures high performance
+            if (lock.tryLock()) {
+               try {
+                   // long running process
+                    //System.out.println(Thread.currentThread().getName() + " obtained Lock.");         
+                    ((MyThread)Thread.currentThread()).last_locked = System.nanoTime();
+                    path2 = astar.pathFind(this, target);  
+                                      
+                    if(path2 != null){
+                        for(Tile t : path2){   
+                            t.pathnode = true;
+                        }   
+                    }
+                    
+               } catch (Exception e) {                   
+               } finally {
+                   
+                   lock.unlock();
+               }             
+               
             
-            path2 = astar.pathFind(this, target);
-            if(path2 != null){
-                for(Tile t : path2){   
-                    t.pathnode = true;
-                }   
             }
         }
     }

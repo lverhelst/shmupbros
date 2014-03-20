@@ -19,11 +19,12 @@ public class AStar {
     private Tile tar;
     
     
-    private Map map;
+    private static Map map;
     
     public AStar(){
         path = new ArrayList<Tile>();
-        map = GameState.getMap();
+        if(map == null)
+            map = GameState.getMap();
     }
     
     public ArrayList<Tile> pathFind(Playable source, Playable target){
@@ -202,6 +203,10 @@ public class AStar {
      */
     public void setMap(Map map) {
         this.map = map;
+    }
+    
+    public Map getMap(){
+        return this.map;
     }
     
     
