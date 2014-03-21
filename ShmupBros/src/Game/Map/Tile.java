@@ -37,10 +37,9 @@ public class Tile {
      * @param graphics The SLick2d/LWJGL graphics
      */
     public void render(Graphics graphics) { 
-        if(isClosed && score < -50){
+        if(isClosed && GameState.isShowSearchSpace()){
             graphics.setColor(Color.cyan);
             graphics.drawRect(x, y, 32, 32);
-            
             graphics.drawString((int)score +"", x, y);
         }
         

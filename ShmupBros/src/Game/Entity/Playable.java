@@ -90,6 +90,7 @@ public class Playable extends Physical{
      * @param amount Amount of health to modify
      */
     @Override public void damage(float amount) {
+
         if (health > 0)
             health -= amount;
         
@@ -124,6 +125,7 @@ public class Playable extends Physical{
      * Respawn the player 
      */
     public void respawn() { 
+
         health = TOTAL_HEALTH;
         setCollidable(true);
     }

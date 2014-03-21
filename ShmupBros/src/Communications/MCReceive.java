@@ -108,7 +108,8 @@ public class MCReceive extends Thread {
         float x, y, rot;
         
         if(somePlayer != null && !((Playable)somePlayer).isAlive())
-            ((Playable)somePlayer).respawn();
+            //((Playable)somePlayer).respawn();
+            GameState.spawn((Playable)somePlayer);
         
         //Parse the parameters
         try {

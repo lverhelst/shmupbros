@@ -89,10 +89,8 @@ public class AIManager {
         if( m == MODE.AGGRESSIVE){
            
         }
-        
         if(!bot.isAlive()){
             GameState.spawn(bot);
-             
         }
         if(bot.getTarget() == null || !bot.getTarget().isAlive()) {
             bot.chooseRandTarget();

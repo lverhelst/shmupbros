@@ -34,23 +34,7 @@ import org.newdawn.slick.gui.TextField;
  */
 public class GameState extends BasicGameState {
 
-    /**
-     * @return the showPath
-     */
-    public static boolean isShowPath() {
-        return showPath;
-    }
     
-    public static void setShowPath(Boolean bool){
-        showPath = bool;
-    }
-
-    /**
-     * @return the showDirections
-     */
-    public static boolean isShowDirections() {
-        return showDirections;
-    }
     public final int ID; //holds the current states ID
     private static ArrayList<Physical> entities = new ArrayList();
     private static Random rand = new Random();
@@ -63,7 +47,7 @@ public class GameState extends BasicGameState {
     private long curtime, lastpathfind;
     private TextField log;
     private Font m_font;
-    private static boolean showPath, showDirections;
+    private static boolean showPath, showDirections, showSearchSpace;
     
     
     TrueTypeFont font;  
@@ -90,6 +74,7 @@ public class GameState extends BasicGameState {
         
         showPath = false;
         showDirections = false;
+        showSearchSpace = false;
     }
     
     /**
@@ -193,7 +178,7 @@ public class GameState extends BasicGameState {
      */
     public static void spawn(Playable col) {
         boolean check = false; 
-        
+
         //look until a position is found
         while(!check) {
             check = true;
@@ -254,6 +239,32 @@ public class GameState extends BasicGameState {
         checkMapCollisions(col);
     }    
     
+    
+    
+    /**
+     * @return the showPath
+     */
+    public static boolean isShowPath() {
+        return showPath;
+    }
+    
+    public static void setShowPath(Boolean bool){
+        showPath = bool;
+    }
+
+    /**
+     * @return the showDirections
+     */
+    public static boolean isShowDirections() {
+        return showDirections;
+    }
+    
+    /**
+     * @return the showDirections
+     */
+    public static boolean isShowSearchSpace() {
+        return showSearchSpace;
+    }
     /**
       * Update the current player every 15 milliseconds
       * @param gc GameState container
