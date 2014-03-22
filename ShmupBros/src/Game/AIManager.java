@@ -19,7 +19,7 @@ public class AIManager {
     private ArrayList<Bot> ai;
     private LinkedList<MyThread> threads;
     private Random rand;
-    private Ray ray,ray2;
+    private Ray raye,rayf;
     
     /**
      * The valid move types
@@ -42,8 +42,8 @@ public class AIManager {
         ai = new ArrayList();
         threads = new LinkedList();
         rand = new Random();
-        ray = new Ray();
-        ray2 = new Ray();
+        raye = new Ray();
+        rayf = new Ray();
     }
     
     /**
@@ -92,10 +92,11 @@ public class AIManager {
         //cast ray for simulate fuzzy selection
         boolean rayhit = false;
         float angleNode = 0;
+        rayf.cast(bot.getX(), bot.getY(), bot.getRotation(), 16, bot.getID());
         
         if(bot.getTarget() != null && bot.getTarget().isAlive()) {
             angleNode = bot.getRotationToEntity(bot.getTarget());
-            rayhit = ray.cast(bot.getX(), bot.getY(), angleNode, 16, bot.getID());
+            rayhit = raye.cast(bot.getX(), bot.getY(), angleNode, 16, bot.getID());
         } else {
             //roam, just does not do it now...
             bot.setMode(MODE.SEARCH); 
@@ -108,11 +109,15 @@ public class AIManager {
                 else if(bot.getRotation() - 2 > angleNode)
                     Controller.update(bot, Controller.MOVE.ROTLEFT);
                 
-                Controller.update(bot, Controller.MOVE.UP);                                
+                if(rayf.getDistance() > 128 && rand.nextInt(100) < 100)
+                    Controller.update(bot, Controller.MOVE.UP);
+                else 
+                    Controller.update(bot, Controller.MOVE.DOWN);
+                
                 Controller.update(bot, Controller.MOVE.FIRE);                
                 
                 //if no line of sight pathfind
-                if(!rayhit || ((Entity)ray.getHit()) != bot.getTarget()) {
+                if(!rayhit || ((Entity)raye.getHit()) != bot.getTarget()) {
                     bot.setMode(MODE.SEARCH);
                 }                
                 break;
@@ -146,7 +151,7 @@ public class AIManager {
                 }                
                 
                 //if facing target, zombie mode and clear path
-                if(rayhit && (ray.getHit() instanceof Playable) && ((Playable)ray.getHit()).getID() == bot.getTarget().getID()) {
+                if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
                     bot.setMode(MODE.AGGRESSIVE);
                     bot.path2 = null;
                 }                
@@ -158,9 +163,9 @@ public class AIManager {
             case RANDOM:                
                 ray2.cast(bot.getX(), bot.getY(), bot.getRotation() - 5, 32, bot.getID());
 
-                if(ray.getDistance() < ray2.getDistance()) {
+                if(raye.getDistance() < ray2.getDistance()) {
                         Controller.update(bot, Controller.MOVE.ROTRIGHT); 
-                    if(ray.getDistance() > 128) {                   
+                    if(raye.getDistance() > 128) {                   
                         Controller.update(bot, Controller.MOVE.UP);
                     } else {                       
                         Controller.update(bot, Controller.MOVE.DOWN);
