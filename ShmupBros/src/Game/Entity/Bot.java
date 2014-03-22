@@ -209,21 +209,6 @@ public class Bot extends Playable {
     }
     
     /**
-     * Updates the rotation of the sprite and applies any forces acting on it
-     */
-    @Override public void update() {
-        super.update();        
-        
-//        ray.cast(getX(), getY(), getRotation() + 3, 32, getID());
-//        ray2.cast(getX(), getY(), getRotation() - 3, 32, getID());
-//        
-//        if(ray.getDistance() < ray2.getDistance()) 
-//            System.err.println("Right:" + ray.getDistance());
-//        else
-//            System.err.println("Left:" + ray2.getDistance());
-    }
-    
-    /**
      * Chooses random Entity as target
      */
     public void chooseRandTarget() {

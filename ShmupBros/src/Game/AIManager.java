@@ -4,13 +4,12 @@ import Ai.Ray;
 import Game.Entity.Bot;
 import Game.Entity.Bot.MODE;
 import Game.Entity.Entity;
+import Game.Entity.Playable;
 import Game.Map.Tile;
 import Game.State.GameState;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
-import static org.lwjgl.input.Mouse.getX;
-import static org.lwjgl.input.Mouse.getY;
 
 /**
 * AIManager
@@ -21,6 +20,7 @@ public class AIManager {
     private LinkedList<MyThread> threads;
     private Random rand;
     private Ray ray,ray2;
+    private static int choice;
     
     /**
      * The valid move types
@@ -85,7 +85,7 @@ public class AIManager {
      */
     public void move(Bot bot, int index) {
         
-        int choice = 4;
+        choice = 0;
 //        int choice = rand.nextInt(10);        
         
         MODE m = bot.getMode();
@@ -103,6 +103,9 @@ public class AIManager {
        // if( dist > 0)
          //System.out.println(dist + "  " + FuzzyRule.forceFromDistance(dist));
         
+        //cast ray for simulate fuzzy selection
+        ray.cast(bot.getX(), bot.getY(), bot.getRotation(), 2, bot.getID());
+        
         switch(choice) {
             case 0:                
                 Controller.update(bot, Controller.MOVE.UP);
@@ -110,6 +113,13 @@ public class AIManager {
                     Controller.update(bot, Controller.MOVE.ROTRIGHT);
                 else if (bot.isFacingTarget() == 1)
                     Controller.update(bot, Controller.MOVE.ROTLEFT);
+                                
+                Controller.update(bot, Controller.MOVE.FIRE);                
+                //if not line of sight pathfind
+//                if((ray.getHit() instanceof Entity) && 
+//                        ((Entity)ray.getHit()) != bot.getTarget()) {
+//                    choice = 2;
+//                }                
                 break;
             case 1:
                 //zombie
@@ -117,7 +127,7 @@ public class AIManager {
                 // bot.applyForce((int)FuzzyRule.forceFromDistance(dist), bot.getRotation());
               // bot.rotateToTarget();
                 break;
-            case 2:
+            case 2: 
                 //ASTAR PATHFINDING!!!
                 if(bot.path2 != null &&  !bot.path2.isEmpty()){
                     Tile t = bot.path2.get(bot.path2.size() - 1);
@@ -138,7 +148,13 @@ public class AIManager {
                 }else{
                     bot.rotateToTarget();
                     Controller.update(bot, Controller.MOVE.FIRE);
-                }
+                }                
+                
+                //if facing target, zombie mode and clear path
+//                if((ray.getHit() instanceof Entity) && ((Entity)ray.getHit()).getID() == bot.getTarget().getID()) {
+//                    choice = 0;
+//                    bot.path2.clear();
+//                }                
                 break;
             case 3:
                 if(bot.hasPath()) {
@@ -159,7 +175,6 @@ public class AIManager {
                 }
                 break;
             case 4:                
-                ray.cast(bot.getX(), bot.getY(), bot.getRotation() + 5, 32, bot.getID());
                 ray2.cast(bot.getX(), bot.getY(), bot.getRotation() - 5, 32, bot.getID());
 
                 if(ray.getDistance() < ray2.getDistance()) {
