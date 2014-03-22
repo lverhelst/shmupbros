@@ -18,6 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Bot extends Playable {
     private ArrayList<Entity> path;
     public ArrayList<Tile> path2;
+    public Ray ray, ray2;
     private Playable target;
     private MODE mode; 
     private static AStar astar;
@@ -44,6 +45,9 @@ public class Bot extends Playable {
         path2 = new ArrayList<>();
         if(astar == null)
             astar = new AStar(); 
+        
+        ray = new Ray();
+        ray2 = new Ray();
         
     }
     
@@ -205,6 +209,21 @@ public class Bot extends Playable {
     }
     
     /**
+     * Updates the rotation of the sprite and applies any forces acting on it
+     */
+    @Override public void update() {
+        super.update();        
+        
+//        ray.cast(getX(), getY(), getRotation() + 3, 32, getID());
+//        ray2.cast(getX(), getY(), getRotation() - 3, 32, getID());
+//        
+//        if(ray.getDistance() < ray2.getDistance()) 
+//            System.err.println("Right:" + ray.getDistance());
+//        else
+//            System.err.println("Left:" + ray2.getDistance());
+    }
+    
+    /**
      * Chooses random Entity as target
      */
     public void chooseRandTarget() {
@@ -217,10 +236,6 @@ public class Bot extends Playable {
             if(p.getType() == TYPE.PLAYABLE && ((Playable)p).isAlive() && rng.nextInt(size) == answer && ((Playable)p) != this)
                 setTarget((Playable)p);
         }
-        
-        Ray ray = new Ray();
-        ray.cast(getX(), getY(), getRotationToEntity(target), 32, getID());
-        System.err.println(ray.getHit().getClass().toString() + ":" + ray.getDistance());
     } 
     
     @Override public void render(Graphics graphics){

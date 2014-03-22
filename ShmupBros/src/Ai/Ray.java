@@ -28,6 +28,7 @@ public class Ray <T>{
     public boolean cast(float x, float y, float angle, float accuracy, long ID) {
         float x2 = x;
         float y2 = y;
+        hit = null; //reset the raycast
         
         //search until a collision happens
         while(hit == null) {

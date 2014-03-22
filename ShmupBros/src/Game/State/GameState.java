@@ -61,7 +61,7 @@ public class GameState extends BasicGameState {
         player = new Player("PLAYER");
         ai = new AIManager();
         
-        int num_bots = 8;
+        int num_bots = 1;
 
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);

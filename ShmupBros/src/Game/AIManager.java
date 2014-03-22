@@ -1,5 +1,6 @@
 package Game;
 
+import Ai.Ray;
 import Game.Entity.Bot;
 import Game.Entity.Bot.MODE;
 import Game.Entity.Entity;
@@ -8,6 +9,8 @@ import Game.State.GameState;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+import static org.lwjgl.input.Mouse.getX;
+import static org.lwjgl.input.Mouse.getY;
 
 /**
 * AIManager
@@ -17,6 +20,7 @@ public class AIManager {
     private ArrayList<Bot> ai;
     private LinkedList<MyThread> threads;
     private Random rand;
+    private Ray ray,ray2;
     
     /**
      * The valid move types
@@ -39,6 +43,8 @@ public class AIManager {
         ai = new ArrayList();
         threads = new LinkedList();
         rand = new Random();
+        ray = new Ray();
+        ray2 = new Ray();
     }
     
     /**
@@ -78,8 +84,8 @@ public class AIManager {
      * @param bot the both to move
      */
     public void move(Bot bot, int index) {
-
-        int choice = 2;
+        
+        int choice = 4;
 //        int choice = rand.nextInt(10);        
         
         MODE m = bot.getMode();
@@ -151,6 +157,27 @@ public class AIManager {
                     if(distNode < bot.getSize()) 
                         bot.nextPathNode();                    
                 }
+                break;
+            case 4:                
+                ray.cast(bot.getX(), bot.getY(), bot.getRotation() + 5, 32, bot.getID());
+                ray2.cast(bot.getX(), bot.getY(), bot.getRotation() - 5, 32, bot.getID());
+
+                if(ray.getDistance() < ray2.getDistance()) {
+                        Controller.update(bot, Controller.MOVE.ROTRIGHT); 
+                    if(ray.getDistance() > 128) {                   
+                        Controller.update(bot, Controller.MOVE.UP);
+                    } else {                       
+                        Controller.update(bot, Controller.MOVE.DOWN);
+                    }
+                } else {
+                        Controller.update(bot, Controller.MOVE.ROTLEFT); 
+                    if(ray2.getDistance() > 128) {                   
+                        Controller.update(bot, Controller.MOVE.UP);
+                    } else {                      
+                        Controller.update(bot, Controller.MOVE.DOWN);
+                    }
+                }
+                
                 break;
         }
 

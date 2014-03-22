@@ -1,5 +1,6 @@
 package Game.Entity;
 
+import Ai.Ray;
 import Communications.MCManager;
 import Game.State.GameState;
 import java.util.ArrayList;
