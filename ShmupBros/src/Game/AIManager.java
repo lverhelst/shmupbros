@@ -53,17 +53,7 @@ public class AIManager {
      */
     public void addAI(Bot bot) {
         ai.add(bot);
-        threads.add(new MyThread(bot));
-       // GameState.addEntity(bot);
-        //test path for the bots
-        for(int i = 0; i < 10; ++i) {
-            int x = rand.nextInt(1000) + 32;
-            int y = rand.nextInt(1000) + 32;
-            Entity node = new Entity(1);
-            node.setX(x);
-            node.setY(y);
-            bot.addPathNode(node);
-        }
+        threads.add(new MyThread(bot));       
     }
     
     public Bot getBot(int i){
@@ -85,7 +75,7 @@ public class AIManager {
      */
     public void move(Bot bot, int index) {
         
-        choice = 0;
+//        choice = 0;
 //        int choice = rand.nextInt(10);        
         
         MODE m = bot.getMode();
@@ -104,22 +94,31 @@ public class AIManager {
          //System.out.println(dist + "  " + FuzzyRule.forceFromDistance(dist));
         
         //cast ray for simulate fuzzy selection
-        ray.cast(bot.getX(), bot.getY(), bot.getRotation(), 2, bot.getID());
+        boolean rayhit = false;
+        float angleNode = 0;
+        
+        if(bot.getTarget() != null && bot.getTarget().isAlive()) {
+            angleNode = bot.getRotationToEntity(bot.getTarget());
+            rayhit = ray.cast(bot.getX(), bot.getY(), angleNode, 16, bot.getID());
+        } else {
+            //roam, just does not do it now...
+            choice = 2; 
+        }
         
         switch(choice) {
-            case 0:                
-                Controller.update(bot, Controller.MOVE.UP);
-                if(bot.isFacingTarget() == -1)
-                    Controller.update(bot, Controller.MOVE.ROTRIGHT);
-                else if (bot.isFacingTarget() == 1)
+            case 0:
+                if(bot.getRotation() + 2 < angleNode)
+                   Controller.update(bot, Controller.MOVE.ROTRIGHT);
+                else if(bot.getRotation() - 2 > angleNode)
                     Controller.update(bot, Controller.MOVE.ROTLEFT);
-                                
+                
+                Controller.update(bot, Controller.MOVE.UP);                                
                 Controller.update(bot, Controller.MOVE.FIRE);                
-                //if not line of sight pathfind
-//                if((ray.getHit() instanceof Entity) && 
-//                        ((Entity)ray.getHit()) != bot.getTarget()) {
-//                    choice = 2;
-//                }                
+                
+                //if no line of sight pathfind
+                if(!rayhit || ((Entity)ray.getHit()) != bot.getTarget()) {
+                    choice = 2;
+                }                
                 break;
             case 1:
                 //zombie
@@ -151,28 +150,29 @@ public class AIManager {
                 }                
                 
                 //if facing target, zombie mode and clear path
-//                if((ray.getHit() instanceof Entity) && ((Entity)ray.getHit()).getID() == bot.getTarget().getID()) {
-//                    choice = 0;
-//                    bot.path2.clear();
-//                }                
+                if(rayhit && (ray.getHit() instanceof Playable) && ((Playable)ray.getHit()).getID() == bot.getTarget().getID()) {
+                    choice = 0;
+                    bot.path2 = null;
+                }                
                 break;
             case 3:
-                if(bot.hasPath()) {
-                    Entity node = bot.getPathNode();
-                    double distNode = bot.getDistanceToEntity(node);
-                    double angleNode = bot.getRotationToEntity(node);
-                    
-                    Controller.update(bot, Controller.MOVE.UP);
-                    
-                    if(bot.getRotation() + 2 < angleNode)
-                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
-                    else if(bot.getRotation() - 2 > angleNode)
-                        Controller.update(bot, Controller.MOVE.ROTLEFT);
-                    
-                    //if at node, get mext node
-                    if(distNode < bot.getSize()) 
-                        bot.nextPathNode();                    
-                }
+                //obsolete
+//                if(bot.hasPath()) {
+//                    Entity node = bot.getPathNode();
+//                    double distNode = bot.getDistanceToEntity(node);
+//                    double angleNode = bot.getRotationToEntity(node);
+//                    
+//                    Controller.update(bot, Controller.MOVE.UP);
+//                    
+//                    if(bot.getRotation() + 2 < angleNode)
+//                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
+//                    else if(bot.getRotation() - 2 > angleNode)
+//                        Controller.update(bot, Controller.MOVE.ROTLEFT);
+//                    
+//                    //if at node, get mext node
+//                    if(distNode < bot.getSize()) 
+//                        bot.nextPathNode();                    
+//                }
                 break;
             case 4:                
                 ray2.cast(bot.getX(), bot.getY(), bot.getRotation() - 5, 32, bot.getID());
