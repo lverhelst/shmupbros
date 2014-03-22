@@ -22,7 +22,7 @@ public class Bot extends Playable {
     private Playable target;
     private MODE mode; 
     private static AStar astar;
-     private static Lock lock = new ReentrantLock();
+    private static Lock lock = new ReentrantLock();
     
     /*
     We might want to change these to float values, that way we can have a mixed mode
@@ -48,6 +48,7 @@ public class Bot extends Playable {
         
         ray = new Ray();
         ray2 = new Ray();
+        mode = MODE.SEARCH;
         
     }
     

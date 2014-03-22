@@ -20,7 +20,6 @@ public class AIManager {
     private LinkedList<MyThread> threads;
     private Random rand;
     private Ray ray,ray2;
-    private static int choice;
     
     /**
      * The valid move types
@@ -78,10 +77,7 @@ public class AIManager {
 //        choice = 0;
 //        int choice = rand.nextInt(10);        
         
-        MODE m = bot.getMode();
-        if( m == MODE.AGGRESSIVE){
-           
-        }
+        
         if(!bot.isAlive()){
             GameState.spawn(bot);
         }
@@ -102,11 +98,11 @@ public class AIManager {
             rayhit = ray.cast(bot.getX(), bot.getY(), angleNode, 16, bot.getID());
         } else {
             //roam, just does not do it now...
-            choice = 2; 
+            bot.setMode(MODE.SEARCH); 
         }
         
-        switch(choice) {
-            case 0:
+        switch(bot.getMode()) {
+            case AGGRESSIVE:
                 if(bot.getRotation() + 2 < angleNode)
                    Controller.update(bot, Controller.MOVE.ROTRIGHT);
                 else if(bot.getRotation() - 2 > angleNode)
@@ -117,16 +113,16 @@ public class AIManager {
                 
                 //if no line of sight pathfind
                 if(!rayhit || ((Entity)ray.getHit()) != bot.getTarget()) {
-                    choice = 2;
+                    bot.setMode(MODE.SEARCH);
                 }                
                 break;
-            case 1:
+            case ZOMBIE:
                 //zombie
                  bot.faceTarget();
                 // bot.applyForce((int)FuzzyRule.forceFromDistance(dist), bot.getRotation());
               // bot.rotateToTarget();
                 break;
-            case 2: 
+            case SEARCH: 
                 //ASTAR PATHFINDING!!!
                 if(bot.path2 != null &&  !bot.path2.isEmpty()){
                     Tile t = bot.path2.get(bot.path2.size() - 1);
@@ -151,30 +147,15 @@ public class AIManager {
                 
                 //if facing target, zombie mode and clear path
                 if(rayhit && (ray.getHit() instanceof Playable) && ((Playable)ray.getHit()).getID() == bot.getTarget().getID()) {
-                    choice = 0;
+                    bot.setMode(MODE.AGGRESSIVE);
                     bot.path2 = null;
                 }                
                 break;
-            case 3:
-                //obsolete
-//                if(bot.hasPath()) {
-//                    Entity node = bot.getPathNode();
-//                    double distNode = bot.getDistanceToEntity(node);
-//                    double angleNode = bot.getRotationToEntity(node);
-//                    
-//                    Controller.update(bot, Controller.MOVE.UP);
-//                    
-//                    if(bot.getRotation() + 2 < angleNode)
-//                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
-//                    else if(bot.getRotation() - 2 > angleNode)
-//                        Controller.update(bot, Controller.MOVE.ROTLEFT);
-//                    
-//                    //if at node, get mext node
-//                    if(distNode < bot.getSize()) 
-//                        bot.nextPathNode();                    
-//                }
+            case STUCK:
                 break;
-            case 4:                
+            case PASSIVE:
+                break;
+            case RANDOM:                
                 ray2.cast(bot.getX(), bot.getY(), bot.getRotation() - 5, 32, bot.getID());
 
                 if(ray.getDistance() < ray2.getDistance()) {
@@ -193,6 +174,8 @@ public class AIManager {
                     }
                 }
                 
+                break;
+            case DEAD:
                 break;
         }
 
