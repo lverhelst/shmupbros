@@ -1,12 +1,10 @@
-package Game;
+package Ai;
 
-import Game.Entity.Entity;
 import Game.Entity.Playable;
 import Game.Map.Map;
 import Game.Map.Tile;
 import Game.State.GameState;
 import java.util.ArrayList;
-
 
 /**
  *
@@ -208,6 +206,4 @@ public class AStar {
     public Map getMap(){
         return this.map;
     }
-    
-    
 }

@@ -8,8 +8,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.*;
 
 import Game.AIManager;
-import Game.AStar;
-import Game.Bot;
+import Game.Entity.Bot;
 import Game.Entity.Explosion;
 
 import Game.Entity.Physical;
@@ -32,9 +31,7 @@ import org.newdawn.slick.gui.TextField;
  * GameState: Used to start and perform the game logic
  * @authors Daniel, Emery, Leon
  */
-public class GameState extends BasicGameState {
-
-    
+public class GameState extends BasicGameState {    
     public final int ID; //holds the current states ID
     private static ArrayList<Physical> entities = new ArrayList();
     private static Random rand = new Random();
@@ -239,7 +236,29 @@ public class GameState extends BasicGameState {
         checkMapCollisions(col);
     }    
     
-    
+    /**
+     * Used to check if a single point is colliding
+     * @param xp the x position to check
+     * @param yp the y position to check
+     * @param ID optional ignores the given entity with the ID
+     * @return the object which was collided with
+     */
+    public static Object checkCollision(float xp, float yp, long ID) {
+        int x = (int)(xp/32);
+        int y = (int)(yp/32);
+        
+        if(!map.getPassable(x, y)) {
+            return map.getTile(x, y);
+        }
+        
+        for(Physical ent: entities) {
+            if(ent.getID() != ID && x == (int)(ent.getX()/32) && y == (int)(ent.getY()/32)) {
+                return ent;
+            }
+        }
+        
+        return null;
+    }    
     
     /**
      * @return the showPath

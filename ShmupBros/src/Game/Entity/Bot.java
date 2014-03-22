@@ -1,9 +1,8 @@
-package Game;
+package Game.Entity;
 
 import Game.AIManager.MyThread;
-import Game.Entity.Entity;
-import Game.Entity.Physical;
-import Game.Entity.Playable;
+import Ai.AStar;
+import Ai.Ray;
 import Game.State.GameState;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -136,9 +135,7 @@ public class Bot extends Playable {
                } finally {
                    
                    lock.unlock();
-               }             
-               
-            
+               } 
             }
         }
     }
@@ -221,26 +218,10 @@ public class Bot extends Playable {
                 setTarget((Playable)p);
         }
         
-//        Random rng = new Random();
-//        int i = 0; 
-//        for(Physical p : GameState.getEntities()){
-//            if(p.getType() == TYPE.PLAYABLE)
-//                i++;
-//        }
-//        //Ensure there are entities to choose from
-//        if(i > 1){
-//            int thisInd = GameState.getEntities().indexOf(this);
-//            int index = thisInd;
-//            int size = GameState.getEntities().size();
-//            while(index == thisInd ){
-//                index = rng.nextInt(size);
-//                if(!(GameState.getEntities().get(index).getType() == TYPE.PLAYABLE))
-//                    index = thisInd;
-//            }
-//            target = (Playable)GameState.getEntities().get(index);
-//        }
-    }    
-    
+        Ray ray = new Ray();
+        ray.cast(getX(), getY(), getRotationToEntity(target), 32, getID());
+        System.err.println(ray.getHit().getClass().toString() + ":" + ray.getDistance());
+    } 
     
     @Override public void render(Graphics graphics){
         if(GameState.isShowDirections()){
@@ -288,6 +269,5 @@ public class Bot extends Playable {
             graphics.drawRect(x2, y2, 3, 3);
         }
         super.render(graphics);
-        
     }
 }

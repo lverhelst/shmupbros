@@ -1,11 +1,11 @@
 package Game;
 
-import Game.Bot.MODE;
+import Game.Entity.Bot;
+import Game.Entity.Bot.MODE;
 import Game.Entity.Entity;
 import Game.Map.Tile;
 import Game.State.GameState;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -58,9 +58,6 @@ public class AIManager {
             node.setY(y);
             bot.addPathNode(node);
         }
-        
-        
-        
     }
     
     public Bot getBot(int i){
@@ -178,7 +175,6 @@ public class AIManager {
        //   bot.chooseRandTarget();
     }
     
-    
     public class MyThread extends Thread {
         private final Bot bot;
         public long last_locked;
@@ -196,8 +192,5 @@ public class AIManager {
         @Override public String toString(){
             return this.getName();
         }
-        
-      
     }
-    
 }
