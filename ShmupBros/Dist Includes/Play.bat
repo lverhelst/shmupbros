@@ -1,2 +1,2 @@
-java -jar -Djava.library.path=".\natives" PeerGame2.jar
+java -jar -Djava.library.path=".\natives" ShmupBros.jar
 pause

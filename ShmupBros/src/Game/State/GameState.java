@@ -96,7 +96,7 @@ public class GameState extends BasicGameState {
         offsetX = gc.getWidth()/2;
         offsetY = gc.getHeight()/2;
         
-        map = new Map("Assets/level.map", gc.getScreenWidth()/32, (gc.getScreenHeight())/32);
+        map = new Map("Assets/level1.map", gc.getScreenWidth()/32, (gc.getScreenHeight())/32);
         curtime = System.currentTimeMillis();
         
         m_font = new Font("Verdana", Font.BOLD, 32);
