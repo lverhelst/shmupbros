@@ -44,7 +44,7 @@ public class GameState extends BasicGameState {
     private long curtime, lastpathfind;
     private TextField log;
     private Font m_font;
-    private static boolean showPath, showDirections, showSearchSpace;
+    private static boolean showPath, showDirections, showSearchSpace, showName;
     
     
     TrueTypeFont font;  
@@ -61,7 +61,7 @@ public class GameState extends BasicGameState {
         player = new Player("PLAYER");
         ai = new AIManager();
         
-        int num_bots = 10;
+        int num_bots = 1;
 
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);
@@ -72,6 +72,7 @@ public class GameState extends BasicGameState {
         showPath = false;
         showDirections = false;
         showSearchSpace = false;
+        showName = false;
     }
     
     /**
@@ -283,6 +284,20 @@ public class GameState extends BasicGameState {
      */
     public static boolean isShowSearchSpace() {
         return showSearchSpace;
+    }
+
+    /**
+     * @return the showName
+     */
+    public static boolean isShowName() {
+        return showName;
+    }
+
+    /**
+     * @param aShowName the showName to set
+     */
+    public static void setShowName(boolean aShowName) {
+        showName = aShowName;
     }
     /**
       * Update the current player every 15 milliseconds

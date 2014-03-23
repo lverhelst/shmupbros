@@ -297,6 +297,10 @@ public class Bot extends Playable {
             graphics.drawLine(this.getX(), this.getY(), x2, y2);
             graphics.drawRect(x2, y2, 3, 3);
         }
+         if(GameState.isShowName())
+            graphics.drawString("AttackMode: "  + this.attackMode.toString() + "\r\nMoveMode: " + this.moveMode.toString() + "\r\nTurnMode: " + this.turnMode.toString(), getX(), getY() - (float)6.0 * getSize());
+        
+        
         super.render(graphics);
     }
 }

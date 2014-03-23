@@ -153,7 +153,9 @@ public class AIManager {
                 break;
             case PASSIVE:
                 break;
-            case SEARCH://if facing target, zombie mode and clear path
+            case SEARCH:
+                //if raycast to target hits target && facing target, zombie mode
+                //else follow path
                 //ASTAR PATHFINDING!!!
                 if(bot.path2 != null &&  !bot.path2.isEmpty()){
                     Tile t = bot.path2.get(bot.path2.size() - 1);
@@ -184,6 +186,7 @@ public class AIManager {
                 break;
             case ZOMBIE:
                 bot.faceTarget();
+                
                 break;
             default:
                 break;
@@ -219,6 +222,7 @@ public class AIManager {
             case RANDOM:
                 break;
             case ZOMBIE:
+                Controller.update(bot, Controller.MOVE.FIRE);
                 break;
             default:
                 break;

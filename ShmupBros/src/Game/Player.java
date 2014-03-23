@@ -76,7 +76,7 @@ public class Player {
             Controller.update(target, Controller.MOVE.HIDESCORE);
         
         if(controls.isKeyPressed(Input.KEY_C))            
-            Controller.update(target, Controller.MOVE.SHOWNAMES);    
+            GameState.setShowName(!GameState.isShowName());
         
         if(controls.isKeyPressed(Input.KEY_V))            
             GameState.setShowPath(!GameState.isShowPath());
