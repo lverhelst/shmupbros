@@ -60,11 +60,24 @@ public class AIManager {
     }
     
     /**
-     * Update all ai bots
+     * Updates the all AI controlled bots
      */
     public void update() {
-        for(int i = 0; i < ai.size(); ++i) {
-            move(ai.get(i), i);          
+        for(Bot bot: ai) {
+            //spawn if dead
+            if(!bot.isAlive())
+                GameState.spawn(bot);
+            bot.setAllMode(MODE.SEARCH);
+            move(bot);
+            turn(bot);
+            attack(bot);
+            
+            if(threads.peek().getState() == Thread.State.NEW)
+                 threads.peek().start(); 
+            else if(threads.peek().getState() == Thread.State.TERMINATED){
+                Bot b = threads.pop().bot;
+                threads.add(new MyThread(b));
+            }
         }
     }
     
@@ -72,137 +85,144 @@ public class AIManager {
      * Let the AI manager choose how to move the bot
      * @param bot the both to move
      */
-    public void move(Bot bot, int index) {
-        
-//        choice = 0;
-//        int choice = rand.nextInt(10);        
-        
-        
-        if(!bot.isAlive()){
-            GameState.spawn(bot);
-        }
-        if(bot.getTarget() == null || !bot.getTarget().isAlive()) {
-            bot.chooseRandTarget();
-        } 
-        
-        double dist = bot.getDistanceToEntity(bot.getTarget());
-       // if( dist > 0)
-         //System.out.println(dist + "  " + FuzzyRule.forceFromDistance(dist));
-        
+    public void move(Bot bot) { 
         //cast ray for simulate fuzzy selection
-        boolean rayhit = false;
-        float angleNode = 0;
         rayf.cast(bot.getX(), bot.getY(), bot.getRotation(), 16, bot.getID());
-        
-        if(bot.getTarget() != null && bot.getTarget().isAlive()) {
-            angleNode = bot.getRotationToEntity(bot.getTarget());
-            rayhit = raye.cast(bot.getX(), bot.getY(), angleNode, 16, bot.getID());
-        } else {
-            //roam, just does not do it now...
-            bot.setMode(MODE.SEARCH); 
-        }
-        
-        switch(bot.getMode()) {
+                
+        switch(bot.getMoveMode()) {
             case AGGRESSIVE:
-                if(bot.getRotation() + 2 < angleNode)
-                   Controller.update(bot, Controller.MOVE.ROTRIGHT);
-                else if(bot.getRotation() - 2 > angleNode)
-                    Controller.update(bot, Controller.MOVE.ROTLEFT);
-                
-                if(rayf.getDistance() > 128 && rand.nextInt(100) < 100)
+                if(rand.nextInt(100) < 100)
                     Controller.update(bot, Controller.MOVE.UP);
-                else 
-                    Controller.update(bot, Controller.MOVE.DOWN);
-                
-                Controller.update(bot, Controller.MOVE.FIRE);                
-                
-                //if no line of sight pathfind
-                if(!rayhit || ((Entity)raye.getHit()) != bot.getTarget()) {
-                    bot.setMode(MODE.SEARCH);
-                }                
                 break;
-            case ZOMBIE:
-                //zombie
-                 bot.faceTarget();
-                // bot.applyForce((int)FuzzyRule.forceFromDistance(dist), bot.getRotation());
-              // bot.rotateToTarget();
+            case ZOMBIE: 
+                Controller.update(bot, Controller.MOVE.UP);
                 break;
             case SEARCH: 
-                //ASTAR PATHFINDING!!!
-                if(bot.path2 != null &&  !bot.path2.isEmpty()){
-                    Tile t = bot.path2.get(bot.path2.size() - 1);
-                    
-                    if(rand.nextInt(100) < 100)
+                if(rayf.getDistance() < 128) {                    
+                    Controller.update(bot, Controller.MOVE.DOWN);
+                } else if (rayf.getDistance() < 512) {  
+                    if(rand.nextInt(10) < 1)
                         Controller.update(bot, Controller.MOVE.UP);
-                   
-                    if(bot.isFacingTile(t) == -1)
-                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
-                    else if(bot.isFacingTile(t) == 1)
-                        Controller.update(bot, Controller.MOVE.ROTLEFT);
-                    else
-                        Controller.update(bot, Controller.MOVE.FIRE);
-                    
-                    if(bot.isFacingTarget() == 0)
-                        Controller.update(bot, Controller.MOVE.FIRE);
-                   
-                }else{
-                    bot.rotateToTarget();
-                    Controller.update(bot, Controller.MOVE.FIRE);
-                }                
-                
-                //if facing target, zombie mode and clear path
-                if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
-                    bot.setMode(MODE.AGGRESSIVE);
-                    bot.path2 = null;
-                }                
+                } else if (rayf.getDistance() < 1024) {  
+                    if(rand.nextInt(10) < 7)
+                        Controller.update(bot, Controller.MOVE.UP);
+                } else {                    
+                    Controller.update(bot, Controller.MOVE.UP);
+                }
                 break;
             case STUCK:
                 break;
             case PASSIVE:
                 break;
             case RANDOM:                
-                ray2.cast(bot.getX(), bot.getY(), bot.getRotation() - 5, 32, bot.getID());
-
-                if(raye.getDistance() < ray2.getDistance()) {
-                        Controller.update(bot, Controller.MOVE.ROTRIGHT); 
-                    if(raye.getDistance() > 128) {                   
-                        Controller.update(bot, Controller.MOVE.UP);
-                    } else {                       
-                        Controller.update(bot, Controller.MOVE.DOWN);
-                    }
-                } else {
-                        Controller.update(bot, Controller.MOVE.ROTLEFT); 
-                    if(ray2.getDistance() > 128) {                   
-                        Controller.update(bot, Controller.MOVE.UP);
-                    } else {                      
-                        Controller.update(bot, Controller.MOVE.DOWN);
-                    }
-                }
-                
+                if(rayf.getDistance() > 128 && rand.nextInt(100) < 100)
+                    Controller.update(bot, Controller.MOVE.UP);
                 break;
             case DEAD:
                 break;
         }
-
-           // Controller.update(bot, Controller.MOVE.FIRE);
-           
-        //Threading for Path Generation
-        //FIFO path finding queue
-        if(threads.peek().getState() == Thread.State.NEW)
-             threads.peek().start(); 
-        else if(threads.peek().getState() == Thread.State.TERMINATED){
-            Bot b = threads.pop().bot;
-            threads.add(new MyThread(b));
+    }
+    
+    /**
+     * Used to make the bot turn 
+     * @param bot the bot to turn
+     */
+    public void turn(Bot bot) {
+        boolean rayhit = false;
+        float angleNode = 0;
+        
+        if(bot.getTarget() != null && bot.getTarget().isAlive()) {
+            angleNode = bot.getRotationToEntity(bot.getTarget());
+            rayhit = raye.cast(bot.getX(), bot.getY(), angleNode, 16, bot.getID());
+        } else {
+            //roam, just does not do it now...
+            bot.setTurnMode(MODE.SEARCH); 
+        }        
+        
+        switch(bot.getTurnMode()) {
+            case AGGRESSIVE:
+                if(bot.getRotation() + 2 < angleNode)
+                   Controller.update(bot, Controller.MOVE.ROTRIGHT);
+                else if(bot.getRotation() - 2 > angleNode)
+                    Controller.update(bot, Controller.MOVE.ROTLEFT);
+                
+                //if no line of sight pathfind
+                if(!rayhit || ((Entity)raye.getHit()) != bot.getTarget()) {
+                    bot.setTurnMode(MODE.SEARCH);
+                }  
+                break;
+            case PASSIVE:
+                break;
+            case SEARCH://if facing target, zombie mode and clear path
+                //ASTAR PATHFINDING!!!
+                if(bot.path2 != null &&  !bot.path2.isEmpty()){
+                    Tile t = bot.path2.get(bot.path2.size() - 1);
+                                       
+                    if(bot.isFacingTile(t) == -1)
+                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
+                    else if(bot.isFacingTile(t) == 1)
+                        Controller.update(bot, Controller.MOVE.ROTLEFT);
+                }                
+                
+//                if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
+//                    bot.setTurnMode(MODE.AGGRESSIVE);
+//                    bot.path2 = null;
+//                }  
+                break;
+            case STUCK:
+                break;
+            case DEAD:
+                break;
+            case RANDOM:
+                rayf.cast(bot.getX(), bot.getY(), bot.getRotation() + 5, 32, bot.getID());
+                raye.cast(bot.getX(), bot.getY(), bot.getRotation() - 5, 32, bot.getID());
+                
+                if(raye.getDistance() > rayf.getDistance()) 
+                    Controller.update(bot, Controller.MOVE.ROTRIGHT);                     
+                else 
+                    Controller.update(bot, Controller.MOVE.ROTLEFT);                
+                break;
+            case ZOMBIE:
+                bot.faceTarget();
+                break;
+            default:
+                break;
         }
+    }
+    
+    /**
+     * Used to make the bot choose if they should attack or not
+     * @param bot the bot to choose if to attack or not
+     */
+    public void attack(Bot bot) {
+        //[TODO] need to make it so bot does not require a target at all times
+        if(bot.getTarget() == null || !bot.getTarget().isAlive()) 
+            bot.chooseRandTarget();
         
-             
-       //add to end of queue
+        double dist = bot.getDistanceToEntity(bot.getTarget());
         
-     
-
-        
-       //if(rand.nextInt(1000) == 11)
-       //   bot.chooseRandTarget();
+        switch(bot.getAttackMode()) {
+            case AGGRESSIVE:
+                Controller.update(bot, Controller.MOVE.FIRE);
+                break;
+            case PASSIVE:
+                bot.chooseRandTarget();
+                break;
+            case SEARCH:
+                if(bot.isFacingTarget() == 0)
+                    Controller.update(bot, Controller.MOVE.FIRE);
+                break;
+            case STUCK:
+                break;
+            case DEAD:
+                break;
+            case RANDOM:
+                break;
+            case ZOMBIE:
+                break;
+            default:
+                break;
+        }
     }
     
     public class MyThread extends Thread {

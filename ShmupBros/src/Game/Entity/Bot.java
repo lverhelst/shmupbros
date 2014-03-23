@@ -20,7 +20,9 @@ public class Bot extends Playable {
     public ArrayList<Tile> path2;
     public Ray ray, ray2;
     private Playable target;
-    private MODE mode; 
+    private MODE turnMode; 
+    private MODE moveMode; 
+    private MODE attackMode; 
     private static AStar astar;
     private static Lock lock = new ReentrantLock();
     
@@ -48,23 +50,49 @@ public class Bot extends Playable {
         
         ray = new Ray();
         ray2 = new Ray();
-        mode = MODE.SEARCH;
-        
+        turnMode = MODE.SEARCH;
+        moveMode = MODE.SEARCH;
+        attackMode = MODE.SEARCH;        
     }
     
     /**
-     * @return the mode
+     * @return the turn mode
      */
-    public MODE getMode() {
-        return mode;
-    }
+    public MODE getTurnMode() { return turnMode; }
+    
+    /**
+     * @return the move mode
+     */
+    public MODE getMoveMode() { return moveMode; }
+    
+    /**
+     * @return the attack mode
+     */
+    public MODE getAttackMode() { return attackMode; }
 
     /**
-     * @param mode the mode to set
+     * @param mode the mode to set all modes to
      */
-    public void setMode(MODE mode) {
-        this.mode = mode;
+    public void setAllMode(MODE mode) { 
+        this.turnMode = mode;
+        this.moveMode = mode;
+        this.attackMode = mode; 
     }
+    
+    /**
+     * @param mode the mode to set turn mode to
+     */
+    public void setTurnMode(MODE mode) { this.turnMode = mode; }
+    
+    /**
+     * @param mode the mode to set move mode to
+     */
+    public void setMoveMode(MODE mode) { this.moveMode = mode; }
+    
+    /**
+     * @param mode the mode to set attack mode to
+     */
+    public void setAttackMode(MODE mode) { this.attackMode = mode; }
     
     /**
      * Add a node to the current path
