@@ -21,6 +21,7 @@ public class Player {
     private Playable target;
     private String name;
     private long last_respawned;
+    private long time_alive;
     
     /**
      * Default contructor which sets the defaults and the players name
@@ -39,7 +40,9 @@ public class Player {
         //temporary default location
         target.setX(512);
         target.setY(512);
+        time_alive = 0;
         last_respawned = System.currentTimeMillis();
+        
     }
     
     /**
@@ -118,10 +121,10 @@ public class Player {
         graphics.drawString("Kills: " + target.getKills(), 900, 20);
         
         if(target.isAlive()){
-            long time =  System.currentTimeMillis() - last_respawned;
-            graphics.drawString("Alive: " + time/1000 + "." + time % 1000 + "s", 450, 20);
+           time_alive =  System.currentTimeMillis() - last_respawned;
+            graphics.drawString("Alive: " + time_alive/1000 + "." + time_alive % 1000 + "s", 450, 20);
         }else{
-            graphics.drawString("You are DEAD!", 450, 20);
+            graphics.drawString("You are DEAD! You survived for " + time_alive/1000 + "." + time_alive % 1000 + "s", 450, 20);
         }
         //render health bar
         graphics.drawRect(19, 560, 201, 20);
