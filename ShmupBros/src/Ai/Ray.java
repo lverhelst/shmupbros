@@ -31,7 +31,7 @@ public class Ray <T>{
         hit = null; //reset the raycast
         
         //search until a collision happens
-        while(hit == null) {
+        while(hit == null && GameState.checkMapBounds(x2, y2)) {
             hit = (T)GameState.checkCollision(x2, y2, ID);
             x2 += accuracy * (float)Math.cos(Math.toRadians(angle));
             y2 += accuracy * (float)Math.sin(Math.toRadians(angle));

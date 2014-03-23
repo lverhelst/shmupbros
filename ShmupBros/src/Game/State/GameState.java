@@ -235,10 +235,23 @@ public class GameState extends BasicGameState {
         }
         
         checkMapCollisions(col);
-    }    
+    } 
     
     /**
-     * Used to check if a single point is colliding
+     * Used to check if a point is within the map bounds
+     * @param xp the x position to check
+     * @param yp the y position to check
+     * @return true if in bounds
+     */
+    public static boolean checkMapBounds(float xp, float yp) {        
+        int x = (int)(xp/32);
+        int y = (int)(yp/32);  
+        
+        return x > 0 && x < map.getWidth() && y < map.getHeight() && y > 0;
+    }
+    
+    /**
+     * Used to check if a single point is colliding 
      * @param xp the x position to check
      * @param yp the y position to check
      * @param ID optional ignores the given entity with the ID
@@ -246,7 +259,7 @@ public class GameState extends BasicGameState {
      */
     public static Object checkCollision(float xp, float yp, long ID) {
         int x = (int)(xp/32);
-        int y = (int)(yp/32);
+        int y = (int)(yp/32);        
         
         if(!map.getPassable(x, y)) {
             return map.getTile(x, y);
@@ -259,7 +272,44 @@ public class GameState extends BasicGameState {
         }
         
         return null;
-    }    
+    }
+    
+    /**
+     * Used to check if a single point is colliding with entities
+     * @param xp the x position to check
+     * @param yp the y position to check
+     * @param ID optional ignores the given entity with the ID
+     * @return the object which was collided with
+     */
+    public static Physical checkEntityCollision(float xp, float yp, long ID) {
+        int x = (int)(xp/32);
+        int y = (int)(yp/32);        
+        
+        for(Physical ent: entities) {
+            if(ent.getID() != ID && x == (int)(ent.getX()/32) && y == (int)(ent.getY()/32)) {
+                return ent;
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Used to check if a single point is colliding with a wall
+     * @param xp the x position to check
+     * @param yp the y position to check
+     * @return the object which was collided with
+     */
+    public static Tile checkWallCollision(float xp, float yp) {
+        int x = (int)(xp/32);
+        int y = (int)(yp/32);
+        
+        if(!map.getPassable(x, y)) {
+            return map.getTile(x, y);
+        }
+        
+        return null;
+    } 
     
     /**
      * @return the showPath
