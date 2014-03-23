@@ -67,6 +67,7 @@ public class GameState extends BasicGameState {
             Bot p = new Bot(32f);
             p.setIdentifier("BOT" + i);     
             ai.addAI(p);
+            p.setTarget(player.getTarget());
         } 
         
         showPath = false;
