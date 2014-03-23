@@ -41,7 +41,6 @@ public class Ray <T>{
         x = x - x2;
         y = y - y2;        
         distance = (float)(Math.sqrt(y * y) + (x * x));
-        
         //check if object hit is an Entity
         return hit instanceof Entity; //did not collide with entity
     }

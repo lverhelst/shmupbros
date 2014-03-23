@@ -137,56 +137,64 @@ public class AStar {
 
         
         if(map.getPassable(x, y)){
-            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+            if(map.getTile(x,y) == tar || ((map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)) &&
+                        (map.getPassable(x +1, y + 1 ) && map.getPassable(x -1 , y - 1) && map.getPassable(x + 1, y -1) && map.getPassable(x -1 , y + 1))))
                 adj.add(map.getTile(x, y));
             
         }
         //below
         y -= 2;
         if(map.getPassable(x, y)){
-            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+            if(map.getTile(x,y) == tar || ((map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)) &&
+                        (map.getPassable(x +1, y + 1 ) && map.getPassable(x -1 , y - 1) && map.getPassable(x + 1, y -1) && map.getPassable(x -1 , y + 1))))
                 adj.add(map.getTile(x, y));
         }
         //right?
         y += 1;
         x += 1;
         if(map.getPassable(x, y)){
-            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+            if(map.getTile(x,y) == tar || ((map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)) &&
+                        (map.getPassable(x +1, y + 1 ) && map.getPassable(x -1 , y - 1) && map.getPassable(x + 1, y -1) && map.getPassable(x -1 , y + 1))))
                 adj.add(map.getTile(x, y));
             
         }
         //lefT?
         x -= 2;
         if(map.getPassable(x, y)){
-            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1))||
+                        (map.getPassable(x +1, y + 1 ) && map.getPassable(x -1 , y - 1) && map.getPassable(x + 1, y -1) && map.getPassable(x -1 , y + 1)))
                 adj.add(map.getTile(x, y));
         }
        
         //upper left?
         y += 1;
         if(map.getPassable(x, y)){
-            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+            if(map.getTile(x,y) == tar || ((map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)) &&
+                        (map.getPassable(x +1, y + 1 ) && map.getPassable(x -1 , y - 1) && map.getPassable(x + 1, y -1) && map.getPassable(x -1 , y + 1))))
                 adj.add(map.getTile(x, y));
             
         }
         //upper right
         x+= 2;
         if(map.getPassable(x, y)){
-            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+            if(map.getTile(x,y) == tar || ((map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)) &&
+                        (map.getPassable(x +1, y + 1 ) && map.getPassable(x -1 , y - 1) && map.getPassable(x + 1, y -1) && map.getPassable(x -1 , y + 1))))
                   adj.add(map.getTile(x, y));
             
         }
         //lower right
         y -= 2;
         if(map.getPassable(x, y)){
-            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+            if(map.getTile(x,y) == tar || ((map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)) &&
+                        (map.getPassable(x +1, y + 1 ) && map.getPassable(x -1 , y - 1) && map.getPassable(x + 1, y -1) && map.getPassable(x -1 , y + 1))))
                 adj.add(map.getTile(x, y));
             
         }
         //lower left
         x-=2;
         if(map.getPassable(x, y)){
-            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)))
+            if(map.getTile(x,y) == tar || ((map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)) &&
+                        (map.getPassable(x +1, y + 1 ) && map.getPassable(x -1 , y - 1) && map.getPassable(x + 1, y -1) && map.getPassable(x -1 , y + 1))))
                 adj.add(map.getTile(x, y));
             
         }

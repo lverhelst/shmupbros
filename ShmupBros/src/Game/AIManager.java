@@ -65,9 +65,10 @@ public class AIManager {
     public void update() {
         for(Bot bot: ai) {
             //spawn if dead
-            if(!bot.isAlive())
+            if(!bot.isAlive()){
                 GameState.spawn(bot);
-            bot.setAllMode(MODE.SEARCH);
+                bot.setAllMode(MODE.SEARCH);
+            }
             move(bot);
             turn(bot);
             attack(bot);
@@ -95,9 +96,12 @@ public class AIManager {
                     Controller.update(bot, Controller.MOVE.UP);
                 break;
             case ZOMBIE: 
-                Controller.update(bot, Controller.MOVE.UP);
+                if(rand.nextInt(10) < 2)
+                    Controller.update(bot, Controller.MOVE.UP);
                 break;
             case SEARCH: 
+                Controller.update(bot, Controller.MOVE.UP);
+                /*
                 if(rayf.getDistance() < 128) {                    
                     Controller.update(bot, Controller.MOVE.DOWN);
                 } else if (rayf.getDistance() < 512) {  
@@ -108,12 +112,17 @@ public class AIManager {
                         Controller.update(bot, Controller.MOVE.UP);
                 } else {                    
                     Controller.update(bot, Controller.MOVE.UP);
-                }
+                }*/
                 break;
             case STUCK:
                 break;
             case PASSIVE:
-                break;
+                if(bot.path2 != null &&  !bot.path2.isEmpty()){
+                    Tile t = bot.path2.get(bot.path2.size() - 1); 
+                    if((Math.abs(bot.getRotationToTile(t) - bot.getRotation()) % 180 < 25) || bot.isFacingTile(t) == 0)
+                            bot.setMoveMode(MODE.SEARCH);
+                } 
+               break;
             case RANDOM:                
                 if(rayf.getDistance() > 128 && rand.nextInt(100) < 100)
                     Controller.update(bot, Controller.MOVE.UP);
@@ -158,18 +167,22 @@ public class AIManager {
                 //else follow path
                 //ASTAR PATHFINDING!!!
                 if(bot.path2 != null &&  !bot.path2.isEmpty()){
-                    Tile t = bot.path2.get(bot.path2.size() - 1);
-                                       
+                    Tile t = bot.path2.get(bot.path2.size() - 1);           
                     if(bot.isFacingTile(t) == -1)
                        Controller.update(bot, Controller.MOVE.ROTRIGHT);
                     else if(bot.isFacingTile(t) == 1)
                         Controller.update(bot, Controller.MOVE.ROTLEFT);
+
+                    if((Math.abs(bot.getRotationToTile(t) - bot.getRotation()) % 180 < 25) && bot.isFacingTile(t) != 0){
+                        bot.setMoveMode(MODE.PASSIVE);
+                    }
+                    
                 }                
                 
-//                if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
-//                    bot.setTurnMode(MODE.AGGRESSIVE);
-//                    bot.path2 = null;
-//                }  
+                if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
+                    bot.setTurnMode(MODE.ZOMBIE);      
+                    bot.setMoveMode(MODE.ZOMBIE);
+                }  
                 break;
             case STUCK:
                 break;
@@ -185,8 +198,13 @@ public class AIManager {
                     Controller.update(bot, Controller.MOVE.ROTLEFT);                
                 break;
             case ZOMBIE:
-                bot.faceTarget();
-                
+                if(bot.isFacingTarget() == -1)
+                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
+                    else if(bot.isFacingTarget() == 1)
+                        Controller.update(bot, Controller.MOVE.ROTLEFT);
+                 if(!(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID())) {
+                    bot.setTurnMode(MODE.SEARCH);                 
+                }  
                 break;
             default:
                 break;
@@ -222,7 +240,8 @@ public class AIManager {
             case RANDOM:
                 break;
             case ZOMBIE:
-                Controller.update(bot, Controller.MOVE.FIRE);
+                if(bot.isFacingTarget() == 0)
+                    Controller.update(bot, Controller.MOVE.FIRE);
                 break;
             default:
                 break;
