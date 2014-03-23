@@ -96,8 +96,15 @@ public class AIManager {
                     Controller.update(bot, Controller.MOVE.UP);
                 break;
             case ZOMBIE: 
-                if(rand.nextInt(10) < 2)
+                if(rand.nextInt(100) < 90)
                     Controller.update(bot, Controller.MOVE.UP);
+                
+                if(rayf.getHit() instanceof Playable){
+                    if(  ((Playable)rayf.getHit()).getID() == bot.getTarget().getID() ) {
+                        bot.setTurnMode(MODE.SEARCH);      
+                        bot.setMoveMode(MODE.SEARCH);
+                    }
+                }
                 break;
             case SEARCH: 
                 Controller.update(bot, Controller.MOVE.UP);
@@ -173,7 +180,7 @@ public class AIManager {
                     else if(bot.isFacingTile(t) == 1)
                         Controller.update(bot, Controller.MOVE.ROTLEFT);
 
-                    if((Math.abs(bot.getRotationToTile(t) - bot.getRotation()) % 180 < 25) && bot.isFacingTile(t) != 0){
+                    if((Math.abs(bot.getRotationToTile(t) - bot.getRotation()) % 180 < 20) && bot.isFacingTile(t) != 0){
                         bot.setMoveMode(MODE.PASSIVE);
                     }
                     
@@ -198,11 +205,12 @@ public class AIManager {
                     Controller.update(bot, Controller.MOVE.ROTLEFT);                
                 break;
             case ZOMBIE:
-                if(bot.isFacingTarget() == -1)
+                /*if(bot.isFacingTarget() == -1)
                        Controller.update(bot, Controller.MOVE.ROTRIGHT);
                     else if(bot.isFacingTarget() == 1)
-                        Controller.update(bot, Controller.MOVE.ROTLEFT);
-                 if(!(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID())) {
+                        Controller.update(bot, Controller.MOVE.ROTLEFT);*/
+                bot.faceTarget();
+                 if(!(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) || raye.getDistance() > 200) {
                     bot.setTurnMode(MODE.SEARCH);                 
                 }  
                 break;
