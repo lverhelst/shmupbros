@@ -20,6 +20,7 @@ import Game.State.Option;
 public class Player {
     private Playable target;
     private String name;
+    private long last_respawned;
     
     /**
      * Default contructor which sets the defaults and the players name
@@ -28,6 +29,7 @@ public class Player {
     public Player(String name) {
         target = new Playable(32);
         target.setIdentifier(name + "1");
+        
         this.name = name;
         
         if(Option.vehicle != null) {
@@ -37,6 +39,7 @@ public class Player {
         //temporary default location
         target.setX(512);
         target.setY(512);
+        last_respawned = System.currentTimeMillis();
     }
     
     /**
@@ -99,8 +102,10 @@ public class Player {
             if (controls.isKeyDown(Input.KEY_RCONTROL)) 
                 Controller.update(target, Controller.MOVE.FIRE); 
         }else{
-            if(controls.isKeyPressed(Input.KEY_ENTER))
+            if(controls.isKeyPressed(Input.KEY_ENTER)){
                 Controller.update(target, Controller.MOVE.RESPAWN);   
+                last_respawned = System.currentTimeMillis();
+            }
         }
     }
     
@@ -112,6 +117,12 @@ public class Player {
         graphics.setColor(Color.white);
         graphics.drawString("Kills: " + target.getKills(), 900, 20);
         
+        if(target.isAlive()){
+            long time =  System.currentTimeMillis() - last_respawned;
+            graphics.drawString("Alive: " + time/1000 + "." + time % 1000 + "s", 450, 20);
+        }else{
+            graphics.drawString("You are DEAD!", 450, 20);
+        }
         //render health bar
         graphics.drawRect(19, 560, 201, 20);
         graphics.setColor(Color.red);

@@ -225,8 +225,8 @@ public class AIManager {
      */
     public void attack(Bot bot) {
         //[TODO] need to make it so bot does not require a target at all times
-        if(bot.getTarget() == null || !bot.getTarget().isAlive()) 
-            bot.chooseRandTarget();
+       // if(bot.getTarget() == null || !bot.getTarget().isAlive()) 
+       //     bot.chooseRandTarget();
         
         double dist = bot.getDistanceToEntity(bot.getTarget());
         

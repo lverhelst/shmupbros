@@ -65,7 +65,7 @@ public class AStar {
                 }
                 //remove target location nodes
                 if(pth.size() >= 1)
-                   pth.remove(pth.size() -1);
+                  pth.remove(pth.size() -1);
                 //if(pth.size() >= 1)
                 //    pth.remove(pth.size() -1);
                 if(pth.size() > 0)
