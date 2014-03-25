@@ -112,21 +112,25 @@ public class AIManager {
         result1 = (((close1 * 100) + (middle1 * 75) + (far1 * 10))/(close1 + middle1 + far1));
         result2 = (((close2 * 100) + (middle2 * 75) + (far2 * 10))/(close2 + middle2 + far2));
         
-        if(bot.hasPath() && false) {
+        if(bot.hasPath() ){
             nclose = FuzzyRule.fuzzyCLOSE(ndistance);
             nmiddle = FuzzyRule.fuzzyMIDDLE(ndistance);
             nfar = FuzzyRule.fuzzyFAR(ndistance);            
-            
+            float rotation = bot.getRotationToTile(bot.path.get(0)) - bot.getRotation() % 180;
             nresult = (((nclose * 100) + (nmiddle * 75) + (nfar * 10))/(nclose + nmiddle + nfar));
+            nresult = FuzzyRule.fuzzyRotation(rotation);
+            nresult = FuzzyRule.fuzzyFACING(rotation);
             result1 = FuzzyLogic.fuzzyOR(FuzzyLogic.fuzzyOR(result1, result2), nresult);
+            
+            
         } else {
             result1 = FuzzyLogic.fuzzyOR(result1, result2);
         }
         
         if(rand.nextInt((int)result1) < 10)
             Controller.update(bot, Controller.MOVE.UP);
-        else 
-            System.err.println(result1 + ":" + close1 + "," + middle1 + "," + far1);
+       // else 
+       //     System.err.println(result1 + ":" + close1 + "," + middle1 + "," + far1);
            
     }
     
@@ -178,7 +182,7 @@ public class AIManager {
                 }                
                 
                 if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
-                    bot.setTurnMode(MODE.ZOMBIE);      
+                    //bot.setTurnMode(MODE.ZOMBIE);      
                     bot.setMoveMode(MODE.ZOMBIE);
                 }  
                 break;
@@ -229,7 +233,7 @@ public class AIManager {
                 bot.chooseRandTarget();
                 break;
             case SEARCH:
-                if(bot.isFacingTarget() == 0)
+                if(FuzzyRule.fuzzyFACING((bot.getRotationToEntity(bot.getTarget()) - bot.getRotation()) % 180) > 0.75)
                     Controller.update(bot, Controller.MOVE.FIRE);
                 break;
             case STUCK:

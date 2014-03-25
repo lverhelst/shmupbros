@@ -72,6 +72,7 @@ public class AStar {
                             pth.add(cur);
                         }else{
                             //slope is the same, do not add
+                            pth.add(cur);
                         }
                     }    
                     else{
