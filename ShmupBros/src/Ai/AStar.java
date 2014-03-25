@@ -81,13 +81,13 @@ public class AStar {
                     cur = cur.parent;
                 }
                 //remove target location nodes
-              //  if(pth.size() >= 1)
-              //    pth.remove(pth.size() -1);
+               // if(pth.size() >= 1)
+                 //pth.remove(pth.size() -1);
                 //if(pth.size() >= 1)
                 //    pth.remove(pth.size() -1);
                
-               // if(pth.size() > 0)
-              //    pth.remove(0);
+                if(pth.size() > 0)
+                  pth.remove(0);
                 
                 
                 //Path found

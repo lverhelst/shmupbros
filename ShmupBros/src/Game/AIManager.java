@@ -127,7 +127,7 @@ public class AIManager {
             result1 = FuzzyLogic.fuzzyOR(result1, result2);
         }
         
-        if(rand.nextInt((int)result1) < 10)
+        if(rand.nextInt((int)result1) < 50)
             Controller.update(bot, Controller.MOVE.UP);
        // else 
        //     System.err.println(result1 + ":" + close1 + "," + middle1 + "," + far1);
@@ -178,11 +178,9 @@ public class AIManager {
                     if((Math.abs(bot.getRotationToTile(t) - bot.getRotation()) % 180 < 20) && bot.isFacingTile(t) != 0){
                         bot.setMoveMode(MODE.PASSIVE);
                     }
-                    
                 }                
-                
                 if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
-                    //bot.setTurnMode(MODE.ZOMBIE);      
+                    bot.setTurnMode(MODE.ZOMBIE);      
                     bot.setMoveMode(MODE.ZOMBIE);
                 }  
                 break;
@@ -200,10 +198,10 @@ public class AIManager {
                     Controller.update(bot, Controller.MOVE.ROTLEFT);                
                 break;
             case ZOMBIE:
-                /*if(bot.isFacingTarget() == -1)
+                if(bot.isFacingTarget() == -1)
                        Controller.update(bot, Controller.MOVE.ROTRIGHT);
                     else if(bot.isFacingTarget() == 1)
-                        Controller.update(bot, Controller.MOVE.ROTLEFT);*/
+                        Controller.update(bot, Controller.MOVE.ROTLEFT);
 //                bot.faceTarget();
                  if(!(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) || raye.getDistance() > 200) {
                     bot.setTurnMode(MODE.SEARCH);                 
@@ -233,7 +231,7 @@ public class AIManager {
                 bot.chooseRandTarget();
                 break;
             case SEARCH:
-                if(FuzzyRule.fuzzyFACING((bot.getRotationToEntity(bot.getTarget()) - bot.getRotation()) % 180) > 0.75)
+                if(FuzzyRule.fuzzyFACING((bot.getRotationToEntity(bot.getTarget()) - bot.getRotation()) % 180) > 0.95)
                     Controller.update(bot, Controller.MOVE.FIRE);
                 break;
             case STUCK:
