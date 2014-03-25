@@ -16,9 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Leon Verhelst and Emery
  */
 public class Bot extends Playable {
-    private ArrayList<Entity> path;
-    public ArrayList<Tile> path2;
-    public Ray ray, ray2;
+    public ArrayList<Tile> path;
     private Playable target;
     private MODE turnMode; 
     private MODE moveMode; 
@@ -44,12 +42,10 @@ public class Bot extends Playable {
         super(f);
         super.setColor(Color.orange);
         path = new ArrayList<>();
-        path2 = new ArrayList<>();
+        
         if(astar == null)
             astar = new AStar(); 
         
-        ray = new Ray();
-        ray2 = new Ray();
         turnMode = MODE.SEARCH;
         moveMode = MODE.SEARCH;
         attackMode = MODE.SEARCH;        
@@ -95,38 +91,6 @@ public class Bot extends Playable {
     public void setAttackMode(MODE mode) { this.attackMode = mode; }
     
     /**
-     * Add a node to the current path
-     * @param node the node to add
-     */
-    public void addPathNode(Entity node) {
-        path.add(node);
-    }
-    
-    /**
-     * Used to get the next path node
-     * @return the next path node
-     */
-    public Entity getPathNode() {
-        return path.get(0);
-    }
-    
-    /**
-     * Used to move to the next node
-     */
-    public void nextPathNode() {
-        if(!path.isEmpty())
-            path.remove(0);
-    }
-    
-    /**
-     * Used to find out if the bot has a path or not
-     * @return true if a path current exist
-     */
-    public boolean hasPath() {
-        return !path.isEmpty();
-    }
-
-    /**
      * @return the target
      */
     public Playable getTarget() {
@@ -156,10 +120,10 @@ public class Bot extends Playable {
                    // long running process
                     //System.out.println(Thread.currentThread().getName() + " obtained Lock.");         
                     ((MyThread)Thread.currentThread()).last_locked = System.nanoTime();
-                    path2 = astar.pathFind(this, target);  
+                    path = astar.pathFind(this, target);  
                                       
-                    if(path2 != null){
-                        for(Tile t : path2){   
+                    if(path != null){
+                        for(Tile t : path){   
                             t.pathnode = true;
                         }   
                     }
@@ -234,6 +198,32 @@ public class Bot extends Playable {
         if((getRotation()  * Math.PI /180) -  2 * Math.PI/180  > angleToFace)
             return 1;
         */
+        return 0;
+    }
+    
+    /**
+     * Used to check if the bot currently has a path
+     * @return true if a path exists
+     */
+    public boolean hasPath() {
+        return path != null && !path.isEmpty();
+    }
+    
+    /**
+     * Used to calculate the distance to the next node
+     * @return the distance 
+     */
+     public double distanceToNode(){
+         if(hasPath()) {
+            Tile node = path.get(0);
+            
+            double x, y;
+            x = getX() - node.getX();
+            y = getY() - node.getY();
+            
+            return Math.sqrt((x * x) + (y * y));
+         }
+         
         return 0;
     }
     

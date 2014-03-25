@@ -61,7 +61,7 @@ public class GameState extends BasicGameState {
         player = new Player("PLAYER");
         ai = new AIManager();
         
-        int num_bots = 10;
+        int num_bots = 1;
 
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);
@@ -96,7 +96,7 @@ public class GameState extends BasicGameState {
         offsetX = gc.getWidth()/2;
         offsetY = gc.getHeight()/2;
         
-        map = new Map("Assets/level1.map", gc.getScreenWidth()/32, (gc.getScreenHeight())/32);
+        map = new Map("Assets/level.map", gc.getScreenWidth()/32, (gc.getScreenHeight())/32);
         curtime = System.currentTimeMillis();
         
         m_font = new Font("Verdana", Font.BOLD, 32);
@@ -267,7 +267,7 @@ public class GameState extends BasicGameState {
         }
         
         for(Physical ent: entities) {
-            if(ent.getID() != ID && x == (int)(ent.getX()/32) && y == (int)(ent.getY()/32)) {
+            if(ent.getID() != ID && ent.getCollidable() && x == (int)(ent.getX()/32) && y == (int)(ent.getY()/32)) {
                 return ent;
             }
         }

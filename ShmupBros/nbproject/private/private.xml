@@ -18,15 +18,10 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Orion/shmupbros/ShmupBros/src/Game/Map/Map.java</file>
-            <file>file:/C:/Users/Orion/shmupbros/ShmupBros/src/Game/Player.java</file>
-            <file>file:/C:/Users/Orion/shmupbros/ShmupBros/src/Game/Entity/Playable.java</file>
-            <file>file:/C:/Users/Orion/shmupbros/ShmupBros/src/Ai/Ray.java</file>
-            <file>file:/C:/Users/Orion/shmupbros/ShmupBros/src/Game/AIManager.java</file>
-            <file>file:/C:/Users/Orion/shmupbros/ShmupBros/src/Game/State/GameState.java</file>
-            <file>file:/C:/Users/Orion/shmupbros/ShmupBros/nbproject/build-impl.xml</file>
-            <file>file:/C:/Users/Orion/shmupbros/ShmupBros/src/Ai/AStar.java</file>
-            <file>file:/C:/Users/Orion/shmupbros/ShmupBros/src/Game/Entity/Bot.java</file>
+            <file>file:/C:/Users/Emery/shmupbros/ShmupBros/src/Ai/FuzzyRule.java</file>
+            <file>file:/C:/Users/Emery/shmupbros/ShmupBros/src/Game/AIManager.java</file>
+            <file>file:/C:/Users/Emery/shmupbros/ShmupBros/src/Ai/FuzzyLogic.java</file>
+            <file>file:/C:/Users/Emery/shmupbros/ShmupBros/src/Game/Entity/Bot.java</file>
         </group>
     </open-files>
 </project-private>
