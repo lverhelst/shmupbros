@@ -59,17 +59,34 @@ public class AStar {
             if(closedList.contains(targetTile)){
                 ArrayList<Tile> pth = new ArrayList<Tile>();
                 Tile cur = targetTile;
+                
+                double lastslope = Math.PI;
+                double slope;
                 while(cur != null){
-                    pth.add(cur);
+                    //calculate slope 
+                    if(cur.parent != null)
+                    {
+                        slope = (cur.getY() - cur.parent.getY())/(cur.getX() - cur.parent.getX());
+                        if(lastslope != slope){
+                            lastslope = slope;
+                            pth.add(cur);
+                        }else{
+                            //slope is the same, do not add
+                        }
+                    }    
+                    else{
+                        break;
+                    }
                     cur = cur.parent;
                 }
                 //remove target location nodes
-                if(pth.size() >= 1)
-                  pth.remove(pth.size() -1);
+              //  if(pth.size() >= 1)
+              //    pth.remove(pth.size() -1);
                 //if(pth.size() >= 1)
                 //    pth.remove(pth.size() -1);
-                if(pth.size() > 0)
-                   pth.remove(0);
+               
+               // if(pth.size() > 0)
+              //    pth.remove(0);
                 
                 
                 //Path found
@@ -132,8 +149,8 @@ public class AStar {
         if(current == null)
             return null;
         //above
-        int x = (int)current.getX()/32;
-        int y = (int)current.getY()/32 + 1;
+        int x = (int)Math.floor(current.getX()/32);
+        int y = (int)Math.floor(current.getY()/32) + 1;
 
         
         if(map.getPassable(x, y)){
@@ -161,7 +178,7 @@ public class AStar {
         //lefT?
         x -= 2;
         if(map.getPassable(x, y)){
-            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1))||
+            if(map.getTile(x,y) == tar || (map.getPassable(x +1, y) && map.getPassable(x -1 , y) && map.getPassable(x, y -1) && map.getPassable(x, y + 1)) &&
                         (map.getPassable(x +1, y + 1 ) && map.getPassable(x -1 , y - 1) && map.getPassable(x + 1, y -1) && map.getPassable(x -1 , y + 1)))
                 adj.add(map.getTile(x, y));
         }

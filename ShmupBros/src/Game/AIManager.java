@@ -112,7 +112,7 @@ public class AIManager {
         result1 = (((close1 * 100) + (middle1 * 75) + (far1 * 10))/(close1 + middle1 + far1));
         result2 = (((close2 * 100) + (middle2 * 75) + (far2 * 10))/(close2 + middle2 + far2));
         
-        if(bot.hasPath()) {
+        if(bot.hasPath() && false) {
             nclose = FuzzyRule.fuzzyCLOSE(ndistance);
             nmiddle = FuzzyRule.fuzzyMIDDLE(ndistance);
             nfar = FuzzyRule.fuzzyFAR(ndistance);            
