@@ -102,7 +102,6 @@ public class GameState extends BasicGameState {
         m_font = new Font("Verdana", Font.BOLD, 32);
         TrueTypeFont ttf = new TrueTypeFont(m_font, true);
         log = new TextField(gc, ttf , 0, 0, 100, 100);
-        log.setText("What");
 
         Projectile.init();
         Playable.init();

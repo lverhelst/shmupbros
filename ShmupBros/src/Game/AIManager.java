@@ -112,22 +112,49 @@ public class AIManager {
         result1 = (((close1 * 100) + (middle1 * 75) + (far1 * 10))/(close1 + middle1 + far1));
         result2 = (((close2 * 100) + (middle2 * 75) + (far2 * 10))/(close2 + middle2 + far2));
         
+        
+        
         if(bot.hasPath() ){
             nclose = FuzzyRule.fuzzyCLOSE(ndistance);
             nmiddle = FuzzyRule.fuzzyMIDDLE(ndistance);
-            nfar = FuzzyRule.fuzzyFAR(ndistance);            
-            float rotation = bot.getRotationToTile(bot.path.get(0)) - bot.getRotation() % 180;
-            nresult = (((nclose * 100) + (nmiddle * 75) + (nfar * 10))/(nclose + nmiddle + nfar));
+            nfar = FuzzyRule.fuzzyFAR(ndistance); 
+            float rotationToNodeVector = bot.getRotationToTile(bot.path.get(0));
+            //System.out.print(rotationToNodeVector + " ");
+            if(bot.path.size() > 2) //&& bot can see node 2
+            {
+               rotationToNodeVector = (rotationToNodeVector + bot.getRotationToTile(bot.path.get(1)))/2;
+            }
+            //System.out.print(rotationToNodeVector);
+            float rotation = rotationToNodeVector - bot.getRotation() % 180;
+            //System.out.println(" needed: " + rotation);
+            
+            
+           // nresult = (((nclose * 100) + (nmiddle * 75) + (nfar * 10))/(nclose + nmiddle + nfar));
             nresult = FuzzyRule.fuzzyRotation(rotation);
-            nresult = FuzzyRule.fuzzyFACING(rotation);
-            result1 = FuzzyLogic.fuzzyOR(FuzzyLogic.fuzzyOR(result1, result2), nresult);
+            
+            
+            //nresult = FuzzyRule.fuzzyFACING(rotation);
+           //as facing -> 1, speed -> 1 (if facing, go fast)
+           
+            
+            // System.out.println(nresult);
+           
+            result1 = nresult; //says if ratation small, go fast
+           // result1 = FuzzyLogic.fuzzyOR(FuzzyLogic.fuzzyOR(result1, result2), nresult);
             
             
         } else {
             result1 = FuzzyLogic.fuzzyOR(result1, result2);
         }
         
-        if(rand.nextInt((int)result1) < 50)
+        //apply speed rule
+        
+        System.out.println(result1);
+        if(bot.isFacingTarget() == 0)
+            Controller.update(bot, Controller.MOVE.UP);
+        
+        //if result1 (speed) -> 1.0, up is done more often
+        else if(rand.nextDouble() < result1)
             Controller.update(bot, Controller.MOVE.UP);
        // else 
        //     System.err.println(result1 + ":" + close1 + "," + middle1 + "," + far1);
@@ -167,8 +194,12 @@ public class AIManager {
             case SEARCH:
                 //if raycast to target hits target && facing target, zombie mode
                 //else follow path
-                //ASTAR PATHFINDING!!!
-                if(bot.path != null &&  !bot.path.isEmpty()){
+                 if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
+                     if(bot.isFacingTarget() == -1)
+                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
+                    else if(bot.isFacingTarget() == 1)
+                        Controller.update(bot, Controller.MOVE.ROTLEFT);
+                }  else /* Pathfind */ if(bot.path != null &&  !bot.path.isEmpty()){
                     Tile t = bot.path.get(bot.path.size() - 1);           
                     if(bot.isFacingTile(t) == -1)
                        Controller.update(bot, Controller.MOVE.ROTRIGHT);
@@ -176,13 +207,10 @@ public class AIManager {
                         Controller.update(bot, Controller.MOVE.ROTLEFT);
 
                     if((Math.abs(bot.getRotationToTile(t) - bot.getRotation()) % 180 < 20) && bot.isFacingTile(t) != 0){
-                        bot.setMoveMode(MODE.PASSIVE);
+                       // bot.setMoveMode(MODE.PASSIVE);
                     }
                 }                
-                if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
-                    bot.setTurnMode(MODE.ZOMBIE);      
-                    bot.setMoveMode(MODE.ZOMBIE);
-                }  
+               
                 break;
             case STUCK:
                 break;
@@ -198,10 +226,7 @@ public class AIManager {
                     Controller.update(bot, Controller.MOVE.ROTLEFT);                
                 break;
             case ZOMBIE:
-                if(bot.isFacingTarget() == -1)
-                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
-                    else if(bot.isFacingTarget() == 1)
-                        Controller.update(bot, Controller.MOVE.ROTLEFT);
+               
 //                bot.faceTarget();
                  if(!(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) || raye.getDistance() > 200) {
                     bot.setTurnMode(MODE.SEARCH);                 

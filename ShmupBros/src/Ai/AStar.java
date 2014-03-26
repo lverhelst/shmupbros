@@ -67,7 +67,9 @@ public class AStar {
                     if(cur.parent != null)
                     {
                         slope = (cur.getY() - cur.parent.getY())/(cur.getX() - cur.parent.getX());
+                        //System.out.println(slope);
                         if(lastslope != slope){
+                            
                             lastslope = slope;
                             pth.add(cur);
                         }else{
@@ -82,12 +84,12 @@ public class AStar {
                 }
                 //remove target location nodes
                // if(pth.size() >= 1)
-                 //pth.remove(pth.size() -1);
+                 // pth.remove(pth.size() -1);
                 //if(pth.size() >= 1)
                 //    pth.remove(pth.size() -1);
                
-                if(pth.size() > 0)
-                  pth.remove(0);
+                //if(pth.size() > 0)
+                  //pth.remove(0);
                 
                 
                 //Path found
