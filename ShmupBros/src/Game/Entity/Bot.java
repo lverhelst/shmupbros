@@ -274,8 +274,8 @@ public class Bot extends Playable {
     
     public void applyFuzzy() {
         //cast the rays to use in fuzzy logic
-        primaryRay.cast(this, 10);
-        secondaryRay.cast(this, - 10);
+        primaryRay.cast(this, 10, 8);
+        secondaryRay.cast(this, - 10, 8);
         
         double distance1 = primaryRay.getDistance()/32;
         double distance2 = secondaryRay.getDistance()/32;

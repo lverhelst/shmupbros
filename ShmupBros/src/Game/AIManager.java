@@ -1,6 +1,5 @@
 package Game;
 
-import Ai.FuzzyLogic;
 import Ai.FuzzyRule;
 import Ai.Ray;
 import Game.Entity.Bot;
@@ -111,7 +110,7 @@ public class AIManager {
         
         if(bot.getTarget() != null && bot.getTarget().isAlive()) {
             angleNode = bot.getRotationToEntity(bot.getTarget());
-            rayhit = raye.cast(bot, angleNode);
+            rayhit = raye.cast(bot, angleNode, bot.getSize());
         } else {
             //roam, just does not do it now...
             bot.setTurnMode(MODE.SEARCH); 
@@ -157,8 +156,8 @@ public class AIManager {
             case DEAD:
                 break;
             case RANDOM:
-                rayf.cast(bot, bot.getRotation() + 5);
-                raye.cast(bot, bot.getRotation() - 5);
+                rayf.cast(bot, bot.getRotation() + 5, 8);
+                raye.cast(bot, bot.getRotation() - 5, 8);
                 
                 if(raye.getDistance() > rayf.getDistance()) 
                     Controller.update(bot, Controller.MOVE.ROTRIGHT);                     

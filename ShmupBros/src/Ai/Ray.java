@@ -25,13 +25,15 @@ public class Ray extends Physical {
      * Used to cast a ray from a position at an angle
      * @param angle the angle to move in
      * @param caster the physical entity to cast the ray
+     * @param size the size of the ray to cast
      * @return true if the ray collides with an entity, false if not
      */
-    public boolean cast(Physical caster, float angle) {
+    public boolean cast(Physical caster, float angle, float size) {
         //retrieves the owners position and rotation
         setX(caster.getX()); 
         setY(caster.getY());
         setRotation(caster.getRotation());
+        setSize(size);
         
         //reset the ray properties
         setForceX(0);        
@@ -62,9 +64,10 @@ public class Ray extends Physical {
      * Used to cast a ray from a position at an angle
      * @param caster the entity casting the ray
      * @param target the entity for the ray to cast towards
+     * @param size the size of the ray to cast
      * @return true if the ray reached target
      */
-    public boolean cast(Entity caster, Entity target) {
+    public boolean cast(Entity caster, Entity target, float size) {
         //retrieves the owners position and rotation
         setX(caster.getX()); 
         setY(caster.getY());
