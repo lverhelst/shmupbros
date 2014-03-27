@@ -11,7 +11,7 @@ import Game.State.GameState;
 public class Ray extends Physical {
     private float distance;
     private Physical hit;
-    private Physical target;
+    private Entity caster;
     
     /**
      * Default constructor
@@ -23,21 +23,21 @@ public class Ray extends Physical {
     /**
      * Used to cast a ray from a position at an angle
      * @param angle the angle to move in
-     * @param ent the physical entity to cast the ray
+     * @param caster the physical entity to cast the ray
      * @return true if the ray collides with an entity, false if not
      */
-    public boolean cast(Physical ent, float angle) {
+    public boolean cast(Physical caster, float angle) {
         //retrieves the owners position and rotation
-        setX(ent.getX()); 
-        setY(ent.getY());
-        setRotation(ent.getRotation());
+        setX(caster.getX()); 
+        setY(caster.getY());
+        setRotation(caster.getRotation());
         
         //reset the ray properties
         setForceX(0);        
         setForceY(0);
         setCollidable(true);
         hit = null;
-        target = ent;
+        this.caster = caster;
         
         //set and apply the rotation and force
         modRotation(angle);
@@ -52,10 +52,45 @@ public class Ray extends Physical {
         } 
         
         //calculate the distance traveled
-        distance = target.getDistanceToEntity(this);
+        distance = getDistanceToEntity(caster);
         //check if object hit is an Entity
         return hit instanceof Entity; //did not collide with entity
-    }    
+    }
+    
+    /**
+     * Used to cast a ray from a position at an angle
+     * @param caster the entity casting the ray
+     * @param target the entity for the ray to cast towards
+     * @return true if the ray reached target
+     */
+    public boolean cast(Entity caster, Entity target) {
+        //retrieves the owners position and rotation
+        setX(caster.getX()); 
+        setY(caster.getY());
+        setRotation(caster.getRotationToEntity(target));
+        
+        //reset the ray properties
+        setForceX(0);        
+        setForceY(0);
+        setCollidable(true);
+        hit = null;
+        this.caster = caster;
+        
+        //set and apply the force
+        applyForce(24, getRotation());        
+        
+        //search until a collision happens
+        while(getCollidable() || getDistanceToEntity(target) > 32) {            
+            GameState.checkCollisions(this);
+            modX(getForceX());
+            modY(getForceY());
+        } 
+        
+        //calculate the distance traveled
+        distance = target.getDistanceToEntity(this);
+        
+        return distance <= 32; //collided with target
+    }
     
     /**
      * @return the object which the ray collided with 
@@ -81,7 +116,7 @@ public class Ray extends Physical {
      * @param col Physical object which has been collided with
      */
     @Override public void Collide(Physical col) {
-        if(col != target) {
+        if(col.getID() != caster.getID()) {
             hit = col;
             setCollidable(false);
         }

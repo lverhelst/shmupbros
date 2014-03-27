@@ -16,23 +16,22 @@ public class AStar {
     private ArrayList<Tile> closedList;
     private Tile tar;
     
-    
     private static Map map;
     
     public AStar(){
-        path = new ArrayList<Tile>();
+        path = new ArrayList();
         if(map == null)
             map = GameState.getMap();
     }
     
     public ArrayList<Tile> pathFind(Playable source, Playable target){
-        
-        openList = new ArrayList<Tile>();
-        closedList = new ArrayList<Tile>();
+        openList = new ArrayList();
+        closedList = new ArrayList();
         int x = (int)((source.getX() + source.getForceX() - source.getSize())/32);
         int y = (int)((source.getY() + source.getForceY() - source.getSize())/32);
         if(!(x >= 0 && y >= 0))
             return null;
+        
         openList.add(map.getTile(x, y));
         if(target == null)
             return null;
