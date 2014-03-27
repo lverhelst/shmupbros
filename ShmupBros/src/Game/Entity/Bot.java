@@ -297,7 +297,7 @@ public class Bot extends Playable {
             double rotation = rotationToNodeVector - getRotation() % 180;
             double nresult = FuzzyRule.fuzzyRotation(rotation);
             
-            result = FuzzyLogic.fuzzyOR(nresult, result); //says if ratation small, go fast
+            result = FuzzyLogic.fuzzyAND(nresult, result); //says if ratation small, go fast
         } 
         
         fuzzySpeed = result;
