@@ -18,6 +18,7 @@ public class Ray extends Physical {
      */
     public Ray() {
         super(16);
+        setType(TYPE.RAY);
     }
     
     /**

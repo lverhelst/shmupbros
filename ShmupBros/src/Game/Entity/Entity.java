@@ -16,7 +16,8 @@ public class Entity {
         ENTITY,
         PLAYABLE,
         PHYSICAL,
-        PROJECTILE        
+        PROJECTILE,
+        RAY
     }
     
     /**

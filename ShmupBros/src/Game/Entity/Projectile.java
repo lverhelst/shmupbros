@@ -60,7 +60,7 @@ public class Projectile extends Physical{
      */
     @Override public void Collide(Physical col) {        
         //Don't collide with owner
-        if(col.getID() == owner.getID()){
+        if(col.getID() == owner.getID() || col.getType() == TYPE.RAY){
             return;
         }
         
