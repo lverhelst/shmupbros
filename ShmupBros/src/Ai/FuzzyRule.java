@@ -58,6 +58,7 @@ public class FuzzyRule {
         }
         return 0;
     }
+    
     /**
      * Returns the amount of force to exert on the object at a certain distance
      * @param distance double distance

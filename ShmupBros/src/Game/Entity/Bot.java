@@ -2,6 +2,8 @@ package Game.Entity;
 
 import Game.AIManager.MyThread;
 import Ai.AStar;
+import Ai.FuzzyLogic;
+import Ai.FuzzyRule;
 import Ai.Ray;
 import Game.State.GameState;
 import org.newdawn.slick.Color;
@@ -24,7 +26,9 @@ public class Bot extends Playable {
     private static AStar astar;
     private static Lock lock = new ReentrantLock();
     
+    //fuzzy logic attributes
     private Ray primaryRay, secondaryRay;
+    private double closeWeight, middleWeight, farWeight, fuzzySpeed;
     
     /*
     We might want to change these to float values, that way we can have a mixed mode
@@ -52,8 +56,14 @@ public class Bot extends Playable {
         moveMode = MODE.SEARCH;
         attackMode = MODE.SEARCH;        
         
+        //used to detect distances to collisions
         primaryRay = new Ray();
         secondaryRay = new Ray();
+        
+        //used to give weights to fuzzy logic
+        closeWeight = 10;
+        middleWeight = 50;
+        farWeight = 100;
     }
     
     /**
@@ -247,12 +257,50 @@ public class Bot extends Playable {
         }
     }
     
+    /**
+     * @return double of the calculated speed
+     */
+    public double getFuzzySpeed() {
+        return fuzzySpeed;
+    }
+    
+    /**
+     * Used to update the bots position and run the fuzzy logic for the bot
+     */
     @Override public void update() {
-        super.update();        
-        
+        super.update();
+        applyFuzzy();
+    }
+    
+    public void applyFuzzy() {
         //cast the rays to use in fuzzy logic
         primaryRay.cast(this, 10);
         secondaryRay.cast(this, - 10);
+        
+        double distance1 = primaryRay.getDistance()/32;
+        double distance2 = secondaryRay.getDistance()/32;
+        
+        //distance infront to colliable
+        double close = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyCLOSE(distance1), FuzzyRule.fuzzyCLOSE(distance2));
+        double middle = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyMIDDLE(distance1), FuzzyRule.fuzzyMIDDLE(distance2));
+        double far = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyFAR(distance1), FuzzyRule.fuzzyFAR(distance2));
+        
+        double result = (((close * closeWeight) + (middle * middleWeight) + (far * farWeight))/(close + middle + far));
+        
+        if(hasPath() ) {
+            double rotationToNodeVector = getRotationToTile(path.get(0));
+            
+            if(path.size() > 2) { //&& bot can see node 2
+               rotationToNodeVector = (rotationToNodeVector + getRotationToTile(path.get(1)))/2;
+            }
+            
+            double rotation = rotationToNodeVector - getRotation() % 180;
+            double nresult = FuzzyRule.fuzzyRotation(rotation);
+            
+            result = FuzzyLogic.fuzzyOR(nresult, result); //says if ratation small, go fast
+        } 
+        
+        fuzzySpeed = result;
     }
     
     @Override public void render(Graphics graphics){

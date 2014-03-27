@@ -80,7 +80,7 @@ public class Ray extends Physical {
         applyForce(24, getRotation());        
         
         //search until a collision happens
-        while(getCollidable() || getDistanceToEntity(target) > 32) {            
+        while(getCollidable() && distance > 32) {
             GameState.checkCollisions(this);
             modX(getForceX());
             modY(getForceY());
