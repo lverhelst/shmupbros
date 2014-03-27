@@ -288,10 +288,10 @@ public class Bot extends Playable {
         double result = (((close * closeWeight) + (middle * middleWeight) + (far * farWeight))/(close + middle + far));
         
         if(hasPath() ) {
-            double rotationToNodeVector = getRotationToTile(path.get(0));
+            double rotationToNodeVector = getRotationToTile(path.get(path.size() - 1));
             
             if(path.size() > 2) { //&& bot can see node 2
-               rotationToNodeVector = (rotationToNodeVector + getRotationToTile(path.get(1)))/2;
+               rotationToNodeVector = (rotationToNodeVector + getRotationToTile(path.get(path.size() - 2)))/2;
             }
             
             double rotation = rotationToNodeVector - getRotation() % 180;
@@ -305,6 +305,7 @@ public class Bot extends Playable {
     
     @Override public void render(Graphics graphics){
         //used to display where the rays collide
+        
         if(true) {
             graphics.setColor(Color.cyan);
             graphics.fillRect(primaryRay.getX(), primaryRay.getY(), 8, 8);
