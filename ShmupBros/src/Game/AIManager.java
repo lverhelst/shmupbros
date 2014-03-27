@@ -90,8 +90,8 @@ public class AIManager {
      */
     public void move(Bot bot) { 
         //cast ray for simulate fuzzy selection
-        rayf.cast(bot, bot.getRotation() + 10, 16);
-        raye.cast(bot, bot.getRotation() - 10, 16);
+        rayf.cast(bot, bot.getRotation() + 10);
+        raye.cast(bot, bot.getRotation() - 10);
         double distance1, distance2, ndistance;
         double close1, middle1, far1, close2, middle2, far2, nclose, nmiddle, nfar, result1, result2, nresult;
         
@@ -171,7 +171,7 @@ public class AIManager {
         
         if(bot.getTarget() != null && bot.getTarget().isAlive()) {
             angleNode = bot.getRotationToEntity(bot.getTarget());
-            rayhit = raye.cast(bot, angleNode, 16);
+            rayhit = raye.cast(bot, angleNode);
         } else {
             //roam, just does not do it now...
             bot.setTurnMode(MODE.SEARCH); 
@@ -217,8 +217,8 @@ public class AIManager {
             case DEAD:
                 break;
             case RANDOM:
-                rayf.cast(bot, bot.getRotation() + 5, 32);
-                raye.cast(bot, bot.getRotation() - 5, 32);
+                rayf.cast(bot, bot.getRotation() + 5);
+                raye.cast(bot, bot.getRotation() - 5);
                 
                 if(raye.getDistance() > rayf.getDistance()) 
                     Controller.update(bot, Controller.MOVE.ROTRIGHT);                     

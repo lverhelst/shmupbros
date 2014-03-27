@@ -24,6 +24,8 @@ public class Bot extends Playable {
     private static AStar astar;
     private static Lock lock = new ReentrantLock();
     
+    private Ray primaryRay, secondaryRay;
+    
     /*
     We might want to change these to float values, that way we can have a mixed mode
     Not 100% sure about that yet, but could allow combo modes
@@ -49,6 +51,9 @@ public class Bot extends Playable {
         turnMode = MODE.SEARCH;
         moveMode = MODE.SEARCH;
         attackMode = MODE.SEARCH;        
+        
+        primaryRay = new Ray();
+        secondaryRay = new Ray();
     }
     
     /**
@@ -240,9 +245,26 @@ public class Bot extends Playable {
             if(p.getType() == TYPE.PLAYABLE && ((Playable)p).isAlive() && rng.nextInt(size) == answer && ((Playable)p) != this)
                 setTarget((Playable)p);
         }
-    } 
+    }
+    
+    @Override public void update() {
+        super.update();        
+        
+        //cast the rays to use in fuzzy logic
+        primaryRay.cast(this, 10);
+        secondaryRay.cast(this, - 10);
+    }
     
     @Override public void render(Graphics graphics){
+        //used to display where the rays collide
+        if(true) {
+            graphics.setColor(Color.cyan);
+            graphics.fillRect(primaryRay.getX(), primaryRay.getY(), 8, 8);
+
+            graphics.setColor(Color.red);
+            graphics.fillRect(secondaryRay.getX(), secondaryRay.getY(), 8, 8);
+        }
+        
         if(GameState.isShowDirections()){
             graphics.setColor(Color.cyan);
 

@@ -206,11 +206,12 @@ public class GameState extends BasicGameState {
      * Check if the entity is colliding with the world
      * @param col the entity to check if colliding
      */
-    public void checkMapCollisions(Physical col) {
+    public static void checkMapCollisions(Physical col) {
         int x = (int)((col.getX() + col.getForceX() - col.getSize())/32);
         int y = (int)((col.getY() + col.getForceY() - col.getSize())/32);
         
-        if(col.getCollidable() && !map.getPassable(x, y) || !map.getPassable(x+1, y) || 
+        if(!checkMapBounds(x,y) && col.getCollidable() &&
+                !map.getPassable(x, y) || !map.getPassable(x+1, y) || 
                 !map.getPassable(x, y+1) || !map.getPassable(x+1, y+1)) 
             col.Collide();
     }
@@ -219,7 +220,7 @@ public class GameState extends BasicGameState {
      * Check if the entity is colliding with another entity
      * @param col the entity to check
      */
-    public void checkCollisions(Physical col) {
+    public static void checkCollisions(Physical col) {
         //ensure the object can collide
         if(!col.getCollidable())
            return;
@@ -248,68 +249,7 @@ public class GameState extends BasicGameState {
         int y = (int)(yp/32);  
         
         return x > 0 && x < map.getWidth() && y < map.getHeight() && y > 0;
-    }
-    
-    /**
-     * Used to check if a single point is colliding 
-     * @param xp the x position to check
-     * @param yp the y position to check
-     * @param ID optional ignores the given entity with the ID
-     * @return the object which was collided with
-     */
-    public static Object checkCollision(float xp, float yp, long ID) {
-        int x = (int)(xp/32);
-        int y = (int)(yp/32);        
-        
-        if(!map.getPassable(x, y)) {
-            return map.getTile(x, y);
-        }
-        
-        for(Physical ent: entities) {
-            if(ent.getID() != ID && ent.getCollidable() && x == (int)(ent.getX()/32) && y == (int)(ent.getY()/32)) {
-                return ent;
-            }
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Used to check if a single point is colliding with entities
-     * @param xp the x position to check
-     * @param yp the y position to check
-     * @param ID optional ignores the given entity with the ID
-     * @return the object which was collided with
-     */
-    public static Physical checkEntityCollision(float xp, float yp, long ID) {
-        int x = (int)(xp/32);
-        int y = (int)(yp/32);        
-        
-        for(Physical ent: entities) {
-            if(ent.getID() != ID && x == (int)(ent.getX()/32) && y == (int)(ent.getY()/32)) {
-                return ent;
-            }
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Used to check if a single point is colliding with a wall
-     * @param xp the x position to check
-     * @param yp the y position to check
-     * @return the object which was collided with
-     */
-    public static Tile checkWallCollision(float xp, float yp) {
-        int x = (int)(xp/32);
-        int y = (int)(yp/32);
-        
-        if(!map.getPassable(x, y)) {
-            return map.getTile(x, y);
-        }
-        
-        return null;
-    } 
+    }    
     
     /**
      * @return the showPath
