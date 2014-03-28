@@ -32,5 +32,10 @@ public class Main {
                
         System.out.println("Test2: eval 15 expect 0.5: " + r2.evaluate(15)); 
         
+        Rule r3 = r1.aggregate(r2);
+        for(int i = 0; i < r3.x_coord.length; i++){
+            System.out.println(r3.x_coord[i] + "," + r3.y_coord[i]);
+        }
+        
     }
 }
