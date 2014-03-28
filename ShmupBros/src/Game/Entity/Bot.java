@@ -309,9 +309,11 @@ public class Bot extends Playable {
         if(true) {
             graphics.setColor(Color.cyan);
             graphics.fillRect(primaryRay.getX(), primaryRay.getY(), 8, 8);
+            graphics.drawLine(getX(), getY(), primaryRay.getX(), primaryRay.getY());
 
             graphics.setColor(Color.red);
             graphics.fillRect(secondaryRay.getX(), secondaryRay.getY(), 8, 8);
+            graphics.drawLine(getX(), getY(), secondaryRay.getX(), secondaryRay.getY());
         }
         
         if(GameState.isShowDirections()){
