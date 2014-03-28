@@ -91,7 +91,7 @@ public class AIManager {
         double speed = bot.getFuzzySpeed();
         
         //apply speed rule
-        System.out.println(speed);
+//        System.out.println(speed);
 //        if(bot.isFacingTarget() == 0)
 //            Controller.update(bot, Controller.MOVE.UP);
         
@@ -138,8 +138,16 @@ public class AIManager {
                        Controller.update(bot, Controller.MOVE.ROTRIGHT);
                     else if(bot.isFacingTarget() == 1)
                         Controller.update(bot, Controller.MOVE.ROTLEFT);
-                }  else /* Pathfind */ if(bot.path != null &&  !bot.path.isEmpty()){
-                    Tile t = bot.path.get(bot.path.size() - 1);           
+                }  else /* Pathfind */ 
+                     if(bot.path != null &&  !bot.path.isEmpty()){
+                         Tile t;
+                         
+                         if(bot.path.size() > 2) {
+                             t = bot.path.get(bot.path.size() - 2);
+                         } else {
+                             t = bot.path.get(bot.path.size() - 1);
+                         }
+                    
                     if(bot.isFacingTile(t) == -1)
                        Controller.update(bot, Controller.MOVE.ROTRIGHT);
                     else if(bot.isFacingTile(t) == 1)

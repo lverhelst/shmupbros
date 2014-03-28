@@ -17,7 +17,7 @@ public class Main {
         app.setShowFPS(true);
         app.setAlwaysRender(true); // Display all frames even when not in focus
 	
-     //   app.start();
+        app.start();
         
         //testing rules
         double[] rx1 = {0,10,20};

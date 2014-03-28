@@ -282,7 +282,7 @@ public class Bot extends Playable {
         double close = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyCLOSE(distance1), FuzzyRule.fuzzyCLOSE(distance2));
         double middle = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyMIDDLE(distance1), FuzzyRule.fuzzyMIDDLE(distance2));
         double far = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyFAR(distance1), FuzzyRule.fuzzyFAR(distance2));
-        
+                
         double result = (((close * weight) + (middle * weight2) + (far * weight3))/(close + middle + far));
         
         if(hasPath() ) {            

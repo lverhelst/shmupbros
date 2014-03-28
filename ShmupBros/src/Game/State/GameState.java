@@ -70,7 +70,7 @@ public class GameState extends BasicGameState {
             p.setTarget(player.getTarget());
         } 
         
-        showPath = false;
+        showPath = true;
         showDirections = false;
         showSearchSpace = false;
         showName = false;
