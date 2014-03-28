@@ -128,9 +128,10 @@ public class Entity {
         if(ent == null)
             return 0;
         
-        float x = ent.x - this.x;
-        float y = ent.y - this.y;
-        return (float)(Math.atan2(y, x) * 180 / Math.PI);
+        float x2 = ent.getX() - getX();
+        float y2 = ent.getY() - getY();                
+                
+        return (float)Math.toDegrees(Math.atan2(y2, x2));
     }
     
     /**
@@ -143,26 +144,5 @@ public class Entity {
             return 0;
         
         return (float) Math.sqrt((ent.y - this.y) * (ent.y - this.y) + (ent.x - this.x) * (ent.x - this.x));
-    }
-    
-    
-    public float getDistanceToTile(Tile t){
-         return (float) Math.sqrt((t.getY() - this.y) * (t.getY() - this.y) + (t.getX() - this.x) * (t.getX() - this.x));
-    }
-    
-    
-    /**
-     * Calculate rotation needed to face the target tile
-     * @param ent The target tile
-     * @return Rotation needed
-     */
-    public float getRotationToTile(Tile t){
-        //return (float) Math.max(ent.rotation, this.rotation) - Math.min(ent.rotation, this.rotation);
-        if(t == null)
-            return 0;
-        
-        float x = t.getX()+16 - this.x;
-        float y = t.getY()+16 - this.y;
-        return (float)(Math.atan2(y, x) * 180 / Math.PI);
     }
 }

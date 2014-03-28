@@ -30,10 +30,6 @@ public class Bot extends Playable {
     private Ray primaryRay, secondaryRay;
     private double closeWeight, middleWeight, farWeight, fuzzySpeed;
     
-    /*
-    We might want to change these to float values, that way we can have a mixed mode
-    Not 100% sure about that yet, but could allow combo modes
-    */
     public enum MODE{
         AGGRESSIVE, //HUNT AND KILL
         PASSIVE, //STAY STILL
@@ -197,7 +193,7 @@ public class Bot extends Playable {
     }
     
     public int isFacingTile(Tile t){
-        float angleToFace = getRotationToTile(t) ;               
+        float angleToFace = getRotationToEntity(t) ;               
         float rotationNeeded = getRotation() - angleToFace;
         
         if(Math.abs(rotationNeeded) > 180)
@@ -288,11 +284,11 @@ public class Bot extends Playable {
         double result = (((close * closeWeight) + (middle * middleWeight) + (far * farWeight))/(close + middle + far));
         
         if(hasPath() ) {
-            double rotationToNodeVector = getRotationToTile(path.get(path.size() - 1));
+            double rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
             
-            if(path.size() > 2) { //&& bot can see node 2
-               rotationToNodeVector = (rotationToNodeVector + getRotationToTile(path.get(path.size() - 2)))/2;
-            }
+//            if(path.size() > 2) { //&& bot can see node 2
+//               rotationToNodeVector = (rotationToNodeVector + getRotationToTile(path.get(path.size() - 2)))/2;
+//            }
             
             double rotation = rotationToNodeVector - getRotation() % 180;
             double nresult = FuzzyRule.fuzzyRotation(rotation);
@@ -305,6 +301,18 @@ public class Bot extends Playable {
     
     @Override public void render(Graphics graphics){
         //used to display where the rays collide
+        if(hasPath()) {
+            Tile tile = path.get(path.size() - 1);
+            graphics.setColor(Color.yellow);
+
+            float theta = (float)Math.toRadians(getRotationToEntity(tile));
+            float r = (float)getDistanceToEntity(tile) ;
+            float x2 = (float)((r * Math.cos(theta)) + this.getX());
+            float y2 =(float)((r * Math.sin(theta)) + this.getY());
+
+            graphics.drawLine(this.getX(), this.getY(), x2, y2);
+            graphics.fillRect(tile.getX(), tile.getY(), 8, 8);
+        }
         
         if(true) {
             graphics.setColor(Color.cyan);

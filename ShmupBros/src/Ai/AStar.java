@@ -46,7 +46,6 @@ public class AStar {
         Tile currentSquare = openList.get(0);
         map.resetTiles();
         
-        
         ArrayList<Tile> adjacents = new ArrayList<Tile>();
         do{
             currentSquare = getLowestScore(currentSquare);

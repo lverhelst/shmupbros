@@ -91,7 +91,7 @@ public class AIManager {
         double speed = bot.getFuzzySpeed();
         
         //apply speed rule
-        System.out.println(speed);
+//        System.out.println(speed);
 //        if(bot.isFacingTarget() == 0)
 //            Controller.update(bot, Controller.MOVE.UP);
         
@@ -145,7 +145,7 @@ public class AIManager {
                     else if(bot.isFacingTile(t) == 1)
                         Controller.update(bot, Controller.MOVE.ROTLEFT);
 
-                    if((Math.abs(bot.getRotationToTile(t) - bot.getRotation()) % 180 < 20) && bot.isFacingTile(t) != 0){
+                    if((Math.abs(bot.getRotationToEntity(t) - bot.getRotation()) % 180 < 20) && bot.isFacingTile(t) != 0){
                        // bot.setMoveMode(MODE.PASSIVE);
                     }
                 }                
@@ -187,30 +187,30 @@ public class AIManager {
         
         double dist = bot.getDistanceToEntity(bot.getTarget());
         
-        switch(bot.getAttackMode()) {
-            case AGGRESSIVE:
-                Controller.update(bot, Controller.MOVE.FIRE);
-                break;
-            case PASSIVE:
-                bot.chooseRandTarget();
-                break;
-            case SEARCH:
-                if(FuzzyRule.fuzzyFACING((bot.getRotationToEntity(bot.getTarget()) - bot.getRotation()) % 180) > 0.95)
-                    Controller.update(bot, Controller.MOVE.FIRE);
-                break;
-            case STUCK:
-                break;
-            case DEAD:
-                break;
-            case RANDOM:
-                break;
-            case ZOMBIE:
-                if(bot.isFacingTarget() == 0)
-                    Controller.update(bot, Controller.MOVE.FIRE);
-                break;
-            default:
-                break;
-        }
+//        switch(bot.getAttackMode()) {
+//            case AGGRESSIVE:
+//                Controller.update(bot, Controller.MOVE.FIRE);
+//                break;
+//            case PASSIVE:
+//                bot.chooseRandTarget();
+//                break;
+//            case SEARCH:
+//                if(FuzzyRule.fuzzyFACING((bot.getRotationToEntity(bot.getTarget()) - bot.getRotation()) % 180) > 0.95)
+//                    Controller.update(bot, Controller.MOVE.FIRE);
+//                break;
+//            case STUCK:
+//                break;
+//            case DEAD:
+//                break;
+//            case RANDOM:
+//                break;
+//            case ZOMBIE:
+//                if(bot.isFacingTarget() == 0)
+//                    Controller.update(bot, Controller.MOVE.FIRE);
+//                break;
+//            default:
+//                break;
+//        }
     }
     
     public class MyThread extends Thread {
