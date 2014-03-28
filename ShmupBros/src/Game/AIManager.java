@@ -91,12 +91,12 @@ public class AIManager {
         double speed = bot.getFuzzySpeed();
         
         //apply speed rule
-//        System.out.println(speed);
+        System.out.println(speed);
 //        if(bot.isFacingTarget() == 0)
 //            Controller.update(bot, Controller.MOVE.UP);
         
         //if result1 (speed) -> 1.0, up is done more often
-        if(rand.nextDouble() < speed)
+        if(rand.nextDouble() * 100 < speed)
             Controller.update(bot, Controller.MOVE.UP);
     }
     

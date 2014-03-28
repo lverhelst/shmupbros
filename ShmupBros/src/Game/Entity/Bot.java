@@ -28,7 +28,9 @@ public class Bot extends Playable {
     
     //fuzzy logic attributes
     private Ray primaryRay, secondaryRay;
-    private double closeWeight, middleWeight, farWeight, fuzzySpeed;
+    private double fuzzySpeed;
+    private double weight, weight2, weight3;
+    private double fireRate, turnRate, moveRate;
     
     public enum MODE{
         AGGRESSIVE, //HUNT AND KILL
@@ -56,10 +58,10 @@ public class Bot extends Playable {
         primaryRay = new Ray();
         secondaryRay = new Ray();
         
-        //used to give weights to fuzzy logic
-        closeWeight = 10;
-        middleWeight = 50;
-        farWeight = 100;
+        //used to give weights to fuzzy move logic
+        weight = 10;
+        weight2 = 50;
+        weight3 = 100;
     }
     
     /**
@@ -273,27 +275,32 @@ public class Bot extends Playable {
         primaryRay.cast(this, 10, 8);
         secondaryRay.cast(this, - 10, 8);
         
-        double distance1 = primaryRay.getDistance()/32;
-        double distance2 = secondaryRay.getDistance()/32;
+        double distance1 = primaryRay.getDistance();
+        double distance2 = secondaryRay.getDistance();
         
         //distance infront to colliable
         double close = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyCLOSE(distance1), FuzzyRule.fuzzyCLOSE(distance2));
         double middle = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyMIDDLE(distance1), FuzzyRule.fuzzyMIDDLE(distance2));
         double far = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyFAR(distance1), FuzzyRule.fuzzyFAR(distance2));
         
-        double result = (((close * closeWeight) + (middle * middleWeight) + (far * farWeight))/(close + middle + far));
+        double result = (((close * weight) + (middle * weight2) + (far * weight3))/(close + middle + far));
         
-        if(hasPath() ) {
+        if(hasPath() ) {            
             double rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
             
-//            if(path.size() > 2) { //&& bot can see node 2
-//               rotationToNodeVector = (rotationToNodeVector + getRotationToTile(path.get(path.size() - 2)))/2;
-//            }
+            if(path.size() > 2) { //&& bot can see node 2
+               rotationToNodeVector = (rotationToNodeVector + getRotationToEntity(path.get(path.size() - 2)))/2;
+            }
             
             double rotation = rotationToNodeVector - getRotation() % 180;
-            double nresult = FuzzyRule.fuzzyRotation(rotation);
             
-            result = FuzzyLogic.fuzzyAND(nresult, result); //says if ratation small, go fast
+            double facing = FuzzyRule.fuzzyCLOSE(rotation);
+            double small = FuzzyRule.fuzzyMIDDLE(rotation);
+            double big = FuzzyRule.fuzzyFAR(rotation);
+            
+            double nresult = (((facing * weight3) + (small * weight2) + (big * weight))/(facing + small + big));
+            
+            result = FuzzyLogic.fuzzyAND(nresult, result); //says if ratation small, go fast            
         } 
         
         fuzzySpeed = result;
