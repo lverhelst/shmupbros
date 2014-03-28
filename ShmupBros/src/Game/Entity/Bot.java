@@ -59,8 +59,8 @@ public class Bot extends Playable {
         secondaryRay = new Ray();
         
         //used to give weights to fuzzy move logic
-        weight = 10;
-        weight2 = 50;
+        weight = 20;
+        weight2 = 75;
         weight3 = 100;
     }
     
@@ -289,7 +289,7 @@ public class Bot extends Playable {
             double rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
             
             if(path.size() > 2) { //&& bot can see node 2
-               rotationToNodeVector = (rotationToNodeVector + getRotationToEntity(path.get(path.size() - 2)))/2;
+               rotationToNodeVector = getRotationToEntity(path.get(path.size() - 2));
             }
             
             double rotation = rotationToNodeVector - getRotation() % 180;
