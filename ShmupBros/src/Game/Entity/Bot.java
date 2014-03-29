@@ -288,6 +288,9 @@ public class Bot extends Playable {
         Rule Rclose = GameState.getRule("Close");
         Rule Rmiddle = GameState.getRule("Middle");
         Rule Rfar = GameState.getRule("Far");
+        Rule Rsmall = GameState.getRule("Small");
+        Rule Rmedium = GameState.getRule("Medium");
+        Rule Rlarge = GameState.getRule("Large");
         
         //distance infront to colliable
         double close = FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), Rclose.evaluate(distance2));
@@ -306,11 +309,14 @@ public class Bot extends Playable {
             
             double rotation = rotationToNodeVector - getRotation() % 180;
             
-            double facing = FuzzyRule.fuzzyFACING(rotation);
-            double small = FuzzyRule.fuzzySMALLTURN(rotation);
-            double big = FuzzyRule.fuzzyBIGTURN(rotation);
             
-            double nresult = (((facing * weight3) + (small * weight2) + (big * weight))/(facing + small + big));
+            
+            
+            double small = Rsmall.evaluate(rotation);
+            double medium = Rmedium.evaluate(rotation);
+            double large = Rlarge.evaluate(rotation);
+            
+            double nresult = (((small * weight3) + (medium * weight2) + (large * weight))/(small + medium + large));
             
             result = FuzzyLogic.fuzzyAND(nresult, result); //says if ratation small, go fast            
         } 
@@ -324,11 +330,11 @@ public class Bot extends Playable {
             
             double rotation = (rotationToNodeVector - getRotation()) % 360;
             
-            double facing = FuzzyRule.fuzzyFACING(rotation);
-            double small = FuzzyRule.fuzzySMALLTURN(rotation);
-            double big = FuzzyRule.fuzzyBIGTURN(rotation);
+            double small = Rsmall.evaluate(rotation);
+            double medium = Rmedium.evaluate(rotation);
+            double large = Rlarge.evaluate(rotation);
             
-            fireRate = (((facing * 100) + (small * 75) + (big * 5))/(facing + small + big));
+            fireRate = (((small * 100) + (medium * 1) + (large * 1))/(small + medium + large));
         }
         
         moveRate = result;
