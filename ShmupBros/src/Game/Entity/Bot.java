@@ -28,7 +28,7 @@ public class Bot extends Playable {
     private static Lock lock = new ReentrantLock();
     
     //fuzzy logic attributes
-    private Ray primaryRay, secondaryRay;
+    private Ray primaryRay, secondaryRay, targetRay;
     private double weight, weight2, weight3;
     private double fireRate, turnRate, moveRate;
     
@@ -57,6 +57,7 @@ public class Bot extends Playable {
         //used to detect distances to collisions
         primaryRay = new Ray();
         secondaryRay = new Ray();
+        targetRay = new Ray();
         
         //used to give weights to fuzzy move logic
         weight = 20;
@@ -205,12 +206,7 @@ public class Bot extends Playable {
             return -1;
         else if(rotationNeeded - 2 > 0)
             return 1;
-        
-       /* if((getRotation() * Math.PI /180) + 2 * Math.PI/180 < angleToFace)
-            return -1;
-        if((getRotation()  * Math.PI /180) -  2 * Math.PI/180  > angleToFace)
-            return 1;
-        */
+       
         return 0;
     }
     
@@ -256,17 +252,24 @@ public class Bot extends Playable {
     }
     
     /**
-     * @return double of the calculated speed
+     * @return double of the calculated move speed
      */
     public double getMoveRate() {
         return moveRate;
     }
     
     /**
-     * @return double of the calculated speed
+     * @return double of the calculated fire speed
      */
     public double getFireRate() {
         return fireRate;
+    }
+    
+    /**
+     * @return double of the calculated turn speed
+     */
+    public double getTurnRate() {
+        return turnRate;
     }
     
     /**
@@ -274,6 +277,10 @@ public class Bot extends Playable {
      */
     @Override public void update() {
         super.update();
+        
+        if(!target.isAlive())
+            chooseRandTarget();
+        
         applyFuzzy();
     }
     
@@ -281,6 +288,7 @@ public class Bot extends Playable {
         //cast the rays to use in fuzzy logic
         primaryRay.cast(this, 10, 8);
         secondaryRay.cast(this, - 10, 8);
+        boolean hit = targetRay.cast(this, target, 32);
         
         double distance1 = primaryRay.getDistance();
         double distance2 = secondaryRay.getDistance();
@@ -288,20 +296,26 @@ public class Bot extends Playable {
         Rule Rclose = GameState.getRule("Close");
         Rule Rmiddle = GameState.getRule("Middle");
         Rule Rfar = GameState.getRule("Far");
+        
         Rule Rsmall = GameState.getRule("Small");
         Rule Rmedium = GameState.getRule("Medium");
         Rule Rlarge = GameState.getRule("Large");
+        
+        Rule Rleft = GameState.getRule("Left");
+        Rule Rfacing = GameState.getRule("Facing");
+        Rule Rright = GameState.getRule("Right");
         
         //distance infront to colliable
         double close = FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), Rclose.evaluate(distance2));
         double middle = FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2));
         double far = FuzzyLogic.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2));
                 
-        double result = (((close * weight) + (middle * weight2) + (far * weight3))/(close + middle + far));
+        double result = (close * weight) + (middle * weight2) + (far * weight3);
+        double rotationToNodeVector = 0;
         
         //check angle to A* path
         if(hasPath() ) {            
-            double rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
+            rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
             
             if(path.size() > 2) { //&& bot can see node 2
                rotationToNodeVector = getRotationToEntity(path.get(path.size() - 2));
@@ -309,40 +323,50 @@ public class Bot extends Playable {
             
             double rotation = rotationToNodeVector - getRotation() % 180;
             
-            
-            
-            
             double small = Rsmall.evaluate(rotation);
             double medium = Rmedium.evaluate(rotation);
             double large = Rlarge.evaluate(rotation);
             
-            double nresult = (((small * weight3) + (medium * weight2) + (large * weight))/(small + medium + large));
+            double nresult = (small * weight3) + (medium * weight2) + (large * weight);
             
-            result = FuzzyLogic.fuzzyAND(nresult, result); //says if ratation small, go fast            
-        } 
-        
-        //check the firerate
-        if(target != null) {
-            double rotationToNodeVector = getRotationToEntity(target); 
-            
-            if(rotationToNodeVector < 0)
-                rotationToNodeVector += 360;
-            
-            double rotation = (rotationToNodeVector - getRotation()) % 360;
-            
-            double small = Rsmall.evaluate(rotation);
-            double medium = Rmedium.evaluate(rotation);
-            double large = Rlarge.evaluate(rotation);
-            
-            fireRate = (((small * 100) + (medium * 1) + (large * 1))/(small + medium + large));
+            result = FuzzyLogic.fuzzyAND(nresult, result); //says if ratation small, go fast  
         }
         
         moveRate = result;
+        
+        //check the firerate
+        if(target != null && hit) {            
+            double rotationToTargetVector = getRotationToEntity(target); 
+            
+            if(rotationToTargetVector < 0)
+                rotationToTargetVector += 360;
+            
+            double rotation = (rotationToTargetVector - getRotation()) % 360;
+            
+            double small = Rsmall.evaluate(rotation);
+            double medium = Rmedium.evaluate(rotation);
+            double large = Rlarge.evaluate(rotation);
+            
+            double left = Rleft.evaluate(rotation);
+            double facing = Rfacing.evaluate(rotation);
+            double right = Rright.evaluate(rotation);
+            
+            fireRate = (small * 100) + (medium * 1) + (large * 1);
+            turnRate = (left * 50) + (facing * 1) + (right * -50);            
+        } else {        
+            double rotation = (rotationToNodeVector - getRotation()) % 360;
+
+            double left = Rleft.evaluate(rotation);
+            double facing = Rfacing.evaluate(rotation);
+            double right = Rright.evaluate(rotation);
+
+            turnRate = (left * 50) + (facing * 1) + (right * -50);   
+        }
     }
     
     @Override public void render(Graphics graphics){
         //used to display where the rays collide
-        if(hasPath()) {
+        if(hasPath() && GameState.isShowRay()) {
             Tile tile = path.get(path.size() - 1);
             graphics.setColor(Color.yellow);
 
@@ -353,9 +377,7 @@ public class Bot extends Playable {
 
             graphics.drawLine(this.getX(), this.getY(), x2, y2);
             graphics.fillRect(tile.getX(), tile.getY(), 8, 8);
-        }
-        
-        if(true) {
+            
             graphics.setColor(Color.cyan);
             graphics.fillRect(primaryRay.getX(), primaryRay.getY(), 8, 8);
             graphics.drawLine(getX(), getY(), primaryRay.getX(), primaryRay.getY());

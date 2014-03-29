@@ -47,7 +47,7 @@ public class GameState extends BasicGameState {
     private long curtime, lastpathfind;
     private TextField log;
     private Font m_font;
-    private static boolean showPath, showDirections, showSearchSpace, showName;
+    private static boolean showPath, showDirections, showSearchSpace, showName, showRay;
     
     
     TrueTypeFont font;  
@@ -73,11 +73,13 @@ public class GameState extends BasicGameState {
             p.setTarget(player.getTarget());
         } 
         
-        showPath = true;
+        showPath = false;
         showDirections = false;
         showSearchSpace = false;
         showName = false;
+        showRay = true;
         
+        //distance rating
         Rule close = new Rule("Close", new double[] {0,150,300,450}, new double[] {0,1,1,0});
         Rule middle = new Rule("Middle", new double[] {250,350,500,650}, new double[] {0,1,1,0});
         Rule far = new Rule("Far", new double[] {600 ,750}, new double[] {0,1});
@@ -85,12 +87,21 @@ public class GameState extends BasicGameState {
         ruleSet.put(middle.getName(), middle);
         ruleSet.put(far.getName(), far);
                 
+        //angle to target rating
         Rule small = new Rule("Small", new double[] {15,45}, new double[] {1,0});
         Rule medium = new Rule("Medium", new double[] {30,50,90,110}, new double[] {0,1,1,0});
         Rule large = new Rule("Large", new double[] {80,120}, new double[] {0,1});        
         ruleSet.put(small.getName(), small);
         ruleSet.put(medium.getName(), medium);
-        ruleSet.put(large.getName(), large);        
+        ruleSet.put(large.getName(), large);
+        
+        //turning rate
+        Rule left = new Rule("Left", new double[] {0,-180}, new double[] {0,1});
+        Rule facing = new Rule("Facing", new double[] {-45,0,45}, new double[] {0,1,0});
+        Rule right = new Rule("Right", new double[] {0,180}, new double[] {0,1});        
+        ruleSet.put(left.getName(), left);
+        ruleSet.put(facing.getName(), facing);
+        ruleSet.put(right.getName(), right); 
     }
     
     /**
@@ -299,6 +310,13 @@ public class GameState extends BasicGameState {
     public static boolean isShowName() {
         return showName;
     }
+    
+    /**
+     * @return the showRay
+     */
+    public static boolean isShowRay() {
+        return showRay;
+    }
 
     /**
      * @param aShowName the showName to set
@@ -306,6 +324,7 @@ public class GameState extends BasicGameState {
     public static void setShowName(boolean aShowName) {
         showName = aShowName;
     }
+    
     /**
       * Update the current player every 15 milliseconds
       * @param gc GameState container

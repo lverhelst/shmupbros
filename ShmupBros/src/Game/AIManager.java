@@ -91,7 +91,7 @@ public class AIManager {
         double speed = bot.getMoveRate();
         
         //apply speed rule
-//        System.out.println(speed);
+        System.out.println(speed);
 //        if(bot.isFacingTarget() == 0)
 //            Controller.update(bot, Controller.MOVE.UP);
         
@@ -105,83 +105,93 @@ public class AIManager {
      * @param bot the bot to turn
      */
     public void turn(Bot bot) {
-        boolean rayhit = false;
-        float angleNode = 0;
+        double speed = bot.getTurnRate();
         
-        if(bot.getTarget() != null && bot.getTarget().isAlive()) {
-            angleNode = bot.getRotationToEntity(bot.getTarget());
-            rayhit = raye.cast(bot, angleNode, bot.getSize());
-        } else {
-            //roam, just does not do it now...
-            bot.setTurnMode(MODE.SEARCH); 
-        }        
+//        System.out.println(speed);
         
-        switch(bot.getTurnMode()) {
-            case AGGRESSIVE:
-                if(bot.getRotation() + 2 < angleNode)
-                   Controller.update(bot, Controller.MOVE.ROTRIGHT);
-                else if(bot.getRotation() - 2 > angleNode)
-                    Controller.update(bot, Controller.MOVE.ROTLEFT);
-                
-                //if no line of sight pathfind
-                if(!rayhit || ((Entity)raye.getHit()) != bot.getTarget()) {
-                    bot.setTurnMode(MODE.SEARCH);
-                }  
-                break;
-            case PASSIVE:
-                break;
-            case SEARCH:
-                //if raycast to target hits target && facing target, zombie mode
-                //else follow path
-                 if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
-                     if(bot.isFacingTarget() == -1)
-                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
-                    else if(bot.isFacingTarget() == 1)
-                        Controller.update(bot, Controller.MOVE.ROTLEFT);
-                }  else /* Pathfind */ 
-                     if(bot.path != null &&  !bot.path.isEmpty()){
-                         Tile t;
-                         
-                         if(bot.path.size() > 2) {
-                             t = bot.path.get(bot.path.size() - 2);
-                         } else {
-                             t = bot.path.get(bot.path.size() - 1);
-                         }
-                    
-                    if(bot.isFacingTile(t) == -1)
-                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
-                    else if(bot.isFacingTile(t) == 1)
-                        Controller.update(bot, Controller.MOVE.ROTLEFT);
-
-                    if((Math.abs(bot.getRotationToEntity(t) - bot.getRotation()) % 180 < 20) && bot.isFacingTile(t) != 0){
-                       // bot.setMoveMode(MODE.PASSIVE);
-                    }
-                }                
-               
-                break;
-            case STUCK:
-                break;
-            case DEAD:
-                break;
-            case RANDOM:
-                rayf.cast(bot, bot.getRotation() + 5, 8);
-                raye.cast(bot, bot.getRotation() - 5, 8);
-                
-                if(raye.getDistance() > rayf.getDistance()) 
-                    Controller.update(bot, Controller.MOVE.ROTRIGHT);                     
-                else 
-                    Controller.update(bot, Controller.MOVE.ROTLEFT);                
-                break;
-            case ZOMBIE:
-               
-//                bot.faceTarget();
-                 if(!(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) || raye.getDistance() > 200) {
-                    bot.setTurnMode(MODE.SEARCH);                 
-                }  
-                break;
-            default:
-                break;
-        }
+        if(speed < 10)
+            Controller.update(bot, Controller.MOVE.ROTLEFT);
+        else if (speed > -10)
+            Controller.update(bot, Controller.MOVE.ROTRIGHT);
+        
+        
+//        boolean rayhit = false;
+//        float angleNode = 0;
+//        
+//        if(bot.getTarget() != null && bot.getTarget().isAlive()) {
+//            angleNode = bot.getRotationToEntity(bot.getTarget());
+//            rayhit = raye.cast(bot, angleNode, bot.getSize());
+//        } else {
+//            //roam, just does not do it now...
+//            bot.setTurnMode(MODE.SEARCH); 
+//        }        
+//        
+//        switch(bot.getTurnMode()) {
+//            case AGGRESSIVE:
+//                if(bot.getRotation() + 2 < angleNode)
+//                   Controller.update(bot, Controller.MOVE.ROTRIGHT);
+//                else if(bot.getRotation() - 2 > angleNode)
+//                    Controller.update(bot, Controller.MOVE.ROTLEFT);
+//                
+//                //if no line of sight pathfind
+//                if(!rayhit || ((Entity)raye.getHit()) != bot.getTarget()) {
+//                    bot.setTurnMode(MODE.SEARCH);
+//                }  
+//                break;
+//            case PASSIVE:
+//                break;
+//            case SEARCH:
+//                //if raycast to target hits target && facing target, zombie mode
+//                //else follow path
+//                 if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
+//                     if(bot.isFacingTarget() == -1)
+//                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
+//                    else if(bot.isFacingTarget() == 1)
+//                        Controller.update(bot, Controller.MOVE.ROTLEFT);
+//                }  else /* Pathfind */ 
+//                     if(bot.path != null &&  !bot.path.isEmpty()){
+//                         Tile t;
+//                         
+//                         if(bot.path.size() > 2) {
+//                             t = bot.path.get(bot.path.size() - 2);
+//                         } else {
+//                             t = bot.path.get(bot.path.size() - 1);
+//                         }
+//                    
+//                    if(bot.isFacingTile(t) == -1)
+//                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
+//                    else if(bot.isFacingTile(t) == 1)
+//                        Controller.update(bot, Controller.MOVE.ROTLEFT);
+//
+//                    if((Math.abs(bot.getRotationToEntity(t) - bot.getRotation()) % 180 < 20) && bot.isFacingTile(t) != 0){
+//                       // bot.setMoveMode(MODE.PASSIVE);
+//                    }
+//                }                
+//               
+//                break;
+//            case STUCK:
+//                break;
+//            case DEAD:
+//                break;
+//            case RANDOM:
+//                rayf.cast(bot, bot.getRotation() + 5, 8);
+//                raye.cast(bot, bot.getRotation() - 5, 8);
+//                
+//                if(raye.getDistance() > rayf.getDistance()) 
+//                    Controller.update(bot, Controller.MOVE.ROTRIGHT);                     
+//                else 
+//                    Controller.update(bot, Controller.MOVE.ROTLEFT);                
+//                break;
+//            case ZOMBIE:
+//               
+////                bot.faceTarget();
+//                 if(!(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) || raye.getDistance() > 200) {
+//                    bot.setTurnMode(MODE.SEARCH);                 
+//                }  
+//                break;
+//            default:
+//                break;
+//        }
     }
     
     /**

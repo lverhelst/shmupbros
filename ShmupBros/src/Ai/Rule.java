@@ -48,7 +48,7 @@ public class Rule {
                 //check for vertical line (undef -> defaults to earliest)
                 if(x_coord[i] == x_coord[i+1])
                     return y_coord[i];
-                System.out.println(slope(i) + "  " + yintercept(i));
+//                System.out.println(slope(i) + "  " + yintercept(i));
                 return value * slope(i) + yintercept(i);
             }
             
