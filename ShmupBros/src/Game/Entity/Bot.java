@@ -299,7 +299,10 @@ public class Bot extends Playable {
             
             fireRate = ((small * 100) + (medium * 1) + (large * 1))/(small + medium + large);
             turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);            
-        } else {        
+        } else {               
+            if(rotationToNodeVector < 0)
+                rotationToNodeVector += 360;
+            
             double rotation = (rotationToNodeVector - getRotation()) % 360;
 
             double left = Rleft.evaluate(rotation);
