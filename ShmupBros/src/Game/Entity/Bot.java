@@ -5,6 +5,7 @@ import Ai.AStar;
 import Ai.FuzzyLogic;
 import Ai.FuzzyRule;
 import Ai.Ray;
+import Ai.Rule;
 import Game.State.GameState;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -284,10 +285,14 @@ public class Bot extends Playable {
         double distance1 = primaryRay.getDistance();
         double distance2 = secondaryRay.getDistance();
         
+        Rule Rclose = GameState.getRule("Close");
+        Rule Rmiddle = GameState.getRule("Middle");
+        Rule Rfar = GameState.getRule("Far");
+        
         //distance infront to colliable
-        double close = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyCLOSE(distance1), FuzzyRule.fuzzyCLOSE(distance2));
-        double middle = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyMIDDLE(distance1), FuzzyRule.fuzzyMIDDLE(distance2));
-        double far = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyFAR(distance1), FuzzyRule.fuzzyFAR(distance2));
+        double close = FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), Rclose.evaluate(distance2));
+        double middle = FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2));
+        double far = FuzzyLogic.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2));
                 
         double result = (((close * weight) + (middle * weight2) + (far * weight3))/(close + middle + far));
         

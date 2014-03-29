@@ -8,10 +8,16 @@ import java.util.Arrays;
  * @author Leon I. Verhelst
  */
 public class Rule {
-    public String name;
-    public double[] x_coord;
-    public double[] y_coord;
+    private String name;
+    private double[] x_coord;
+    private double[] y_coord;
     
+    /**
+     * Default constructor for a fuzzy rule, both arrays must be same length
+     * @param name the name of the rule
+     * @param xs the x positions
+     * @param ys the y value at x positions
+     */
     public Rule(String name, double[] xs, double[]ys){
         if(xs == null || ys == null || xs.length != ys.length)
             System.err.println("Invalid rule. Coordinate Values must mtch and cannot be null");
@@ -21,7 +27,11 @@ public class Rule {
         y_coord = ys;
     }
     
-    
+    /**
+     * Used to evaluate the fuzzy membership value at the passed in point
+     * @param value the number to check the fuzzy membership value
+     * @return values fuzzy membership value
+     */
     public double evaluate(double value){
         double result = -1.0;
         //value is on lower end
@@ -45,6 +55,7 @@ public class Rule {
         }
         return result;
     }
+    
     /***
      * Calculates the slope of a line
      * @param i I -> starting index of the line, ending index is i+1
@@ -78,6 +89,7 @@ public class Rule {
         }
         return new Rule("_" + this.name, x_coord, newY);   
     }
+    
     /**
      * returns the rule created by overlaying a rule atop this rule 
      * Uses Mamdani's MAX principle
@@ -185,5 +197,28 @@ public class Rule {
             return x0;
         else
             return -1.0;
+    }
+    
+    /**
+     * @return string of the rules name 
+     */
+    public String getName() {
+        return name;
+    }
+    
+    /**
+     * @return String of the values contained in the rule
+     */
+    @Override public String toString() {
+        String temp = "";
+        
+        for(int i = 0; i < x_coord.length; i++){
+            temp += x_coord[i] + "," + y_coord[i];
+            
+            if(i < x_coord.length - 1)
+                temp += "\n";
+        }
+        
+        return temp;
     }
 }
