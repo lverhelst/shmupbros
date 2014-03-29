@@ -1,12 +1,7 @@
 package Game;
 
-import Ai.FuzzyRule;
 import Ai.Ray;
 import Game.Entity.Bot;
-import Game.Entity.Bot.MODE;
-import Game.Entity.Entity;
-import Game.Entity.Playable;
-import Game.Map.Tile;
 import Game.State.GameState;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -20,7 +15,6 @@ public class AIManager {
     private ArrayList<Bot> ai;
     private LinkedList<MyThread> threads;
     private Random rand;
-    private Ray raye,rayf;
     
     /**
      * The valid move types
@@ -43,8 +37,6 @@ public class AIManager {
         ai = new ArrayList();
         threads = new LinkedList();
         rand = new Random();
-        raye = new Ray();
-        rayf = new Ray();
     }
     
     /**
@@ -68,8 +60,8 @@ public class AIManager {
             //spawn if dead
             if(!bot.isAlive()){
                 GameState.spawn(bot);
-                bot.setAllMode(MODE.SEARCH);
             }
+            
             move(bot);
             turn(bot);
             attack(bot);
@@ -91,7 +83,8 @@ public class AIManager {
         double speed = bot.getMoveRate();
         
         //apply speed rule
-        System.out.println(speed);
+        if(speed == Double.NaN)
+            System.out.println("move: " + speed);
 //        if(bot.isFacingTarget() == 0)
 //            Controller.update(bot, Controller.MOVE.UP);
         
@@ -106,92 +99,14 @@ public class AIManager {
      */
     public void turn(Bot bot) {
         double speed = bot.getTurnRate();
+                
+        if(speed == Double.NaN)
+            System.out.println("turn: " + speed);
         
-//        System.out.println(speed);
-        
-        if(speed < 10)
+        if(speed < 15)
             Controller.update(bot, Controller.MOVE.ROTLEFT);
-        else if (speed > -10)
-            Controller.update(bot, Controller.MOVE.ROTRIGHT);
-        
-        
-//        boolean rayhit = false;
-//        float angleNode = 0;
-//        
-//        if(bot.getTarget() != null && bot.getTarget().isAlive()) {
-//            angleNode = bot.getRotationToEntity(bot.getTarget());
-//            rayhit = raye.cast(bot, angleNode, bot.getSize());
-//        } else {
-//            //roam, just does not do it now...
-//            bot.setTurnMode(MODE.SEARCH); 
-//        }        
-//        
-//        switch(bot.getTurnMode()) {
-//            case AGGRESSIVE:
-//                if(bot.getRotation() + 2 < angleNode)
-//                   Controller.update(bot, Controller.MOVE.ROTRIGHT);
-//                else if(bot.getRotation() - 2 > angleNode)
-//                    Controller.update(bot, Controller.MOVE.ROTLEFT);
-//                
-//                //if no line of sight pathfind
-//                if(!rayhit || ((Entity)raye.getHit()) != bot.getTarget()) {
-//                    bot.setTurnMode(MODE.SEARCH);
-//                }  
-//                break;
-//            case PASSIVE:
-//                break;
-//            case SEARCH:
-//                //if raycast to target hits target && facing target, zombie mode
-//                //else follow path
-//                 if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
-//                     if(bot.isFacingTarget() == -1)
-//                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
-//                    else if(bot.isFacingTarget() == 1)
-//                        Controller.update(bot, Controller.MOVE.ROTLEFT);
-//                }  else /* Pathfind */ 
-//                     if(bot.path != null &&  !bot.path.isEmpty()){
-//                         Tile t;
-//                         
-//                         if(bot.path.size() > 2) {
-//                             t = bot.path.get(bot.path.size() - 2);
-//                         } else {
-//                             t = bot.path.get(bot.path.size() - 1);
-//                         }
-//                    
-//                    if(bot.isFacingTile(t) == -1)
-//                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
-//                    else if(bot.isFacingTile(t) == 1)
-//                        Controller.update(bot, Controller.MOVE.ROTLEFT);
-//
-//                    if((Math.abs(bot.getRotationToEntity(t) - bot.getRotation()) % 180 < 20) && bot.isFacingTile(t) != 0){
-//                       // bot.setMoveMode(MODE.PASSIVE);
-//                    }
-//                }                
-//               
-//                break;
-//            case STUCK:
-//                break;
-//            case DEAD:
-//                break;
-//            case RANDOM:
-//                rayf.cast(bot, bot.getRotation() + 5, 8);
-//                raye.cast(bot, bot.getRotation() - 5, 8);
-//                
-//                if(raye.getDistance() > rayf.getDistance()) 
-//                    Controller.update(bot, Controller.MOVE.ROTRIGHT);                     
-//                else 
-//                    Controller.update(bot, Controller.MOVE.ROTLEFT);                
-//                break;
-//            case ZOMBIE:
-//               
-////                bot.faceTarget();
-//                 if(!(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) || raye.getDistance() > 200) {
-//                    bot.setTurnMode(MODE.SEARCH);                 
-//                }  
-//                break;
-//            default:
-//                break;
-//        }
+        else if (speed > -15)
+            Controller.update(bot, Controller.MOVE.ROTRIGHT);        
     }
     
     /**
@@ -199,9 +114,10 @@ public class AIManager {
      * @param bot the bot to choose if to attack or not
      */
     public void attack(Bot bot) {
-        double speed = bot.getFireRate();
-        
-//        System.out.println(speed);
+        double speed = bot.getFireRate();        
+ 
+        if(speed == Double.NaN)
+            System.out.println("attack: " + speed);
                 
         //if result1 (speed) -> 1.0, up is done more often
         if(rand.nextDouble() * 100 < speed)

@@ -3,7 +3,6 @@ package Game.Entity;
 import Game.AIManager.MyThread;
 import Ai.AStar;
 import Ai.FuzzyLogic;
-import Ai.FuzzyRule;
 import Ai.Ray;
 import Ai.Rule;
 import Game.State.GameState;
@@ -20,10 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Bot extends Playable {
     public ArrayList<Tile> path;
-    private Playable target;
-    private MODE turnMode; 
-    private MODE moveMode; 
-    private MODE attackMode; 
+    private Playable target; 
     private static AStar astar;
     private static Lock lock = new ReentrantLock();
     
@@ -32,15 +28,7 @@ public class Bot extends Playable {
     private double weight, weight2, weight3;
     private double fireRate, turnRate, moveRate;
     
-    public enum MODE{
-        AGGRESSIVE, //HUNT AND KILL
-        PASSIVE, //STAY STILL
-        SEARCH, //AQUIRE TARGET
-        STUCK, //PATHFIND AROUND OBSTACLE OR SUICIDE AND RESPAWN
-        DEAD, //DEAD
-        RANDOM, //RANDOM MOVES
-        ZOMBIE  //Move in straight lines
-    }
+   
         
     public Bot(float f){
         super(f);
@@ -48,11 +36,7 @@ public class Bot extends Playable {
         path = new ArrayList<>();
         
         if(astar == null)
-            astar = new AStar(); 
-        
-        turnMode = MODE.SEARCH;
-        moveMode = MODE.SEARCH;
-        attackMode = MODE.SEARCH;        
+            astar = new AStar();              
         
         //used to detect distances to collisions
         primaryRay = new Ray();
@@ -64,45 +48,6 @@ public class Bot extends Playable {
         weight2 = 75;
         weight3 = 100;
     }
-    
-    /**
-     * @return the turn mode
-     */
-    public MODE getTurnMode() { return turnMode; }
-    
-    /**
-     * @return the move mode
-     */
-    public MODE getMoveMode() { return moveMode; }
-    
-    /**
-     * @return the attack mode
-     */
-    public MODE getAttackMode() { return attackMode; }
-
-    /**
-     * @param mode the mode to set all modes to
-     */
-    public void setAllMode(MODE mode) { 
-        this.turnMode = mode;
-        this.moveMode = mode;
-        this.attackMode = mode; 
-    }
-    
-    /**
-     * @param mode the mode to set turn mode to
-     */
-    public void setTurnMode(MODE mode) { this.turnMode = mode; }
-    
-    /**
-     * @param mode the mode to set move mode to
-     */
-    public void setMoveMode(MODE mode) { this.moveMode = mode; }
-    
-    /**
-     * @param mode the mode to set attack mode to
-     */
-    public void setAttackMode(MODE mode) { this.attackMode = mode; }
     
     /**
      * @return the target
@@ -310,7 +255,8 @@ public class Bot extends Playable {
         double middle = FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2));
         double far = FuzzyLogic.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2));
                 
-        double result = (close * weight) + (middle * weight2) + (far * weight3);
+        double result = ((close * weight) + (middle * weight2) + (far * weight3))/(close + middle + far);
+        
         double rotationToNodeVector = 0;
         
         //check angle to A* path
@@ -327,7 +273,7 @@ public class Bot extends Playable {
             double medium = Rmedium.evaluate(rotation);
             double large = Rlarge.evaluate(rotation);
             
-            double nresult = (small * weight3) + (medium * weight2) + (large * weight);
+            double nresult = ((small * weight3) + (medium * weight2) + (large * weight))/(small + medium + large);
             
             result = FuzzyLogic.fuzzyAND(nresult, result); //says if ratation small, go fast  
         }
@@ -351,8 +297,8 @@ public class Bot extends Playable {
             double facing = Rfacing.evaluate(rotation);
             double right = Rright.evaluate(rotation);
             
-            fireRate = (small * 100) + (medium * 1) + (large * 1);
-            turnRate = (left * 50) + (facing * 1) + (right * -50);            
+            fireRate = ((small * 100) + (medium * 1) + (large * 1))/(small + medium + large);
+            turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);            
         } else {        
             double rotation = (rotationToNodeVector - getRotation()) % 360;
 
@@ -360,7 +306,7 @@ public class Bot extends Playable {
             double facing = Rfacing.evaluate(rotation);
             double right = Rright.evaluate(rotation);
 
-            turnRate = (left * 50) + (facing * 1) + (right * -50);   
+            turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);   
         }
     }
     
@@ -431,9 +377,6 @@ public class Bot extends Playable {
             graphics.drawLine(this.getX(), this.getY(), x2, y2);
             graphics.drawRect(x2, y2, 3, 3);
         }
-         if(GameState.isShowName())
-            graphics.drawString("AttackMode: "  + this.attackMode.toString() + "\r\nMoveMode: " + this.moveMode.toString() + "\r\nTurnMode: " + this.turnMode.toString(), getX(), getY() - (float)6.0 * getSize());
-        
         
         super.render(graphics);
     }
