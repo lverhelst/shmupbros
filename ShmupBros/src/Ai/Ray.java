@@ -120,7 +120,7 @@ public class Ray extends Physical {
      * @param col Physical object which has been collided with
      */
     @Override public void Collide(Physical col) {
-        if(col.getID() != caster.getID()) {
+        if(col.getID() != caster.getID() && col.getType() != TYPE.PROJECTILE) {
             hit = col;
             setCollidable(false);
         }

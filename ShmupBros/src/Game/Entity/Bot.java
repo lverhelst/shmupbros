@@ -28,7 +28,6 @@ public class Bot extends Playable {
     
     //fuzzy logic attributes
     private Ray primaryRay, secondaryRay;
-    private double fuzzySpeed;
     private double weight, weight2, weight3;
     private double fireRate, turnRate, moveRate;
     
@@ -258,8 +257,15 @@ public class Bot extends Playable {
     /**
      * @return double of the calculated speed
      */
-    public double getFuzzySpeed() {
-        return fuzzySpeed;
+    public double getMoveRate() {
+        return moveRate;
+    }
+    
+    /**
+     * @return double of the calculated speed
+     */
+    public double getFireRate() {
+        return fireRate;
     }
     
     /**
@@ -285,6 +291,7 @@ public class Bot extends Playable {
                 
         double result = (((close * weight) + (middle * weight2) + (far * weight3))/(close + middle + far));
         
+        //check angle to A* path
         if(hasPath() ) {            
             double rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
             
@@ -294,16 +301,32 @@ public class Bot extends Playable {
             
             double rotation = rotationToNodeVector - getRotation() % 180;
             
-            double facing = FuzzyRule.fuzzyCLOSE(rotation);
-            double small = FuzzyRule.fuzzyMIDDLE(rotation);
-            double big = FuzzyRule.fuzzyFAR(rotation);
+            double facing = FuzzyRule.fuzzyFACING(rotation);
+            double small = FuzzyRule.fuzzySMALLTURN(rotation);
+            double big = FuzzyRule.fuzzyBIGTURN(rotation);
             
             double nresult = (((facing * weight3) + (small * weight2) + (big * weight))/(facing + small + big));
             
             result = FuzzyLogic.fuzzyAND(nresult, result); //says if ratation small, go fast            
         } 
         
-        fuzzySpeed = result;
+        //check the firerate
+        if(target != null) {
+            double rotationToNodeVector = getRotationToEntity(target); 
+            
+            if(rotationToNodeVector < 0)
+                rotationToNodeVector += 360;
+            
+            double rotation = (rotationToNodeVector - getRotation()) % 360;
+            
+            double facing = FuzzyRule.fuzzyFACING(rotation);
+            double small = FuzzyRule.fuzzySMALLTURN(rotation);
+            double big = FuzzyRule.fuzzyBIGTURN(rotation);
+            
+            fireRate = (((facing * 100) + (small * 75) + (big * 5))/(facing + small + big));
+        }
+        
+        moveRate = result;
     }
     
     @Override public void render(Graphics graphics){

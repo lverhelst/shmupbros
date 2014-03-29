@@ -88,7 +88,7 @@ public class AIManager {
      * @param bot the both to move
      */
     public void move(Bot bot) {
-        double speed = bot.getFuzzySpeed();
+        double speed = bot.getMoveRate();
         
         //apply speed rule
 //        System.out.println(speed);
@@ -189,36 +189,13 @@ public class AIManager {
      * @param bot the bot to choose if to attack or not
      */
     public void attack(Bot bot) {
-        //[TODO] need to make it so bot does not require a target at all times
-       // if(bot.getTarget() == null || !bot.getTarget().isAlive()) 
-       //     bot.chooseRandTarget();
+        double speed = bot.getFireRate();
         
-        double dist = bot.getDistanceToEntity(bot.getTarget());
-        
-//        switch(bot.getAttackMode()) {
-//            case AGGRESSIVE:
-//                Controller.update(bot, Controller.MOVE.FIRE);
-//                break;
-//            case PASSIVE:
-//                bot.chooseRandTarget();
-//                break;
-//            case SEARCH:
-//                if(FuzzyRule.fuzzyFACING((bot.getRotationToEntity(bot.getTarget()) - bot.getRotation()) % 180) > 0.95)
-//                    Controller.update(bot, Controller.MOVE.FIRE);
-//                break;
-//            case STUCK:
-//                break;
-//            case DEAD:
-//                break;
-//            case RANDOM:
-//                break;
-//            case ZOMBIE:
-//                if(bot.isFacingTarget() == 0)
-//                    Controller.update(bot, Controller.MOVE.FIRE);
-//                break;
-//            default:
-//                break;
-//        }
+//        System.out.println(speed);
+                
+        //if result1 (speed) -> 1.0, up is done more often
+        if(rand.nextDouble() * 100 < speed)
+            Controller.update(bot, Controller.MOVE.FIRE);
     }
     
     public class MyThread extends Thread {
