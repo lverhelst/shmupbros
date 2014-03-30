@@ -27,8 +27,6 @@ public class Bot extends Playable {
     private Ray primaryRay, secondaryRay, targetRay;
     private double weight, weight2, weight3;
     private double fireRate, turnRate, moveRate;
-    
-   
         
     public Bot(float f){
         super(f);
@@ -63,7 +61,6 @@ public class Bot extends Playable {
         this.target = target;
         
         GameState.addText(this.getIdentifier() + " targeted " + target.getIdentifier());
-        //generatePathToTarget();
     }
     
     public void generatePathToTarget(){
@@ -76,8 +73,7 @@ public class Bot extends Playable {
             //This ensures high performance
             if (lock.tryLock()) {
                try {
-                   // long running process
-                    //System.out.println(Thread.currentThread().getName() + " obtained Lock.");         
+                   // long running process       
                     ((MyThread)Thread.currentThread()).last_locked = System.nanoTime();
                     path = astar.pathFind(this, target);  
                                       
@@ -85,74 +81,13 @@ public class Bot extends Playable {
                         for(Tile t : path){   
                             t.pathnode = true;
                         }   
-                    }
-                    
+                    }                    
                } catch (Exception e) {                   
-               } finally {
-                   
+               } finally {                   
                    lock.unlock();
                } 
             }
         }
-    }
-    
-    /**
-     * Fact the target
-     */
-    public void faceTarget() {        
-        //face the target
-         this.setRotation(this.getRotationToEntity(target));
-    }
-    
-    /**
-     * Method to rotate bot to face its target (for basic AI, fuzzy will use RotationToEntity)
-     */
-    public void rotateToTarget() {
-        float angleToFace = this.getRotationToEntity(target);               
-        if((this.getRotation() + 5 < angleToFace || this.getRotation() - 5 > angleToFace)){
-            //can rotate 15 degrees at a time
-            this.modRotation(angleToFace % 15);
-        }
-    }
-    
-    public void rotateToAngle(float angle){
-         if((this.getRotation() + 5 < angle || this.getRotation() - 5 > angle)){
-            //can rotate 15 degrees at a time
-            this.modRotation(angle % 15);
-        }
-    }
-    
-    /**
-     * Method to return if the bot is facing its target (for basic AI, fuzzy will use RotationToEntity)
-     * @return 0 if facing, -1 or 1 if not
-     */
-    public int isFacingTarget() {
-        float angleToFace = getRotationToEntity(target) ;               
-        float rotationNeeded = getRotation() - angleToFace;
-        
-        if(Math.abs(rotationNeeded) > 180)
-            rotationNeeded += rotationNeeded > 0 ? -360 : 360;
- 
-        if(rotationNeeded + 2 < 0)
-            return -1;
-        else if(rotationNeeded - 2 > 0)
-            return 1;
-        return 0;
-    }
-    
-    public int isFacingTile(Tile t){
-        float angleToFace = getRotationToEntity(t) ;               
-        float rotationNeeded = getRotation() - angleToFace;
-        
-        if(Math.abs(rotationNeeded) > 180)
-            rotationNeeded += rotationNeeded > 0 ? -360 : 360;
- 
-        if(rotationNeeded + 2 < 0)
-            return -1;
-        else if(rotationNeeded - 2 > 0)
-            return 1;
-       
-        return 0;
     }
     
     /**
@@ -161,24 +96,6 @@ public class Bot extends Playable {
      */
     public boolean hasPath() {
         return path != null && !path.isEmpty();
-    }
-    
-    /**
-     * Used to calculate the distance to the next node
-     * @return the distance 
-     */
-     public double distanceToNode(){
-         if(hasPath()) {
-            Tile node = path.get(0);
-            
-            double x, y;
-            x = getX() - node.getX();
-            y = getY() - node.getY();
-            
-            return Math.sqrt((x * x) + (y * y));
-         }
-         
-        return 0;
     }
     
     /**
@@ -251,12 +168,19 @@ public class Bot extends Playable {
         Rule Rright = GameState.getRule("Right");
         
         //distance infront to colliable
-        double close = FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), Rclose.evaluate(distance2));
-        double middle = FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2));
-        double far = FuzzyLogic.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2));
+        double close = Rclose.evaluate(distance1);
+        double middle = Rmiddle.evaluate(distance1);
+        double far = Rfar.evaluate(distance1);
                 
+        double close2 = Rclose.evaluate(distance2);
+        double middle2 = Rmiddle.evaluate(distance2);
+        double far2 = Rfar.evaluate(distance2);
+                        
         double result = ((close * weight) + (middle * weight2) + (far * weight3))/(close + middle + far);
+        double result2 = ((close2 * weight) + (middle2 * weight2) + (far2 * weight3))/(close2 + middle2 + far2);
         
+        result = FuzzyLogic.fuzzyAND(result, result2);
+            
         double rotationToNodeVector = 0;
         
         //check angle to A* path
@@ -275,7 +199,7 @@ public class Bot extends Playable {
             
             double nresult = ((small * weight3) + (medium * weight2) + (large * weight))/(small + medium + large);
             
-            result = FuzzyLogic.fuzzyAND(nresult, result); //says if ratation small, go fast  
+            result = FuzzyLogic.fuzzyOR(nresult, result); //says if ratation small, go fast  
         }
         
         moveRate = result;
