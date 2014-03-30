@@ -134,7 +134,7 @@ public class Player {
         //shows the scoreboard if option is selected
          if(Controller.showScore){
             graphics.setColor(Color.white);
-            String score = "Score:\r\n";
+            String score = "Score:  K\\D\r\n";
             int i = 1;
             ArrayList<Playable> p = new ArrayList<>();
             
@@ -152,7 +152,7 @@ public class Player {
             });
             
             for(Playable pl: p){
-                score += i + ": " + pl.getIdentifier() + " " + ((Playable)pl).getKills() + "\r\n";
+                score += i + ": " + pl.getIdentifier() + " " + ((Playable)pl).getKills() + " \\ " + ((Playable)pl).getDeaths() + "\r\n";
                    i++;
             }
             drawString(graphics, score, 51, 51);

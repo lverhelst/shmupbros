@@ -140,8 +140,8 @@ public class Bot extends Playable {
     @Override public void update() {
         super.update();
         
-        if(!target.isAlive())
-            chooseRandTarget();
+        //if(!target.isAlive())
+          //  chooseRandTarget();
         
         applyFuzzy();
     }

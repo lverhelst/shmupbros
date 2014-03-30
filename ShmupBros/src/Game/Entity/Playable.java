@@ -104,6 +104,10 @@ public class Playable extends Physical{
         }
     }  
     
+    public int getDeaths(){
+        return deaths;
+    }
+    
     /**
      * Used to allow vehicle to perform an attack
      */
