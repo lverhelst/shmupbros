@@ -17,14 +17,14 @@ public class Main {
         app.setShowFPS(true);
         app.setAlwaysRender(true); // Display all frames even when not in focus
 	
-        app.start();
+        //app.start();
         
         //testing rules
         
-        double[] rx1 = {0,64,128,256};
-        double[] ry1 = {0,1,1, 0};
-        double[] rx2 = {0,64,128, 512, 1024};
-        double[] ry2 = {0,0,1,1,0};
+        double[] rx1 = {0,10,20,};
+        double[] ry1 = {1,0,1};
+        double[] rx2 = {0,10,20};
+        double[] ry2 = {0,1,0};
         
         Rule r1 = new Rule("close", rx1, ry1);
         Rule r2 = new Rule("middle", rx2, ry2);

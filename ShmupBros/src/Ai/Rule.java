@@ -103,62 +103,35 @@ public class Rule {
         int thisind = 0;
         int otherind = 0;
         
-        //chose rule with biggest first y
-        //add to results list
-        if(y_coord[thisind] > otherRule.y_coord[otherind]){
-            otherind++;
-            x.add(x_coord[thisind]);
-            y.add(y_coord[thisind]);
-        }else if(y_coord[thisind] < otherRule.y_coord[otherind]){
-            thisind++;
-            x.add(otherRule.x_coord[otherind]);
-            y.add(otherRule.y_coord[otherind]);
-        }else{
-            thisind++;
-            otherind++;
-            x.add(x_coord[thisind]);
-            y.add(y_coord[thisind]);
-        }
+      
             
         while(thisind < x_coord.length - 1 &&  otherind < otherRule.x_coord.length -1){
-            
-            
-            
             //check intercepts
             double x1 = getXIntercept(x_coord[thisind], x_coord[thisind + 1],
                         y_coord[thisind], y_coord[thisind + 1],
                     otherRule.x_coord[otherind], otherRule.x_coord[otherind + 1],
                     otherRule.y_coord[otherind], otherRule.y_coord[otherind + 1]);
             if(x1 != -1.0){
-                System.out.println("INtersecte");
-                
+                System.out.println("Intersected");
+                addLargest(this, thisind, otherRule, otherind, x, y);
                 //did intersect
                 double m = (y_coord[thisind + 1] - y_coord[thisind])/(x_coord[thisind + 1] - x_coord[thisind]);
                 double b = y_coord[thisind] - m * x_coord[thisind];
-                
                 double y1 =  m * x1 + b;
                 x.add(x1);
                 y.add(y1);
                 
                 thisind++;
                 otherind++;
-                
+                addLargest(this, thisind, otherRule, otherind, x, y);
                 
             }else{
-                  //chose rule with biggest next y
-                    //add to results list
-                
-                    System.out.println("! " +y_coord[thisind] + " " + otherRule.y_coord[otherind]);
-                    
-                    if(y_coord[thisind] >= otherRule.y_coord[otherind]){
-                        otherind++;
-                        x.add(x_coord[thisind]);
-                        y.add(y_coord[thisind]);
-                    }else{
-                        thisind++;
-                        x.add(otherRule.x_coord[otherind]);
-                        y.add(otherRule.y_coord[otherind]);
-                    }
+                //chose rule with biggest next y
+                //add to results list
+                addLargest(this, thisind, otherRule, otherind, x, y);
+                thisind++;
+                otherind++;
+                addLargest(this, thisind, otherRule, otherind, x, y);
             }
         }
         
@@ -174,6 +147,26 @@ public class Rule {
         return new Rule(this.name + otherRule.name, retx, rety);
     }
     
+    private void addLargest(Rule r1, int index1, Rule r2, int index2, ArrayList<Double> x, ArrayList<Double> y){
+        //compare
+        //chose rule with biggest first y
+        //add to results list
+        if(y_coord[index1] >= r2.y_coord[index2]){
+            if(!x.contains(x_coord[index1])){
+                x.add(x_coord[index1]);
+                y.add(y_coord[index1]);
+            }
+        }else if(y_coord[index1] < r2.y_coord[index2]){
+            if(!x.contains(x_coord[index1])){
+                x.add(r2.x_coord[index2]);
+                y.add(r2.y_coord[index2]);
+            }
+        }
+    } 
+            
+            
+            
+            
     private double getXIntercept(double x1, double x2, double y1, double y2, double x3, double x4, double y3, double y4){
         //if either is vertical
         if(x1 == x2 || x3 == x4){
