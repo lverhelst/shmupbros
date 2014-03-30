@@ -1,6 +1,5 @@
 package Game;
 
-import Ai.Ray;
 import Game.Entity.Bot;
 import Game.State.GameState;
 import java.util.ArrayList;
@@ -82,12 +81,6 @@ public class AIManager {
     public void move(Bot bot) {
         double speed = bot.getMoveRate();
         
-        //apply speed rule
-        if(speed == Double.NaN)
-            System.out.println("move: " + speed);
-//        if(bot.isFacingTarget() == 0)
-//            Controller.update(bot, Controller.MOVE.UP);
-        
         //if result1 (speed) -> 1.0, up is done more often
         if(rand.nextDouble() * 100 < speed)
             Controller.update(bot, Controller.MOVE.UP);
@@ -100,9 +93,8 @@ public class AIManager {
     public void turn(Bot bot) {
         double speed = bot.getTurnRate();
                 
-        if(speed == Double.NaN)
-            System.out.println("turn: " + speed);
-        
+//        System.out.println("turn: " + speed);
+                        
         if(speed < 15)
             Controller.update(bot, Controller.MOVE.ROTLEFT);
         else if (speed > -15)
@@ -115,10 +107,7 @@ public class AIManager {
      */
     public void attack(Bot bot) {
         double speed = bot.getFireRate();        
- 
-        if(speed == Double.NaN)
-            System.out.println("attack: " + speed);
-                
+                 
         //if result1 (speed) -> 1.0, up is done more often
         if(rand.nextDouble() * 100 < speed)
             Controller.update(bot, Controller.MOVE.FIRE);
