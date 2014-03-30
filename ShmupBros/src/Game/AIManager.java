@@ -81,6 +81,8 @@ public class AIManager {
     public void move(Bot bot) {
         double speed = bot.getMoveRate();
         
+        System.out.println(speed);
+        
         //if result1 (speed) -> 1.0, up is done more often
         if(rand.nextDouble() * 100 < speed)
             Controller.update(bot, Controller.MOVE.UP);

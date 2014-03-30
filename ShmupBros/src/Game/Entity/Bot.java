@@ -27,6 +27,7 @@ public class Bot extends Playable {
     private Ray primaryRay, secondaryRay, targetRay;
     private double weight, weight2, weight3;
     private double fireRate, turnRate, moveRate;
+    private double slow, normal, fast, left, facing, right;
         
     public Bot(float f){
         super(f);
@@ -167,24 +168,15 @@ public class Bot extends Playable {
         Rule Rfacing = GameState.getRule("Facing");
         Rule Rright = GameState.getRule("Right");
         
-        //distance infront to colliable
-        double close = Rclose.evaluate(distance1);
-        double middle = Rmiddle.evaluate(distance1);
-        double far = Rfar.evaluate(distance1);
-                
-        double close2 = Rclose.evaluate(distance2);
-        double middle2 = Rmiddle.evaluate(distance2);
-        double far2 = Rfar.evaluate(distance2);
-                        
-        double result = ((close * weight) + (middle * weight2) + (far * weight3))/(close + middle + far);
-        double result2 = ((close2 * weight) + (middle2 * weight2) + (far2 * weight3))/(close2 + middle2 + far2);
+        Rule Rslow = GameState.getRule("Slow");
+        Rule Rnormal = GameState.getRule("Normal");
+        Rule Rfast = GameState.getRule("Fast");
         
-        result = FuzzyLogic.fuzzyAND(result, result2);
-            
         double rotationToNodeVector = 0;
+        double smallAngle = 0, normalAngle = 0, largeAngle = 0;
         
         //check angle to A* path
-        if(hasPath() ) {            
+        if(hasPath()) {            
             rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
             
             if(path.size() > 2) { //&& bot can see node 2
@@ -193,16 +185,10 @@ public class Bot extends Playable {
             
             double rotation = rotationToNodeVector - getRotation() % 180;
             
-            double small = Rsmall.evaluate(rotation);
-            double medium = Rmedium.evaluate(rotation);
-            double large = Rlarge.evaluate(rotation);
-            
-            double nresult = ((small * weight3) + (medium * weight2) + (large * weight))/(small + medium + large);
-            
-            result = FuzzyLogic.fuzzyOR(nresult, result); //says if ratation small, go fast  
+            smallAngle = Rlarge.evaluate(rotation);
+            normalAngle = Rmedium.evaluate(rotation);
+            largeAngle = Rsmall.evaluate(rotation);
         }
-        
-        moveRate = result;
         
         //check the firerate
         if(target != null && hit) {            
@@ -217,9 +203,9 @@ public class Bot extends Playable {
             double medium = Rmedium.evaluate(rotation);
             double large = Rlarge.evaluate(rotation);
             
-            double left = Rleft.evaluate(rotation);
-            double facing = Rfacing.evaluate(rotation);
-            double right = Rright.evaluate(rotation);
+            left = Rleft.evaluate(rotation);
+            facing = Rfacing.evaluate(rotation);
+            right = Rright.evaluate(rotation);
             
             fireRate = ((small * 100) + (medium * 1) + (large * 1))/(small + medium + large);
             turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);            
@@ -229,12 +215,48 @@ public class Bot extends Playable {
             
             double rotation = (rotationToNodeVector - getRotation()) % 360;
 
-            double left = Rleft.evaluate(rotation);
-            double facing = Rfacing.evaluate(rotation);
-            double right = Rright.evaluate(rotation);
+            left = Rleft.evaluate(rotation);
+            facing = Rfacing.evaluate(rotation);
+            right = Rright.evaluate(rotation);
 
             turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);   
         }
+        
+        //slow logic------------------------------------------------------------
+        //if ray 1 is close and turning left -> slow  
+        slow = FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), left);
+        //if ray 2 is close and turning right -> slow
+        slow = FuzzyLogic.fuzzyOR(slow, FuzzyLogic.fuzzyAND(Rclose.evaluate(distance2), right));
+        //if ray 1 and 2 are close -> slow
+        slow = FuzzyLogic.fuzzyOR(slow, FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), Rclose.evaluate(distance2)));
+        //if angle to node is large -> slow
+        slow = FuzzyLogic.fuzzyOR(slow, largeAngle);
+        
+        //normal logic----------------------------------------------------------
+        //if ray 1 is middle and turning left -> normal  
+        normal = FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), left);
+        //if ray 2 is middle and turning right -> normal
+        normal = FuzzyLogic.fuzzyOR(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance2), right));
+        //if ray 1 and 2 are middle -> normal
+        normal = FuzzyLogic.fuzzyOR(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
+        //if angle to node is normal -> normal
+        normal = FuzzyLogic.fuzzyOR(normal, normalAngle);
+        
+        //fast logic------------------------------------------------------------
+        //if is facing -> fast  
+        fast = facing;
+        //if ray 1 and 2 are far -> fast
+        fast = FuzzyLogic.fuzzyOR(fast, FuzzyLogic.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2)));
+        //if angle to node is small -> fast
+        fast = FuzzyLogic.fuzzyOR(fast, smallAngle);
+        
+//        slow = Rslow.evaluate(slow);
+//        normal = Rnormal.evaluate(normal);
+//        fast = Rfast.evaluate(fast);
+        
+        double result = ((slow * weight) + (normal * weight2) + (fast * weight3))/(slow + normal + fast);
+        
+        moveRate = result;
     }
     
     @Override public void render(Graphics graphics){
