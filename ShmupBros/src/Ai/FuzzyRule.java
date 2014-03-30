@@ -23,7 +23,7 @@ public class FuzzyRule {
             return (slope * distance) + 2;
         }
         //Distance is far       
-        return 0;
+        return 0.001;
     }
     /**
      * Returns whether the distance is middle
@@ -42,7 +42,7 @@ public class FuzzyRule {
         if(distance < 650 && distance > 500){
             return ((1.0 - 0.0)/(500 - 650)) * distance + 4.333333333333334;
         }
-        return 0;
+        return 0.001;
     }
     
     /**
@@ -56,7 +56,7 @@ public class FuzzyRule {
         if(distance <= 750 && distance > 600){
             return ((0.0 - 1.0)/(600 - 750)) * distance - 4;
         }
-        return 0;
+        return 0.001;
     }
     
     /**

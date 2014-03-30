@@ -1,5 +1,6 @@
 package Game;
 
+import Ai.Rule;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
@@ -17,5 +18,22 @@ public class Main {
         app.setAlwaysRender(true); // Display all frames even when not in focus
 	
         app.start();
+        
+        //testing rules
+        
+        double[] rx1 = {0,64,128,256};
+        double[] ry1 = {0,1,1, 0};
+        double[] rx2 = {0,64,128, 512, 1024};
+        double[] ry2 = {0,0,1,1,0};
+        
+        Rule r1 = new Rule("close", rx1, ry1);
+        Rule r2 = new Rule("middle", rx2, ry2);
+        double value = 96;
+        
+        System.out.println(r1.getName() + ": eval " + value + " expect 1.0: " + r1.evaluate(value));               
+        System.out.println(r2.getName() + ": eval " + value + " expect 0.5: " + r2.evaluate(value)); 
+        
+        Rule r3 = r1.aggregate(r2);
+        System.out.println(r3);
     }
 }

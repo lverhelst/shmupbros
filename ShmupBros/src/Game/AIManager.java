@@ -1,12 +1,7 @@
 package Game;
 
-import Ai.FuzzyRule;
 import Ai.Ray;
 import Game.Entity.Bot;
-import Game.Entity.Bot.MODE;
-import Game.Entity.Entity;
-import Game.Entity.Playable;
-import Game.Map.Tile;
 import Game.State.GameState;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -20,7 +15,6 @@ public class AIManager {
     private ArrayList<Bot> ai;
     private LinkedList<MyThread> threads;
     private Random rand;
-    private Ray raye,rayf;
     
     /**
      * The valid move types
@@ -43,8 +37,6 @@ public class AIManager {
         ai = new ArrayList();
         threads = new LinkedList();
         rand = new Random();
-        raye = new Ray();
-        rayf = new Ray();
     }
     
     /**
@@ -68,8 +60,8 @@ public class AIManager {
             //spawn if dead
             if(!bot.isAlive()){
                 GameState.spawn(bot);
-                bot.setAllMode(MODE.SEARCH);
             }
+            
             move(bot);
             turn(bot);
             attack(bot);
@@ -88,10 +80,11 @@ public class AIManager {
      * @param bot the both to move
      */
     public void move(Bot bot) {
-        double speed = bot.getFuzzySpeed();
+        double speed = bot.getMoveRate();
         
         //apply speed rule
-        System.out.println(speed);
+        if(speed == Double.NaN)
+            System.out.println("move: " + speed);
 //        if(bot.isFacingTarget() == 0)
 //            Controller.update(bot, Controller.MOVE.UP);
         
@@ -105,75 +98,15 @@ public class AIManager {
      * @param bot the bot to turn
      */
     public void turn(Bot bot) {
-        boolean rayhit = false;
-        float angleNode = 0;
-        
-        if(bot.getTarget() != null && bot.getTarget().isAlive()) {
-            angleNode = bot.getRotationToEntity(bot.getTarget());
-            rayhit = raye.cast(bot, angleNode, bot.getSize());
-        } else {
-            //roam, just does not do it now...
-            bot.setTurnMode(MODE.SEARCH); 
-        }        
-        
-        switch(bot.getTurnMode()) {
-            case AGGRESSIVE:
-                if(bot.getRotation() + 2 < angleNode)
-                   Controller.update(bot, Controller.MOVE.ROTRIGHT);
-                else if(bot.getRotation() - 2 > angleNode)
-                    Controller.update(bot, Controller.MOVE.ROTLEFT);
+        double speed = bot.getTurnRate();
                 
-                //if no line of sight pathfind
-                if(!rayhit || ((Entity)raye.getHit()) != bot.getTarget()) {
-                    bot.setTurnMode(MODE.SEARCH);
-                }  
-                break;
-            case PASSIVE:
-                break;
-            case SEARCH:
-                //if raycast to target hits target && facing target, zombie mode
-                //else follow path
-                 if(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) {
-                     if(bot.isFacingTarget() == -1)
-                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
-                    else if(bot.isFacingTarget() == 1)
-                        Controller.update(bot, Controller.MOVE.ROTLEFT);
-                }  else /* Pathfind */ if(bot.path != null &&  !bot.path.isEmpty()){
-                    Tile t = bot.path.get(bot.path.size() - 1);           
-                    if(bot.isFacingTile(t) == -1)
-                       Controller.update(bot, Controller.MOVE.ROTRIGHT);
-                    else if(bot.isFacingTile(t) == 1)
-                        Controller.update(bot, Controller.MOVE.ROTLEFT);
-
-                    if((Math.abs(bot.getRotationToEntity(t) - bot.getRotation()) % 180 < 20) && bot.isFacingTile(t) != 0){
-                       // bot.setMoveMode(MODE.PASSIVE);
-                    }
-                }                
-               
-                break;
-            case STUCK:
-                break;
-            case DEAD:
-                break;
-            case RANDOM:
-                rayf.cast(bot, bot.getRotation() + 5, 8);
-                raye.cast(bot, bot.getRotation() - 5, 8);
-                
-                if(raye.getDistance() > rayf.getDistance()) 
-                    Controller.update(bot, Controller.MOVE.ROTRIGHT);                     
-                else 
-                    Controller.update(bot, Controller.MOVE.ROTLEFT);                
-                break;
-            case ZOMBIE:
-               
-//                bot.faceTarget();
-                 if(!(rayhit && (raye.getHit() instanceof Playable) && ((Playable)raye.getHit()).getID() == bot.getTarget().getID()) || raye.getDistance() > 200) {
-                    bot.setTurnMode(MODE.SEARCH);                 
-                }  
-                break;
-            default:
-                break;
-        }
+        if(speed == Double.NaN)
+            System.out.println("turn: " + speed);
+        
+        if(speed < 15)
+            Controller.update(bot, Controller.MOVE.ROTLEFT);
+        else if (speed > -15)
+            Controller.update(bot, Controller.MOVE.ROTRIGHT);        
     }
     
     /**
@@ -181,36 +114,14 @@ public class AIManager {
      * @param bot the bot to choose if to attack or not
      */
     public void attack(Bot bot) {
-        //[TODO] need to make it so bot does not require a target at all times
-       // if(bot.getTarget() == null || !bot.getTarget().isAlive()) 
-       //     bot.chooseRandTarget();
-        
-        double dist = bot.getDistanceToEntity(bot.getTarget());
-        
-//        switch(bot.getAttackMode()) {
-//            case AGGRESSIVE:
-//                Controller.update(bot, Controller.MOVE.FIRE);
-//                break;
-//            case PASSIVE:
-//                bot.chooseRandTarget();
-//                break;
-//            case SEARCH:
-//                if(FuzzyRule.fuzzyFACING((bot.getRotationToEntity(bot.getTarget()) - bot.getRotation()) % 180) > 0.95)
-//                    Controller.update(bot, Controller.MOVE.FIRE);
-//                break;
-//            case STUCK:
-//                break;
-//            case DEAD:
-//                break;
-//            case RANDOM:
-//                break;
-//            case ZOMBIE:
-//                if(bot.isFacingTarget() == 0)
-//                    Controller.update(bot, Controller.MOVE.FIRE);
-//                break;
-//            default:
-//                break;
-//        }
+        double speed = bot.getFireRate();        
+ 
+        if(speed == Double.NaN)
+            System.out.println("attack: " + speed);
+                
+        //if result1 (speed) -> 1.0, up is done more often
+        if(rand.nextDouble() * 100 < speed)
+            Controller.update(bot, Controller.MOVE.FIRE);
     }
     
     public class MyThread extends Thread {

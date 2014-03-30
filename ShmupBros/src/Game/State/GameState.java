@@ -1,5 +1,6 @@
 package Game.State;
 
+import Ai.Rule;
 import Communications.MCManager;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -23,6 +24,7 @@ import Game.Map.Tile;
 import java.util.ArrayList;
 import java.util.Random;
 import java.awt.Font;
+import java.util.HashMap;
 import org.newdawn.slick.TrueTypeFont;
 
 import org.newdawn.slick.gui.TextField;
@@ -31,8 +33,9 @@ import org.newdawn.slick.gui.TextField;
  * GameState: Used to start and perform the game logic
  * @authors Daniel, Emery, Leon
  */
-public class GameState extends BasicGameState {    
+public class GameState extends BasicGameState { 
     public final int ID; //holds the current states ID
+    private static HashMap<String, Rule> ruleSet = new HashMap();
     private static ArrayList<Physical> entities = new ArrayList();
     private static Random rand = new Random();
     private static Map map;
@@ -44,7 +47,7 @@ public class GameState extends BasicGameState {
     private long curtime, lastpathfind;
     private TextField log;
     private Font m_font;
-    private static boolean showPath, showDirections, showSearchSpace, showName;
+    private static boolean showPath, showDirections, showSearchSpace, showName, showRay;
     
     
     TrueTypeFont font;  
@@ -74,6 +77,31 @@ public class GameState extends BasicGameState {
         showDirections = false;
         showSearchSpace = false;
         showName = false;
+        showRay = true;
+        
+        //distance rating
+        Rule close = new Rule("Close", new double[] {0,150,300,450}, new double[] {0,1,1,0});
+        Rule middle = new Rule("Middle", new double[] {250,350,500,650}, new double[] {0,1,1,0});
+        Rule far = new Rule("Far", new double[] {550 ,1000}, new double[] {0,1});
+        ruleSet.put(close.getName(), close);
+        ruleSet.put(middle.getName(), middle);
+        ruleSet.put(far.getName(), far);
+                
+        //angle to target rating
+        Rule small = new Rule("Small", new double[] {15,45}, new double[] {1,0});
+        Rule medium = new Rule("Medium", new double[] {30,50,90,110}, new double[] {0,1,1,0});
+        Rule large = new Rule("Large", new double[] {80,120}, new double[] {0,1});        
+        ruleSet.put(small.getName(), small);
+        ruleSet.put(medium.getName(), medium);
+        ruleSet.put(large.getName(), large);
+        
+        //turning rate
+        Rule left = new Rule("Left", new double[] {0,-180}, new double[] {0,1});
+        Rule facing = new Rule("Facing", new double[] {-45,0,45}, new double[] {0,1,0});
+        Rule right = new Rule("Right", new double[] {0,180}, new double[] {0,1});        
+        ruleSet.put(left.getName(), left);
+        ruleSet.put(facing.getName(), facing);
+        ruleSet.put(right.getName(), right); 
     }
     
     /**
@@ -282,6 +310,13 @@ public class GameState extends BasicGameState {
     public static boolean isShowName() {
         return showName;
     }
+    
+    /**
+     * @return the showRay
+     */
+    public static boolean isShowRay() {
+        return showRay;
+    }
 
     /**
      * @param aShowName the showName to set
@@ -289,6 +324,7 @@ public class GameState extends BasicGameState {
     public static void setShowName(boolean aShowName) {
         showName = aShowName;
     }
+    
     /**
       * Update the current player every 15 milliseconds
       * @param gc GameState container
@@ -310,6 +346,15 @@ public class GameState extends BasicGameState {
             ai.update();
 
         }
+    }
+    
+    /**
+     * Used to retrieve a rule from the rule set
+     * @param rule a string of the name
+     * @return the rule
+     */
+    public static Rule getRule(String rule) {
+        return ruleSet.get(rule);
     }
    
     /**

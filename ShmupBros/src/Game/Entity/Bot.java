@@ -3,8 +3,8 @@ package Game.Entity;
 import Game.AIManager.MyThread;
 import Ai.AStar;
 import Ai.FuzzyLogic;
-import Ai.FuzzyRule;
 import Ai.Ray;
+import Ai.Rule;
 import Game.State.GameState;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -19,28 +19,16 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Bot extends Playable {
     public ArrayList<Tile> path;
-    private Playable target;
-    private MODE turnMode; 
-    private MODE moveMode; 
-    private MODE attackMode; 
+    private Playable target; 
     private static AStar astar;
     private static Lock lock = new ReentrantLock();
     
     //fuzzy logic attributes
-    private Ray primaryRay, secondaryRay;
-    private double fuzzySpeed;
+    private Ray primaryRay, secondaryRay, targetRay;
     private double weight, weight2, weight3;
     private double fireRate, turnRate, moveRate;
     
-    public enum MODE{
-        AGGRESSIVE, //HUNT AND KILL
-        PASSIVE, //STAY STILL
-        SEARCH, //AQUIRE TARGET
-        STUCK, //PATHFIND AROUND OBSTACLE OR SUICIDE AND RESPAWN
-        DEAD, //DEAD
-        RANDOM, //RANDOM MOVES
-        ZOMBIE  //Move in straight lines
-    }
+   
         
     public Bot(float f){
         super(f);
@@ -48,60 +36,18 @@ public class Bot extends Playable {
         path = new ArrayList<>();
         
         if(astar == null)
-            astar = new AStar(); 
-        
-        turnMode = MODE.SEARCH;
-        moveMode = MODE.SEARCH;
-        attackMode = MODE.SEARCH;        
+            astar = new AStar();              
         
         //used to detect distances to collisions
         primaryRay = new Ray();
         secondaryRay = new Ray();
+        targetRay = new Ray();
         
         //used to give weights to fuzzy move logic
-        weight = 10;
-        weight2 = 50;
+        weight = 20;
+        weight2 = 75;
         weight3 = 100;
     }
-    
-    /**
-     * @return the turn mode
-     */
-    public MODE getTurnMode() { return turnMode; }
-    
-    /**
-     * @return the move mode
-     */
-    public MODE getMoveMode() { return moveMode; }
-    
-    /**
-     * @return the attack mode
-     */
-    public MODE getAttackMode() { return attackMode; }
-
-    /**
-     * @param mode the mode to set all modes to
-     */
-    public void setAllMode(MODE mode) { 
-        this.turnMode = mode;
-        this.moveMode = mode;
-        this.attackMode = mode; 
-    }
-    
-    /**
-     * @param mode the mode to set turn mode to
-     */
-    public void setTurnMode(MODE mode) { this.turnMode = mode; }
-    
-    /**
-     * @param mode the mode to set move mode to
-     */
-    public void setMoveMode(MODE mode) { this.moveMode = mode; }
-    
-    /**
-     * @param mode the mode to set attack mode to
-     */
-    public void setAttackMode(MODE mode) { this.attackMode = mode; }
     
     /**
      * @return the target
@@ -205,12 +151,7 @@ public class Bot extends Playable {
             return -1;
         else if(rotationNeeded - 2 > 0)
             return 1;
-        
-       /* if((getRotation() * Math.PI /180) + 2 * Math.PI/180 < angleToFace)
-            return -1;
-        if((getRotation()  * Math.PI /180) -  2 * Math.PI/180  > angleToFace)
-            return 1;
-        */
+       
         return 0;
     }
     
@@ -256,10 +197,24 @@ public class Bot extends Playable {
     }
     
     /**
-     * @return double of the calculated speed
+     * @return double of the calculated move speed
      */
-    public double getFuzzySpeed() {
-        return fuzzySpeed;
+    public double getMoveRate() {
+        return moveRate;
+    }
+    
+    /**
+     * @return double of the calculated fire speed
+     */
+    public double getFireRate() {
+        return fireRate;
+    }
+    
+    /**
+     * @return double of the calculated turn speed
+     */
+    public double getTurnRate() {
+        return turnRate;
     }
     
     /**
@@ -267,6 +222,10 @@ public class Bot extends Playable {
      */
     @Override public void update() {
         super.update();
+        
+        if(!target.isAlive())
+            chooseRandTarget();
+        
         applyFuzzy();
     }
     
@@ -274,41 +233,89 @@ public class Bot extends Playable {
         //cast the rays to use in fuzzy logic
         primaryRay.cast(this, 10, 8);
         secondaryRay.cast(this, - 10, 8);
+        boolean hit = targetRay.cast(this, target, 32);
         
         double distance1 = primaryRay.getDistance();
         double distance2 = secondaryRay.getDistance();
         
+        Rule Rclose = GameState.getRule("Close");
+        Rule Rmiddle = GameState.getRule("Middle");
+        Rule Rfar = GameState.getRule("Far");
+        
+        Rule Rsmall = GameState.getRule("Small");
+        Rule Rmedium = GameState.getRule("Medium");
+        Rule Rlarge = GameState.getRule("Large");
+        
+        Rule Rleft = GameState.getRule("Left");
+        Rule Rfacing = GameState.getRule("Facing");
+        Rule Rright = GameState.getRule("Right");
+        
         //distance infront to colliable
-        double close = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyCLOSE(distance1), FuzzyRule.fuzzyCLOSE(distance2));
-        double middle = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyMIDDLE(distance1), FuzzyRule.fuzzyMIDDLE(distance2));
-        double far = FuzzyLogic.fuzzyAND(FuzzyRule.fuzzyFAR(distance1), FuzzyRule.fuzzyFAR(distance2));
+        double close = FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), Rclose.evaluate(distance2));
+        double middle = FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2));
+        double far = FuzzyLogic.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2));
+                
+        double result = ((close * weight) + (middle * weight2) + (far * weight3))/(close + middle + far);
         
-        double result = (((close * weight) + (middle * weight2) + (far * weight3))/(close + middle + far));
+        double rotationToNodeVector = 0;
         
+        //check angle to A* path
         if(hasPath() ) {            
-            double rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
+            rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
             
             if(path.size() > 2) { //&& bot can see node 2
-               rotationToNodeVector = (rotationToNodeVector + getRotationToEntity(path.get(path.size() - 2)))/2;
+               rotationToNodeVector = getRotationToEntity(path.get(path.size() - 2));
             }
             
             double rotation = rotationToNodeVector - getRotation() % 180;
             
-            double facing = FuzzyRule.fuzzyCLOSE(rotation);
-            double small = FuzzyRule.fuzzyMIDDLE(rotation);
-            double big = FuzzyRule.fuzzyFAR(rotation);
+            double small = Rsmall.evaluate(rotation);
+            double medium = Rmedium.evaluate(rotation);
+            double large = Rlarge.evaluate(rotation);
             
-            double nresult = (((facing * weight3) + (small * weight2) + (big * weight))/(facing + small + big));
+            double nresult = ((small * weight3) + (medium * weight2) + (large * weight))/(small + medium + large);
             
-            result = FuzzyLogic.fuzzyAND(nresult, result); //says if ratation small, go fast            
-        } 
+            result = FuzzyLogic.fuzzyAND(nresult, result); //says if ratation small, go fast  
+        }
         
-        fuzzySpeed = result;
+        moveRate = result;
+        
+        //check the firerate
+        if(target != null && hit) {            
+            double rotationToTargetVector = getRotationToEntity(target); 
+            
+            if(rotationToTargetVector < 0)
+                rotationToTargetVector += 360;
+            
+            double rotation = (rotationToTargetVector - getRotation()) % 360;
+            
+            double small = Rsmall.evaluate(rotation);
+            double medium = Rmedium.evaluate(rotation);
+            double large = Rlarge.evaluate(rotation);
+            
+            double left = Rleft.evaluate(rotation);
+            double facing = Rfacing.evaluate(rotation);
+            double right = Rright.evaluate(rotation);
+            
+            fireRate = ((small * 100) + (medium * 1) + (large * 1))/(small + medium + large);
+            turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);            
+        } else {               
+            if(rotationToNodeVector < 0)
+                rotationToNodeVector += 360;
+            
+            double rotation = (rotationToNodeVector - getRotation()) % 360;
+
+            double left = Rleft.evaluate(rotation);
+            double facing = Rfacing.evaluate(rotation);
+            double right = Rright.evaluate(rotation);
+
+            turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);   
+        }
     }
     
     @Override public void render(Graphics graphics){
         //used to display where the rays collide
-        if(hasPath()) {
+        if(hasPath() && GameState.isShowRay()) {
             Tile tile = path.get(path.size() - 1);
             graphics.setColor(Color.yellow);
 
@@ -319,9 +326,7 @@ public class Bot extends Playable {
 
             graphics.drawLine(this.getX(), this.getY(), x2, y2);
             graphics.fillRect(tile.getX(), tile.getY(), 8, 8);
-        }
-        
-        if(true) {
+            
             graphics.setColor(Color.cyan);
             graphics.fillRect(primaryRay.getX(), primaryRay.getY(), 8, 8);
             graphics.drawLine(getX(), getY(), primaryRay.getX(), primaryRay.getY());
@@ -375,9 +380,6 @@ public class Bot extends Playable {
             graphics.drawLine(this.getX(), this.getY(), x2, y2);
             graphics.drawRect(x2, y2, 3, 3);
         }
-         if(GameState.isShowName())
-            graphics.drawString("AttackMode: "  + this.attackMode.toString() + "\r\nMoveMode: " + this.moveMode.toString() + "\r\nTurnMode: " + this.turnMode.toString(), getX(), getY() - (float)6.0 * getSize());
-        
         
         super.render(graphics);
     }
