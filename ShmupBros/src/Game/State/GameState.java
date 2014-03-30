@@ -81,16 +81,16 @@ public class GameState extends BasicGameState {
         
         //distance rating
         Rule close = new Rule("Close", new double[] {0,150,300,450}, new double[] {0,1,1,0});
-        Rule middle = new Rule("Middle", new double[] {250,350,500,650}, new double[] {0,1,1,0});
-        Rule far = new Rule("Far", new double[] {550 ,1000}, new double[] {0,1});
+        Rule middle = new Rule("Middle", new double[] {0,250,350,500,650}, new double[] {0,0,1,1,0});
+        Rule far = new Rule("Far", new double[] {0,550 ,1000}, new double[] {0,0,1});
         ruleSet.put(close.getName(), close);
         ruleSet.put(middle.getName(), middle);
         ruleSet.put(far.getName(), far);
                 
         //angle to target rating
-        Rule small = new Rule("Small", new double[] {15,45}, new double[] {1,0});
-        Rule medium = new Rule("Medium", new double[] {30,50,90,110}, new double[] {0,1,1,0});
-        Rule large = new Rule("Large", new double[] {80,120}, new double[] {0,1});        
+        Rule small = new Rule("Small", new double[] {0,15,45}, new double[] {1,1,0});
+        Rule medium = new Rule("Medium", new double[] {0,30,50,90,110}, new double[] {0,0,1,1,0});
+        Rule large = new Rule("Large", new double[] {0,80,120}, new double[] {0,0,1});        
         ruleSet.put(small.getName(), small);
         ruleSet.put(medium.getName(), medium);
         ruleSet.put(large.getName(), large);

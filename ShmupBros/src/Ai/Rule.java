@@ -163,10 +163,8 @@ public class Rule {
             }
         }
     } 
-            
-            
-            
-            
+
+    
     private double getXIntercept(double x1, double x2, double y1, double y2, double x3, double x4, double y3, double y4){
         //if either is vertical
         if(x1 == x2 || x3 == x4){
