@@ -64,7 +64,7 @@ public class GameState extends BasicGameState {
         player = new Player("PLAYER");
         ai = new AIManager();
         
-        int num_bots = 2;
+        int num_bots = 10;
 
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);
@@ -80,7 +80,7 @@ public class GameState extends BasicGameState {
         showRay = false;
         
         //distance rating
-        Rule close = new Rule("Close", new double[] {0,150,300,450}, new double[] {0,1,1,0});
+        Rule close = new Rule("Close", new double[] {0,150,300}, new double[] {0,1,0});
         Rule middle = new Rule("Middle", new double[] {0,250,350,500,650}, new double[] {0,0,1,1,0});
         Rule far = new Rule("Far", new double[] {0,550 ,1000}, new double[] {0,0,1});
         ruleSet.put(close.getName(), close);

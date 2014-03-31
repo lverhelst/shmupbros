@@ -110,6 +110,7 @@ public class Bot extends Playable {
      * Chooses random Entity as target
      */
     public void chooseRandTarget() {
+        
         Random rng = new Random();
         int size = GameState.getEntities().size();
         int answer = rng.nextInt(size);
@@ -276,7 +277,7 @@ public class Bot extends Playable {
         //if ray 1 is middle and turning left -> normal  
         normal = FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), left);
         //if ray 2 is middle and turning right -> normal
-        normal = FuzzyLogic.fuzzyOR(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance2), right));
+        normal = FuzzyLogic.fuzzyAND(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance2), right));
         //if ray 1 and 2 are middle -> normal
        // normal = FuzzyLogic.fuzzyOR(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
         //if angle to node is normal -> normal
@@ -317,8 +318,8 @@ public class Bot extends Playable {
         Rule tempc = Rfast.applyImplication(fast * 1);//weight3);
         fin = tempc.aggregate(tempa).aggregate(tempb);
         result = Rule.defuzzifyRule(fin);
-        if(result >= 80)
-            System.out.println( this.getIdentifier() + ":" + result);
+        //if(result >= 80)
+        //    System.out.println( this.getIdentifier() + ":" + result);
         moveRate = result;
     }
     
