@@ -26,7 +26,7 @@ public class Bot extends Playable {
     //fuzzy logic attributes
     private Ray primaryRay, secondaryRay, targetRay;
     private double weight, weight2, weight3;
-    private double fireRate, turnRate, moveRate;
+    private double fireRate, turnRate, moveRate, learnRate;
     private double slow, normal, fast, left, facing, right;
         
     public Bot(float f){
@@ -43,9 +43,11 @@ public class Bot extends Playable {
         targetRay = new Ray();
         
         //used to give weights to fuzzy move logic
-        weight = 20;
-        weight2 = 75;
+        weight = 100;
+        weight2 = 100;
         weight3 = 100;
+        
+        learnRate = 16;
     }
     
     /**
@@ -135,22 +137,44 @@ public class Bot extends Playable {
         return turnRate;
     }
     
+    @Override public void Collide() {
+        super.Collide();
+        
+//        System.out.println(slow + " " + normal + " " + fast);
+//        System.err.println(weight + " " + weight2 + " " + weight3);
+        
+        //reward
+        weight += (weight - (weight * slow))/learnRate;
+        weight2 += (weight2 - (weight2 * normal))/learnRate;
+        weight3 += (weight3 - (weight3 * fast))/learnRate;
+        
+        //punish
+        weight -= (weight * slow)/learnRate;
+        weight2 -= (weight2 * normal)/learnRate;
+        weight3 -= (weight3 * fast)/learnRate;
+        
+        //bound weights
+        weight = Math.min(Math.max(weight, 0),100);
+        weight2 = Math.min(Math.max(weight2, 0),100);
+        weight3 = Math.min(Math.max(weight3, 0),100);
+    }
+    
     /**
      * Used to update the bots position and run the fuzzy logic for the bot
      */
     @Override public void update() {
         super.update();
         
-        //if(!target.isAlive())
-          //  chooseRandTarget();
+        if(!target.isAlive())
+            chooseRandTarget();
         
         applyFuzzy();
     }
     
     public void applyFuzzy() {
         //cast the rays to use in fuzzy logic
-        primaryRay.cast(this, 10, 8);
-        secondaryRay.cast(this, - 10, 8);
+        primaryRay.cast(this, 5, 8);
+        secondaryRay.cast(this, - 5, 8);
         boolean hit = targetRay.cast(this, target, 32);
         
         double distance1 = primaryRay.getDistance();
@@ -185,9 +209,9 @@ public class Bot extends Playable {
             
             double rotation = rotationToNodeVector - getRotation() % 180;
             
-            smallAngle = Rlarge.evaluate(rotation);
+            smallAngle = Rsmall.evaluate(rotation);
             normalAngle = Rmedium.evaluate(rotation);
-            largeAngle = Rsmall.evaluate(rotation);
+            largeAngle = Rlarge.evaluate(rotation);
         }
         
         //check the firerate
@@ -230,7 +254,7 @@ public class Bot extends Playable {
         //if ray 1 and 2 are close -> slow
         slow = FuzzyLogic.fuzzyOR(slow, FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), Rclose.evaluate(distance2)));
         //if angle to node is large -> slow
-        slow = FuzzyLogic.fuzzyOR(slow, largeAngle);
+        slow = FuzzyLogic.fuzzyOR(slow, largeAngle); 
         
         //normal logic----------------------------------------------------------
         //if ray 1 is middle and turning left -> normal  
@@ -244,7 +268,7 @@ public class Bot extends Playable {
         
         //fast logic------------------------------------------------------------
         //if is facing -> fast  
-        fast = facing;
+        fast = FuzzyLogic.fuzzyAND(facing, FuzzyLogic.fuzzyNOT(slow));
         //if ray 1 and 2 are far -> fast
         fast = FuzzyLogic.fuzzyOR(fast, FuzzyLogic.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2)));
         //if angle to node is small -> fast
