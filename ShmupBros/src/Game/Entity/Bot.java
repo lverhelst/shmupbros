@@ -113,7 +113,7 @@ public class Bot extends Playable {
         Random rng = new Random();
         int size = GameState.getEntities().size();
         int answer = rng.nextInt(size);
-        
+        this.fireRate = 0.0;
         //Will find a playable object which is alive randomly
         for(Physical p : GameState.getEntities()){
             if(p.getType() == TYPE.PLAYABLE && ((Playable)p).isAlive() && rng.nextInt(size) == answer && ((Playable)p) != this)
@@ -145,8 +145,8 @@ public class Bot extends Playable {
     @Override public void Collide() {
         super.Collide();
         
-        System.out.println(slow + " " + normal + " " + fast);
-        System.err.println(weight + " " + weight2 + " " + weight3);
+       // System.out.println(slow + " " + normal + " " + fast);
+       // System.err.println(weight + " " + weight2 + " " + weight3);
         
         //reward
         weight += (weight - (weight * slow))/learnRate;
@@ -209,7 +209,12 @@ public class Bot extends Playable {
             rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
             
             if(path.size() > 2) { //&& bot can see node 2
-               rotationToNodeVector = getRotationToEntity(path.get(path.size() - 2));
+               rotationToNodeVector = (rotationToNodeVector + getRotationToEntity(path.get(path.size() - 2)))/2;
+               if(Math.abs(rotationToNodeVector) < 5){
+                   path.remove(path.size() - 1);
+                   path.remove(path.size() - 2);
+               }
+               
             }
             
             double rotation = rotationToNodeVector - getRotation() % 180;
@@ -247,13 +252,14 @@ public class Bot extends Playable {
             left = Rleft.evaluate(rotation);
             facing = Rfacing.evaluate(rotation);
             right = Rright.evaluate(rotation);
-
+            fireRate = 0.0;
             turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);   
         }
         if(Double.isNaN(turnRate))
             turnRate = -50; //Default turn right
+        //turnRate += (System.currentTimeMillis() % 2 == 0) ? 10 : -10;
+        //System.out.println("turn " + turnRate);
         
-        System.out.println("turn " + turnRate);
         //slow logic------------------------------------------------------------
         //if ray 1 is close and turning left -> slow  
         slow = FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), left);
@@ -272,13 +278,15 @@ public class Bot extends Playable {
         //if ray 2 is middle and turning right -> normal
         normal = FuzzyLogic.fuzzyOR(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance2), right));
         //if ray 1 and 2 are middle -> normal
-        normal = FuzzyLogic.fuzzyOR(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
+       // normal = FuzzyLogic.fuzzyOR(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
         //if angle to node is normal -> normal
         normal = FuzzyLogic.fuzzyOR(normal, normalAngle);
         
         //fast logic------------------------------------------------------------
         //if ray 1 and 2 are far -> fast
         fast = FuzzyLogic.fuzzyOR(fast, FuzzyLogic.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2)));
+        //if ray 1 and 2 are normal -> fast
+        fast = FuzzyLogic.fuzzyOR(fast, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
         //if is facing -> fast  
         fast = FuzzyLogic.fuzzyAND(fast, facing);
         //if angle to node is small -> fast
@@ -294,22 +302,23 @@ public class Bot extends Playable {
        if(Double.isNaN(fast))
            fast = 0.0; 
         double result = ((slow * weight) + (normal * weight2) + (fast * weight3))/(slow + normal + fast);
-       System.out.println("Emery res: " + result + " \r\n    slow:" + slow + " "  + weight + " \r\n   normal:" + normal + "  " + weight2  +" \r\n   fast:" + fast + " " + weight3); 
+     //  System.out.println("Emery res: " + result + " \r\n    slow:" + slow + " "  + weight + " \r\n   normal:" + normal + "  " + weight2  +" \r\n   fast:" + fast + " " + weight3); 
        
        
         
         /***
          * Leon's attempt
          */  
-        Rule tempa = Rslow.applyImplication(slow * weight);
+        Rule tempa = Rslow.applyImplication(slow * 1); //weight);
         //medium speed
         //distance medium
-        Rule tempb = Rnormal.applyImplication(normal * weight2);
+        Rule tempb = Rnormal.applyImplication(normal * 1);//weight2);
         //fast speed
-        Rule tempc = Rfast.applyImplication(fast * weight3);
+        Rule tempc = Rfast.applyImplication(fast * 1);//weight3);
         fin = tempc.aggregate(tempa).aggregate(tempb);
         result = Rule.defuzzifyRule(fin);
-        System.out.println("Leon: " + result);
+        if(result >= 80)
+            System.out.println( this.getIdentifier() + ":" + result);
         moveRate = result;
     }
     
@@ -394,6 +403,7 @@ public class Bot extends Playable {
            // graphics.fill(poly);
        
         }
+      //  graphics.drawString(moveRate + " ", getX() + 16, getY() + 16);
         super.render(graphics);
     }
 }

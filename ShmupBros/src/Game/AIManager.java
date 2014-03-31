@@ -65,6 +65,7 @@ public class AIManager {
             turn(bot);
             attack(bot);
             
+            
             if(threads.peek().getState() == Thread.State.NEW)
                  threads.peek().start(); 
             else if(threads.peek().getState() == Thread.State.TERMINATED){

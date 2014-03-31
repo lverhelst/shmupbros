@@ -26,7 +26,7 @@ public class FuzzyLogic {
         return Math.max(a, b);
     }
     
-    /**
+        /**
      * Fuzzy Not operation, gives the negation of the current value
      * @param a value
      * @return the negated value

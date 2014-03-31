@@ -124,7 +124,7 @@ public class Rule {
                     otherRule.getX_coord()[otherind], otherRule.getX_coord()[otherind + 1],
                     otherRule.getY_coord()[otherind], otherRule.getY_coord()[otherind + 1]);
             if(x1 != -1.0){
-                System.out.println("Intersected");
+                //System.out.println("Intersected");
                 addLargest(this, thisind, otherRule, otherind, x, y);
                 //did intersect
                 double m = (getY_coord()[thisind + 1] - getY_coord()[thisind])/(getX_coord()[thisind + 1] - getX_coord()[thisind]);
