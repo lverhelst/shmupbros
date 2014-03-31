@@ -64,7 +64,7 @@ public class GameState extends BasicGameState {
         player = new Player("PLAYER");
         ai = new AIManager();
         
-        int num_bots = 1;
+        int num_bots = 2;
 
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);
@@ -374,17 +374,23 @@ public class GameState extends BasicGameState {
     @Override public void render(GameContainer gc, StateBasedGame sbg, Graphics graphics) {
         float x = offsetX - player.getTarget().getX();
         float y = offsetY - player.getTarget().getY();
+        int activeX = -(int)(x/32);
+        int activeY = -(int)(y/32);
         
-        graphics.translate(x, y);
+        if(!player.getTarget().isAlive()) {
+            graphics.scale(0.3f, 0.3f);            
+        } else {
+            graphics.translate(x, y);
+        }
         
         for(int i = 0; i < entities.size(); i++) 
             entities.get(i).render(graphics);
         
-        int activeX = -(int)(x/32);
-        int activeY = -(int)(y/32);
+        if(!player.getTarget().isAlive())
+            map.render(graphics); //draws the map
+        else
+            map.render(graphics, activeX, activeY); //draws the map
         
-        map.render(graphics, activeX, activeY); //draws the map
-
         graphics.resetTransform();
 
         player.render(graphics);     
@@ -393,6 +399,7 @@ public class GameState extends BasicGameState {
         graphics.setColor(Color.white);
         graphics.setFont(font);
         drawString(graphics, logString, gc.getWidth() - 350, gc.getHeight() - 100);
+        
     }
     
     /**

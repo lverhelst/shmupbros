@@ -123,6 +123,17 @@ public class Map {
         }
     }
     
+    /**
+     * Renders the map
+     */
+    public void render(Graphics graphics) {        
+        for (int i = 0; i < getWidth(); ++i) {
+            for (int j = 0; j < getHeight(); ++j) {
+                map[i][j].render(graphics);
+            }
+        }
+    }
+    
     public void resetTiles(){
         for (Tile[] map1 : map) {
             for (Tile t : map1) {
