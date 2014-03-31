@@ -140,8 +140,8 @@ public class Bot extends Playable {
     @Override public void Collide() {
         super.Collide();
         
-//        System.out.println(slow + " " + normal + " " + fast);
-//        System.err.println(weight + " " + weight2 + " " + weight3);
+        System.out.println(slow + " " + normal + " " + fast);
+        System.err.println(weight + " " + weight2 + " " + weight3);
         
         //reward
         weight += (weight - (weight * slow))/learnRate;
@@ -254,7 +254,9 @@ public class Bot extends Playable {
         //if ray 1 and 2 are close -> slow
         slow = FuzzyLogic.fuzzyOR(slow, FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), Rclose.evaluate(distance2)));
         //if angle to node is large -> slow
-        slow = FuzzyLogic.fuzzyOR(slow, largeAngle); 
+        slow = FuzzyLogic.fuzzyOR(slow, largeAngle);
+        //if not facing -> slow
+        slow = FuzzyLogic.fuzzyOR(slow, FuzzyLogic.fuzzyNOT(facing));
         
         //normal logic----------------------------------------------------------
         //if ray 1 is middle and turning left -> normal  
@@ -267,10 +269,10 @@ public class Bot extends Playable {
         normal = FuzzyLogic.fuzzyOR(normal, normalAngle);
         
         //fast logic------------------------------------------------------------
-        //if is facing -> fast  
-        fast = FuzzyLogic.fuzzyAND(facing, FuzzyLogic.fuzzyNOT(slow));
         //if ray 1 and 2 are far -> fast
         fast = FuzzyLogic.fuzzyOR(fast, FuzzyLogic.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2)));
+        //if is facing -> fast  
+        fast = FuzzyLogic.fuzzyAND(fast, facing);
         //if angle to node is small -> fast
         fast = FuzzyLogic.fuzzyOR(fast, smallAngle);
         
