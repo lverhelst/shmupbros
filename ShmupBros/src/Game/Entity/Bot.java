@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.newdawn.slick.ShapeFill;
+import org.newdawn.slick.geom.Polygon;
+import org.newdawn.slick.geom.Shape;
 
 /**
  * @author Leon Verhelst and Emery
@@ -29,6 +32,8 @@ public class Bot extends Playable {
     private double fireRate, turnRate, moveRate, learnRate;
     private double slow, normal, fast, left, facing, right;
         
+    private Rule fin;
+    
     public Bot(float f){
         super(f);
         super.setColor(Color.orange);
@@ -245,7 +250,10 @@ public class Bot extends Playable {
 
             turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);   
         }
+        if(Double.isNaN(turnRate))
+            turnRate = -50; //Default turn right
         
+        System.out.println("turn " + turnRate);
         //slow logic------------------------------------------------------------
         //if ray 1 is close and turning left -> slow  
         slow = FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), left);
@@ -279,9 +287,29 @@ public class Bot extends Playable {
 //        slow = Rslow.evaluate(slow);
 //        normal = Rnormal.evaluate(normal);
 //        fast = Rfast.evaluate(fast);
-        
+       if(Double.isNaN(slow))
+           slow = 0.0;
+       if(Double.isNaN(normal))
+           normal = 0.0;
+       if(Double.isNaN(fast))
+           fast = 0.0; 
         double result = ((slow * weight) + (normal * weight2) + (fast * weight3))/(slow + normal + fast);
+       System.out.println("Emery res: " + result + " \r\n    slow:" + slow + " "  + weight + " \r\n   normal:" + normal + "  " + weight2  +" \r\n   fast:" + fast + " " + weight3); 
+       
+       
         
+        /***
+         * Leon's attempt
+         */  
+        Rule tempa = Rslow.applyImplication(slow * weight);
+        //medium speed
+        //distance medium
+        Rule tempb = Rnormal.applyImplication(normal * weight2);
+        //fast speed
+        Rule tempc = Rfast.applyImplication(fast * weight3);
+        fin = tempc.aggregate(tempa).aggregate(tempb);
+        result = Rule.defuzzifyRule(fin);
+        System.out.println("Leon: " + result);
         moveRate = result;
     }
     
@@ -352,7 +380,20 @@ public class Bot extends Playable {
             graphics.drawLine(this.getX(), this.getY(), x2, y2);
             graphics.drawRect(x2, y2, 3, 3);
         }
-        
+        if(fin != null){
+            graphics.setColor(Color.blue);
+            Polygon poly = new Polygon(); 
+            //System.out.println("fin  \r\n  " + fin);
+            for(int i = 0; i < fin.getX_coord().length - 1; i++){
+                poly.addPoint((int)fin.getX_coord()[i] * 10, (int)fin.getY_coord()[i] * 1000);
+                
+               //graphics.drawLine((float)fin.getX_coord()[i] + this.getX(), (float)fin.getY_coord()[i] * 100 + this.getY(), (float)fin.getX_coord()[i + 1] + this.getX(),(float) fin.getY_coord()[i+1] * 100 + this.getY());
+            }
+            poly.setLocation(this.getX(), this.getY());
+            //graphics.draw(poly);
+           // graphics.fill(poly);
+       
+        }
         super.render(graphics);
     }
 }

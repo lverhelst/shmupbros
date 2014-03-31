@@ -35,5 +35,5 @@ public class Main {
         
         Rule r3 = r1.aggregate(r2);
         System.out.println(r3);
-    }
+  }
 }

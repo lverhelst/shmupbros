@@ -105,8 +105,8 @@ public class GameState extends BasicGameState {
                 
         //speed rule
         Rule slow = new Rule("Slow", new double[] {0,20,40}, new double[] {0,1,0});
-        Rule normal = new Rule("Normal", new double[] {20,40,60,80}, new double[] {0,1,1,0});
-        Rule fast = new Rule("Fast", new double[] {60,80}, new double[] {0,1});        
+        Rule normal = new Rule("Normal", new double[] {0,20,40,60,80}, new double[] {0,0,1,1,0});
+        Rule fast = new Rule("Fast", new double[] {0,60,80}, new double[] {0,0,1});        
         ruleSet.put(slow.getName(), slow);
         ruleSet.put(normal.getName(), normal);
         ruleSet.put(fast.getName(), fast);  
