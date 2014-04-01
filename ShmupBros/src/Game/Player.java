@@ -11,7 +11,6 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import Game.Entity.Entity.TYPE;
-import Game.State.Option;
 
 /**
  * Player: Used to view and manage the local player and game
@@ -31,10 +30,6 @@ public class Player {
         
         target = new Playable(32);
         target.setIdentifier(name);
-                
-        if(Option.vehicle != null) {
-            target.setColor(Option.vehicle.getColor());
-        }
         
         //temporary default location
         target.setX(512);
