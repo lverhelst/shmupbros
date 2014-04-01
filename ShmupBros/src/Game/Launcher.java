@@ -3,6 +3,8 @@ package Game;
 import Ai.Rule;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
@@ -10,6 +12,7 @@ import org.newdawn.slick.SlickException;
  * @author Emery
  */
 public class Launcher extends javax.swing.JFrame {
+    public Rule activeRule;
     
     /**
      * Creates new form Launcher
@@ -20,6 +23,7 @@ public class Launcher extends javax.swing.JFrame {
         //initiate
         Settings.loadConfig();
         initComponents();
+        activeRule = Settings.rules.get(0);
         
         //set loaded settings
         playerName.setText(Settings.playerName);
@@ -27,7 +31,7 @@ public class Launcher extends javax.swing.JFrame {
         showRay.setSelected(Settings.showRay);
         showSearchSpace.setSelected(Settings.showSearchSpace);
         numberBots.setValue(Settings.numBots);
-        pack();
+        numPoints.setValue(activeRule.getX_coord().length);
     }
     
     /**
@@ -66,6 +70,7 @@ public class Launcher extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         launch = new javax.swing.JButton();
         save = new javax.swing.JButton();
+        numPoints = new javax.swing.JSpinner();
         ruleDisplay1 = new Game.RuleDisplay();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -134,6 +139,14 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
+        numPoints.setModel(new javax.swing.SpinnerNumberModel(1, 1, 10, 1));
+        numPoints.setToolTipText("Sets the number of points");
+        numPoints.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                numPointsPropertyChange(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -142,6 +155,7 @@ public class Launcher extends javax.swing.JFrame {
                 .addGap(0, 40, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(launch, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(numPoints, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(save, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
         jPanel1Layout.setVerticalGroup(
@@ -150,8 +164,17 @@ public class Launcher extends javax.swing.JFrame {
                 .addComponent(launch)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(save)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(numPoints, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
+
+        numPoints.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                ruleDisplay1.setPoints((int)numPoints.getValue());
+            }
+        });
 
         ruleDisplay1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
@@ -272,10 +295,15 @@ public class Launcher extends javax.swing.JFrame {
     private void ruleListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ruleListActionPerformed
         int index = ruleList.getSelectedIndex();
         
-        ruleDisplay1.changeRule(Settings.rules.get(index));
+        numPoints.setValue(Settings.rules.get(index).getX_coord().length);
+        activeRule = Settings.rules.get(index);
+        ruleDisplay1.changeRule(activeRule);
         ruleDisplay1.revalidate();
         ruleDisplay1.repaint();
     }//GEN-LAST:event_ruleListActionPerformed
+
+    private void numPointsPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_numPointsPropertyChange
+    }//GEN-LAST:event_numPointsPropertyChange
 
     /**
      * @param args the command line arguments
@@ -318,6 +346,7 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton launch;
+    private javax.swing.JSpinner numPoints;
     private javax.swing.JSpinner numberBots;
     private javax.swing.JTextField playerName;
     private Game.RuleDisplay ruleDisplay1;

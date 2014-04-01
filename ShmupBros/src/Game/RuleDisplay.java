@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
  * @author Emery
  */
 public class RuleDisplay extends javax.swing.JPanel {
+    private Rule rule;
     private double[] x_coords;
     private double[] y_coords;
     private double x_total;
@@ -61,16 +62,18 @@ public class RuleDisplay extends javax.swing.JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                x_move = e.getX()/x_scale;
-                y_move = (y_max - e.getY()/y_scale)*2;
-                
-                if(index != 0 && index != x_coords.length - 1)
-                    x_coords[index] = Math.min(Math.max(x_move, 0), x_total);
-                
-                y_coords[index] = Math.min(Math.max(y_move, 0), y_max);
-                
-                RuleDisplay.this.revalidate();
-                RuleDisplay.this.repaint();
+                if(index != -1) {
+                    x_move = e.getX()/x_scale;
+                    y_move = (y_max - e.getY()/y_scale)*2;
+
+                    if(index != 0 && index != x_coords.length - 1)
+                        x_coords[index] = Math.min(Math.max(x_move, 0), x_total);
+
+                    y_coords[index] = Math.min(Math.max(y_move, 0), y_max);
+
+                    RuleDisplay.this.revalidate();
+                    RuleDisplay.this.repaint();
+                }
             }
 
             @Override
@@ -90,10 +93,57 @@ public class RuleDisplay extends javax.swing.JPanel {
     }
     
     /**
+     * Used to set the min value in the graph
+     * @param min the min value as a double
+     */
+    public void setMin(double min) {
+        x_coords[0] = min;
+        rule.changeSet(x_coords, y_coords);
+        RuleDisplay.this.revalidate();
+        RuleDisplay.this.repaint();
+    }
+    
+    /**
+     * Used to set the max value in the graph
+     * @param max the max value as a double
+     */
+    public void setMax(double max) {
+        x_coords[x_coords.length - 1] = max;
+        rule.changeSet(x_coords, y_coords);
+        RuleDisplay.this.revalidate();
+        RuleDisplay.this.repaint();
+    }
+    
+    /**
+     * Used to set the number of points in the graph
+     * @param points an int of the number of point
+     */
+    public void setPoints(int points) {
+        double[] x_new = new double[points];
+        double[] y_new = new double[points];
+                
+        for(int i = 0; i < points; ++i) {
+            x_new[i] = (x_total/points * i);
+            if(i < x_coords.length) {
+                y_new[i] = y_coords[i];
+            } else {                
+                y_new[i] = y_max;
+            }
+        }
+        
+        x_coords = x_new;
+        y_coords = y_new;
+        rule.changeSet(x_coords, y_coords);
+        RuleDisplay.this.revalidate();
+        RuleDisplay.this.repaint();
+    }
+    
+    /**
      * private method which does the work of setting a rule
      * @param rule the rule to set
      */
-    private void setRule(Rule rule) {        
+    private void setRule(Rule rule) {  
+        this.rule = rule;
         x_coords = rule.getX_coord();
         y_coords = rule.getY_coord();
         

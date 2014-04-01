@@ -189,6 +189,7 @@
                   <EmptySpace min="0" pref="40" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="launch" alignment="1" min="-2" max="-2" attributes="0"/>
+                      <Component id="numPoints" alignment="1" min="-2" max="-2" attributes="0"/>
                       <Component id="save" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -201,6 +202,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="save" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
+                  <Component id="numPoints" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -227,6 +229,20 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JSpinner" name="numPoints">
+          <Properties>
+            <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
+              <SpinnerModel initial="1" maximum="10" minimum="1" numberType="java.lang.Integer" stepSize="1" type="number"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Sets the number of points"/>
+          </Properties>
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="numPointsPropertyChange"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="numPoints.addChangeListener(new ChangeListener() {&#xa;&#xa;        @Override&#xa;        public void stateChanged(ChangeEvent e) {&#xa;            ruleDisplay1.setPoints((int)numPoints.getValue());&#xa;        }&#xa;});"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

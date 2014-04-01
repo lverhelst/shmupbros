@@ -42,6 +42,19 @@ public class Rule {
     }
     
     /**
+     * Used to allow the values of the rule to be changed after creation
+     * @param xs the x positions
+     * @param ys the y positions
+     */
+    public void changeSet(double[] xs, double[] ys) {        
+        if(xs == null || ys == null || xs.length != ys.length)
+            System.err.println("Invalid rule. Coordinate Values must mtch and cannot be null");
+        
+        x_coord = xs;
+        y_coord = ys;
+    }
+    
+    /**
      * Used to evaluate the fuzzy membership value at the passed in point
      * @param value the number to check the fuzzy membership value
      * @return values fuzzy membership value
