@@ -183,9 +183,10 @@ public class Playable extends Physical{
             return;
         }
         
-        if(GameState.isShowName())
+        if(GameState.isShowName()){
             graphics.drawString(this.getIdentifier(), getX(), getY() - 2 * getSize());
-        
+            
+        }
         sprite.setRotation(getRotation());
         sprite2.setRotation(getRotation());
         if(System.nanoTime()/100 % 2 == 0)
