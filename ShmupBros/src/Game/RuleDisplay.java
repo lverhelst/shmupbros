@@ -1,6 +1,7 @@
 package Game;
 
 import Ai.Rule;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -80,16 +81,18 @@ public class RuleDisplay extends javax.swing.JPanel {
         
         x_scale = (getWidth()/x_total) * 0.98;
         y_scale = (getHeight()/y_max)/2; 
-        g2.setColor(java.awt.Color.red);
+        g2.setColor(new Color(0.75f,0f,0f));
 //        g2.fillRect(0, 0, getWidth(), getHeight());
-        int last_x = 0;
-        int last_y = getHeight()/2;
+        int last_x = (int)(x_coords[0] * x_scale) + 4;
+        int last_y = (int)(y_max - y_coords[0] * y_scale/2) + getHeight()/2;
+        g2.fillOval(last_x-4, last_y-4, 8, 8);
         
-        for(int i = 0; i < x_coords.length; ++i) {
-            int x = (int)(x_coords[i] * x_scale);
+        for(int i = 1; i < x_coords.length; ++i) {
+            int x = (int)(x_coords[i] * x_scale) + 4;
             int y = (int)(y_max - y_coords[i] * y_scale/2) + getHeight()/2;
             
             g2.drawLine(x, y, last_x, last_y);
+            g2.fillOval(x-4, y-4, 8, 8);
             
             last_x = x;
             last_y = y;
