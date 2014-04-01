@@ -6,6 +6,9 @@
 
 package Game;
 
+import Ai.Rule;
+import java.awt.Graphics;
+
 /**
  *
  * @author Emery
@@ -15,8 +18,13 @@ public class RuleDisplay extends javax.swing.JPanel {
     /**
      * Creates new form RuleDisplay
      */
-    public RuleDisplay() {
+    public RuleDisplay(Rule rule) {
         initComponents();
+    }
+    
+    @Override public void paintComponent(Graphics g) {
+        g.setColor(java.awt.Color.red);
+        g.drawLine(0, 0, 100, 100);
     }
 
     /**
