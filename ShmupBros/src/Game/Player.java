@@ -25,14 +25,13 @@ public class Player {
     
     /**
      * Default contructor which sets the defaults and the players name
-     * @param name the Players name
      */
-    public Player(String name) {
+    public Player() {
+        name = Settings.playerName;
+        
         target = new Playable(32);
-        target.setIdentifier(name + "1");
-        
-        this.name = name;
-        
+        target.setIdentifier(name);
+                
         if(Option.vehicle != null) {
             target.setColor(Option.vehicle.getColor());
         }
@@ -41,8 +40,7 @@ public class Player {
         target.setX(512);
         target.setY(512);
         time_alive = 0;
-        last_respawned = System.currentTimeMillis();
-        
+        last_respawned = System.currentTimeMillis();        
     }
     
     /**

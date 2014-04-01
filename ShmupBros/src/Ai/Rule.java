@@ -8,6 +8,7 @@ import java.util.Arrays;
  * @author Leon I. Verhelst
  */
 public class Rule {
+    private String set;
     private String name;
     public double w;
     private double[] x_coord;
@@ -30,10 +31,11 @@ public class Rule {
      * @param xs the x positions
      * @param ys the y value at x positions
      */
-    public Rule(String name, double[] xs, double[]ys){
+    public Rule(String set, String name, double[] xs, double[]ys){
         if(xs == null || ys == null || xs.length != ys.length)
             System.err.println("Invalid rule. Coordinate Values must mtch and cannot be null");
         
+        this.set = set;
         this.name = name;
         x_coord = xs;
         y_coord = ys;
@@ -68,6 +70,13 @@ public class Rule {
         return result;
     }
     
+    /**
+     * @return the set which the rule belongs too 
+     */
+    public String getSet() {
+        return set;
+    }
+    
     /***
      * Calculates the slope of a line
      * @param i I -> starting index of the line, ending index is i+1
@@ -99,7 +108,7 @@ public class Rule {
             if(newY[i] > value)
                 newY[i] = value;
         }
-        return new Rule("_" + this.name, getX_coord(), newY);   
+        return new Rule(getSet(), "_" + this.name, getX_coord(), newY);   
     }
     
     /**
@@ -164,7 +173,7 @@ public class Rule {
         for(int i = 0; i < y.size(); i++)
             rety[i] = y.get(i);
         
-        return new Rule(this.name + otherRule.name, retx, rety);
+        return new Rule("Result", this.name + otherRule.name, retx, rety);
     }
     
     private void addLargest(Rule r1, int index1, Rule r2, int index2, ArrayList<Double> x, ArrayList<Double> y){

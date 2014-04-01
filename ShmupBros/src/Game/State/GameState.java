@@ -20,6 +20,7 @@ import Game.Player;
 import Game.Map.Map;
 import Game.Entity.Entity.TYPE;
 import Game.Map.Tile;
+import Game.Settings;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -61,10 +62,10 @@ public class GameState extends BasicGameState {
     */
     public GameState(int id){ 
         ID = id;
-        player = new Player("PLAYER");
+        player = new Player();
         ai = new AIManager();
         
-        int num_bots = 10;
+        int num_bots = Settings.numBots;
 
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);
@@ -73,43 +74,48 @@ public class GameState extends BasicGameState {
             p.setTarget(player.getTarget());
         } 
         
-        showPath = false;
+        showPath = Settings.showPath;
         showDirections = false;
-        showSearchSpace = false;
+        showSearchSpace = Settings.showSearchSpace;
         showName = false;
-        showRay = false;
+        showRay = Settings.showRay;
         
+        for(Rule rule: Settings.rules) {
+            ruleSet.put(rule.getName(), rule);
+        }
+        /*
         //distance rating
-        Rule close = new Rule("Close", new double[] {0,150,300}, new double[] {0,1,0});
-        Rule middle = new Rule("Middle", new double[] {0,250,350,500,650}, new double[] {0,0,1,1,0});
-        Rule far = new Rule("Far", new double[] {0,550 ,1000}, new double[] {0,0,1});
+        Rule close = new Rule("Distance","Close", new double[] {0,150,300}, new double[] {0,1,0});
+        Rule middle = new Rule("Distance","Middle", new double[] {0,250,350,500,650}, new double[] {0,0,1,1,0});
+        Rule far = new Rule("Distance","Far", new double[] {0,550 ,1000}, new double[] {0,0,1});
         ruleSet.put(close.getName(), close);
         ruleSet.put(middle.getName(), middle);
         ruleSet.put(far.getName(), far);
                 
         //angle to target rating
-        Rule small = new Rule("Small", new double[] {0,15,45}, new double[] {1,1,0});
-        Rule medium = new Rule("Medium", new double[] {0,30,50,90,110}, new double[] {0,0,1,1,0});
-        Rule large = new Rule("Large", new double[] {0,80,120}, new double[] {0,0,1});        
+        Rule small = new Rule("Angle","Small", new double[] {0,15,45}, new double[] {1,1,0});
+        Rule medium = new Rule("Angle","Medium", new double[] {0,30,50,90,110}, new double[] {0,0,1,1,0});
+        Rule large = new Rule("Angle","Large", new double[] {0,80,120}, new double[] {0,0,1});        
         ruleSet.put(small.getName(), small);
         ruleSet.put(medium.getName(), medium);
         ruleSet.put(large.getName(), large);
         
         //turning rate
-        Rule left = new Rule("Left", new double[] {0,-180}, new double[] {0,1});
-        Rule facing = new Rule("Facing", new double[] {-45,-15,0,15,45}, new double[] {0,1,1,1,0});
-        Rule right = new Rule("Right", new double[] {0,180}, new double[] {0,1});        
+        Rule left = new Rule("Turn","Left", new double[] {0,-180}, new double[] {0,1});
+        Rule facing = new Rule("Turn","Facing", new double[] {-45,-15,0,15,45}, new double[] {0,1,1,1,0});
+        Rule right = new Rule("Turn","Right", new double[] {0,180}, new double[] {0,1});        
         ruleSet.put(left.getName(), left);
         ruleSet.put(facing.getName(), facing);
         ruleSet.put(right.getName(), right);
                 
         //speed rule
-        Rule slow = new Rule("Slow", new double[] {0,10,15,30}, new double[] {0.75,1,1,0});
-        Rule normal = new Rule("Normal", new double[] {0,20,40,50,90}, new double[] {0,0,1,1,0});
-        Rule fast = new Rule("Fast", new double[] {0,30,80,100}, new double[] {0,0,1,1});        
+        Rule slow = new Rule("Speed","Slow", new double[] {0,10,15,30}, new double[] {0.75,1,1,0});
+        Rule normal = new Rule("Speed","Normal", new double[] {0,20,40,50,90}, new double[] {0,0,1,1,0});
+        Rule fast = new Rule("Speed","Fast", new double[] {0,30,80,100}, new double[] {0,0,1,1});        
         ruleSet.put(slow.getName(), slow);
         ruleSet.put(normal.getName(), normal);
         ruleSet.put(fast.getName(), fast);  
+        */
     }
     
     /**
