@@ -26,7 +26,7 @@ public class Bot extends Playable {
     private static Lock lock = new ReentrantLock();
     
     //fuzzy logic attributes
-    private Ray primaryRay, secondaryRay, targetRay;
+    private Ray primaryRay, secondaryRay, targetRay, frontRay;
     private double weight, weight2, weight3;
     private double fireRate, turnRate, moveRate, learnRate;
     private double slow, normal, fast, left, facing, right;
@@ -45,6 +45,7 @@ public class Bot extends Playable {
         primaryRay = new Ray();
         secondaryRay = new Ray();
         targetRay = new Ray();
+        frontRay = new Ray();
         
         //used to give weights to fuzzy move logic
         weight = 1;
@@ -178,8 +179,9 @@ public class Bot extends Playable {
     
     public void applyFuzzy() {
         //cast the rays to use in fuzzy logic
-        primaryRay.cast(this, 5, 8, true);
-        secondaryRay.cast(this, -5, 8, false);
+        primaryRay.cast(this, 5, 8, 1);
+        secondaryRay.cast(this, -5, 8, 2);
+        boolean rhit = new Ray().cast(this, 1, 8, 0);
         boolean hit = targetRay.cast(this, target, 32);
         
         double distance1 = primaryRay.getDistance();
@@ -265,6 +267,9 @@ public class Bot extends Playable {
             fireRate = 0.0;
             turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);   
         }
+        if(rhit)
+            fireRate = 80.0;
+        
         if(Double.isNaN(turnRate))
             turnRate = -50; //Default turn right
         //turnRate += (System.currentTimeMillis() % 2 == 0) ? 10 : -10;

@@ -28,11 +28,11 @@ public class Ray extends Physical {
      * @param size the size of the ray to cast
      * @return true if the ray collides with an entity, false if not
      */
-    public boolean cast(Physical caster, float angle, float size, boolean isLeft) {
+    public boolean cast(Physical caster, float angle, float size, int isLeft) {
         //retrieves the owners position and rotation
         
         double r = -22.62;
-        double theta = Math.toRadians(caster.getRotation() + (isLeft? -45:  45));
+        double theta = Math.toRadians(caster.getRotation() + (isLeft == 1 ? -45: (isLeft == 2? 45 : 0)));
         float x = (float)(r * Math.cos(theta) + caster.getX());
         float y = (float)(r * Math.sin(theta) + caster.getY());
         originx = x;
