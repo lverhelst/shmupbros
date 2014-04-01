@@ -23,7 +23,7 @@ public class StateManager extends StateBasedGame {
         addState(new Menu(MENU));
         addState(new Option(OPTIONS));
         addState(new GameState(StateManager.GAME));
-        enterState(MENU);
+        enterState(GAME);
     }
     
     /**
