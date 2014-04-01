@@ -27,9 +27,7 @@ public class Launcher extends javax.swing.JFrame {
         showRay.setSelected(Settings.showRay);
         showSearchSpace.setSelected(Settings.showSearchSpace);
         numberBots.setValue(Settings.numBots);
-        
-        graph.invalidate();
-        graph.repaint();
+        pack();
     }
     
     /**
@@ -68,7 +66,7 @@ public class Launcher extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         launch = new javax.swing.JButton();
         save = new javax.swing.JButton();
-        graph = new Game.RuleDisplay(Settings.rules.get(0));
+        ruleDisplay1 = new Game.RuleDisplay();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -155,17 +153,17 @@ public class Launcher extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        graph.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        ruleDisplay1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        javax.swing.GroupLayout graphLayout = new javax.swing.GroupLayout(graph);
-        graph.setLayout(graphLayout);
-        graphLayout.setHorizontalGroup(
-            graphLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 391, Short.MAX_VALUE)
+        javax.swing.GroupLayout ruleDisplay1Layout = new javax.swing.GroupLayout(ruleDisplay1);
+        ruleDisplay1.setLayout(ruleDisplay1Layout);
+        ruleDisplay1Layout.setHorizontalGroup(
+            ruleDisplay1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
-        graphLayout.setVerticalGroup(
-            graphLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 203, Short.MAX_VALUE)
+        ruleDisplay1Layout.setVerticalGroup(
+            ruleDisplay1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 200, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -174,7 +172,8 @@ public class Launcher extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(ruleDisplay1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
@@ -192,9 +191,8 @@ public class Launcher extends javax.swing.JFrame {
                                 .addComponent(showRay)
                                 .addComponent(showSearchSpace))
                             .addGap(90, 90, 90)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(graph, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, Short.MAX_VALUE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -221,8 +219,8 @@ public class Launcher extends javax.swing.JFrame {
                         .addComponent(ruleList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(graph, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addComponent(ruleDisplay1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         pack();
@@ -273,6 +271,10 @@ public class Launcher extends javax.swing.JFrame {
 
     private void ruleListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ruleListActionPerformed
         int index = ruleList.getSelectedIndex();
+        
+        ruleDisplay1.changeRule(Settings.rules.get(index));
+        ruleDisplay1.revalidate();
+        ruleDisplay1.repaint();
     }//GEN-LAST:event_ruleListActionPerformed
 
     /**
@@ -311,7 +313,6 @@ public class Launcher extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel graph;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
@@ -319,6 +320,7 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JButton launch;
     private javax.swing.JSpinner numberBots;
     private javax.swing.JTextField playerName;
+    private Game.RuleDisplay ruleDisplay1;
     private javax.swing.JComboBox ruleList;
     private javax.swing.JButton save;
     private javax.swing.JRadioButton showPath;
