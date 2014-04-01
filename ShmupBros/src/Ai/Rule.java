@@ -14,12 +14,12 @@ public class Rule {
     private double[] x_coord;
     private double[] y_coord;
     
-    public static double defuzzifyRule(Rule r){
+    public  double defuzzifyRule(){
         double denominator = 0;
         double numerator = 0;
-        for(int i = 0; i < r.getX_coord().length; i++){
-            denominator += r.getX_coord()[i] * r.getY_coord()[i];
-            numerator += r.getY_coord()[i];
+        for(int i = 0; i < x_coord.length; i++){
+            denominator += x_coord[i] * y_coord[i];
+            numerator += y_coord[i];
         }
         return denominator/numerator;
     }

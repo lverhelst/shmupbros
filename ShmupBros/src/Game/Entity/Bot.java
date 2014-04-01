@@ -9,13 +9,12 @@ import Game.State.GameState;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import Game.Map.Tile;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.newdawn.slick.ShapeFill;
 import org.newdawn.slick.geom.Polygon;
-import org.newdawn.slick.geom.Shape;
 
 /**
  * @author Leon Verhelst and Emery
@@ -146,6 +145,9 @@ public class Bot extends Playable {
     @Override public void Collide() {
         super.Collide();
         
+        System.out.println(slow + " " + normal + " " + fast);
+        System.err.println(weight + " " + weight2 + " " + weight3);
+        
         //reward
         weight += (weight - (weight * slow))/learnRate;
         weight2 += (weight2 - (weight2 * normal))/learnRate;
@@ -249,6 +251,17 @@ public class Bot extends Playable {
             left = Rleft.evaluate(rotation);
             facing = Rfacing.evaluate(rotation);
             right = Rright.evaluate(rotation);
+            
+            if(distance1 < 20){
+                left = 0;
+                right = 72;
+            }
+            else if(distance2 < 20){
+                left = 70;
+                right = 0;
+            }
+                
+                
             fireRate = 0.0;
             turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);   
         }
@@ -306,14 +319,15 @@ public class Bot extends Playable {
         /***
          * Leon's attempt
          */  
-        Rule tempa = Rslow.applyImplication(slow * weight); //weight);
+
+        Rule tempa = Rslow.applyImplication(slow *  (weight/100)); //weight);
         //medium speed
         //distance medium
-        Rule tempb = Rnormal.applyImplication(normal * weight2);//weight2);
+        Rule tempb = Rnormal.applyImplication(normal * (weight2/100));//weight2);
         //fast speed
-        Rule tempc = Rfast.applyImplication(fast * weight3);//weight3);
+        Rule tempc = Rfast.applyImplication(fast * (weight3/100));//weight3);
         fin = tempc.aggregate(tempa).aggregate(tempb);
-        result = Rule.defuzzifyRule(fin);
+        result = fin.defuzzifyRule();
         //if(result >= 80)
         //    System.out.println( this.getIdentifier() + ":" + result);
         moveRate = result;
@@ -388,7 +402,7 @@ public class Bot extends Playable {
             graphics.drawRect(x2, y2, 3, 3);
         }
         if(fin != null){
-            graphics.setColor(Color.blue);
+            
             Polygon poly = new Polygon(); 
             //System.out.println("fin  \r\n  " + fin);
             for(int i = 0; i < fin.getX_coord().length - 1; i++){
@@ -401,7 +415,12 @@ public class Bot extends Playable {
            // graphics.fill(poly);
        
         }
-      //  graphics.drawString(moveRate + " ", getX() + 16, getY() + 16);
+      //  graphics.drawString(moveRate + " ", getX() + 16, getY() + 16);    
+            graphics.setColor(Color.white);
+         DecimalFormat df = new DecimalFormat("#.##");
+         if(GameState.isShowName()){
+            graphics.drawString(df.format(moveRate) + " ", getX() + 16, getY() + 16);
+        }
         super.render(graphics);
     }
 }
