@@ -1,0 +1,20 @@
+Resolution:1024,800
+Player Name:Player1
+Color:0.1,0.1,0.1
+Multiplayer:false
+Show Path:false
+Show Ray:true
+Show Search Space:false
+Number of Bots:1
+Rule:Distance!Close!0,150,300!0,1,0
+Rule:Distance!Middle!0,250,350,500,650!0,0,1,1,0
+Rule:Distance!Far!0,550,1000!0,0,1
+Rule:Angle!Small!0,15,45!1,1,0
+Rule:Angle!Medium!0,30,50,90,110!0,0,1,1,0
+Rule:Angle!Large!0,80,120!0,0,1
+Rule:Turn!Left!0,-180!0,1
+Rule:Turn!Facing!-45,-15,0,15,45!0,1,1,1,0
+Rule:Turn!Right!0,180!0,1
+Rule:Speed!Slow!0,10,15,30!0.75,1,1,0
+Rule:Speed!Normal!0,20,40,50,90!0,0,1,1,0
+Rule:Speed!Fast!0,30,80,100!0,0,1,1
