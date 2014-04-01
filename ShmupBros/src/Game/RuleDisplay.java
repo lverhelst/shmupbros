@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.DecimalFormat;
 
 /**
  * @author Emery
@@ -185,12 +186,16 @@ public class RuleDisplay extends javax.swing.JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
         
+        DecimalFormat formatter =  new DecimalFormat("#.##");
+        
+        
         x_scale = (getWidth()/x_total) * 0.98;
         y_scale = (getHeight()/y_max)/2; 
         g2.setColor(new Color(0.75f,0f,0f));
         
         int last_x = (int)(x_coords[0] * x_scale) + 4;
         int last_y = (int)(y_max - y_coords[0] * y_scale/2) + getHeight()/2;
+        g2.drawString("[" + formatter.format(x_coords[0]) + "," + formatter.format(y_coords[0]) + "]", last_x, last_y);
         
         if(index == 0) 
             g2.setColor(new Color(0f,0f,0.75f));
@@ -203,6 +208,7 @@ public class RuleDisplay extends javax.swing.JPanel {
             
             g2.setColor(new Color(0.75f,0f,0f));
             g2.drawLine(x, y, last_x, last_y);
+            g2.drawString("[" + formatter.format(x_coords[i]) + "," + formatter.format(y_coords[i]) + "]", (x  < this.getWidth() - 40? x : x - 40), y);
             
             if(index == i) 
                 g2.setColor(new Color(0f,0f,0.75f));
