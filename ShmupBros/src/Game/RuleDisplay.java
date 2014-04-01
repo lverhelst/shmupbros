@@ -4,6 +4,8 @@ import Ai.Rule;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * @author Emery
@@ -16,13 +18,45 @@ public class RuleDisplay extends javax.swing.JPanel {
     private double x_scale;
     private double y_scale;
     
+    private boolean moving;
+    private double x_move;
+    private double y_move;
+    
     /**
      * Creates new form RuleDisplay
      */
     public RuleDisplay() {
-        super();
-        
+        super();        
         setRule(Settings.rules.get(0));
+        
+        this.addMouseListener(new MouseListener(){
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                x_move = e.getX()/x_scale;
+                y_move = (y_max - e.getY()/y_scale)*2;
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                moving = true;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                moving = false;
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        });
+    }
+    
+    public boolean findPosition(int x, int y) {
+        return false;
     }
     
     /**
@@ -82,7 +116,7 @@ public class RuleDisplay extends javax.swing.JPanel {
         x_scale = (getWidth()/x_total) * 0.98;
         y_scale = (getHeight()/y_max)/2; 
         g2.setColor(new Color(0.75f,0f,0f));
-//        g2.fillRect(0, 0, getWidth(), getHeight());
+        
         int last_x = (int)(x_coords[0] * x_scale) + 4;
         int last_y = (int)(y_max - y_coords[0] * y_scale/2) + getHeight()/2;
         g2.fillOval(last_x-4, last_y-4, 8, 8);

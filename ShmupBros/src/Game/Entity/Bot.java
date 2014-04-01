@@ -48,9 +48,9 @@ public class Bot extends Playable {
         targetRay = new Ray();
         
         //used to give weights to fuzzy move logic
-        weight = 100;
-        weight2 = 100;
-        weight3 = 100;
+        weight = 1;
+        weight2 = 1;
+        weight3 = 1;
         
         learnRate = 16;
     }
@@ -146,9 +146,6 @@ public class Bot extends Playable {
     @Override public void Collide() {
         super.Collide();
         
-       // System.out.println(slow + " " + normal + " " + fast);
-       // System.err.println(weight + " " + weight2 + " " + weight3);
-        
         //reward
         weight += (weight - (weight * slow))/learnRate;
         weight2 += (weight2 - (weight2 * normal))/learnRate;
@@ -160,9 +157,9 @@ public class Bot extends Playable {
         weight3 -= (weight3 * fast)/learnRate;
         
         //bound weights
-        weight = Math.min(Math.max(weight, 0),100);
-        weight2 = Math.min(Math.max(weight2, 0),100);
-        weight3 = Math.min(Math.max(weight3, 0),100);
+        weight = Math.min(Math.max(weight, 0),1);
+        weight2 = Math.min(Math.max(weight2, 0),1);
+        weight3 = Math.min(Math.max(weight3, 0),1);
     }
     
     /**
@@ -215,7 +212,6 @@ public class Bot extends Playable {
                    path.remove(path.size() - 1);
                    path.remove(path.size() - 2);
                }
-               
             }
             
             double rotation = rotationToNodeVector - getRotation() % 180;
@@ -242,8 +238,8 @@ public class Bot extends Playable {
             facing = Rfacing.evaluate(rotation);
             right = Rright.evaluate(rotation);
             
-            fireRate = ((small * 100) + (medium * 1) + (large * 1))/(small + medium + large);
-            turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);
+            fireRate = ((small * 100) + (medium * 10) + (large * 1))/(small + medium + large);
+            turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);
         } else {               
             if(rotationToNodeVector < 0)
                 rotationToNodeVector += 360;
@@ -254,7 +250,7 @@ public class Bot extends Playable {
             facing = Rfacing.evaluate(rotation);
             right = Rright.evaluate(rotation);
             fireRate = 0.0;
-            turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);   
+            turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);   
         }
         if(Double.isNaN(turnRate))
             turnRate = -50; //Default turn right
@@ -279,7 +275,7 @@ public class Bot extends Playable {
         //if ray 2 is middle and turning right -> normal
         normal = FuzzyLogic.fuzzyAND(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance2), right));
         //if ray 1 and 2 are middle -> normal
-       // normal = FuzzyLogic.fuzzyOR(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
+        normal = FuzzyLogic.fuzzyOR(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
         //if angle to node is normal -> normal
         normal = FuzzyLogic.fuzzyOR(normal, normalAngle);
         
@@ -310,12 +306,12 @@ public class Bot extends Playable {
         /***
          * Leon's attempt
          */  
-        Rule tempa = Rslow.applyImplication(slow * 1); //weight);
+        Rule tempa = Rslow.applyImplication(slow * weight); //weight);
         //medium speed
         //distance medium
-        Rule tempb = Rnormal.applyImplication(normal * 1);//weight2);
+        Rule tempb = Rnormal.applyImplication(normal * weight2);//weight2);
         //fast speed
-        Rule tempc = Rfast.applyImplication(fast * 1);//weight3);
+        Rule tempc = Rfast.applyImplication(fast * weight3);//weight3);
         fin = tempc.aggregate(tempa).aggregate(tempb);
         result = Rule.defuzzifyRule(fin);
         //if(result >= 80)
