@@ -253,6 +253,7 @@ public class Bot extends Playable {
             left = Rleft.evaluate(rotation);
             facing = Rfacing.evaluate(rotation);
             right = Rright.evaluate(rotation);
+            
             fireRate = 0.0;
             turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);   
         }
@@ -317,7 +318,7 @@ public class Bot extends Playable {
         //fast speed
         Rule tempc = Rfast.applyImplication(fast * 1);//weight3);
         fin = tempc.aggregate(tempa).aggregate(tempb);
-        result = Rule.defuzzifyRule(fin);
+        result = fin.defuzzifyRule();
         //if(result >= 80)
         //    System.out.println( this.getIdentifier() + ":" + result);
         moveRate = result;

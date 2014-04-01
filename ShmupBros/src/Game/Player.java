@@ -79,6 +79,9 @@ public class Player {
         
         if(controls.isKeyPressed(Input.KEY_V))            
             GameState.setShowPath(!GameState.isShowPath());
+        
+          if(controls.isKeyPressed(Input.KEY_X))            
+            GameState.setShowRay(!GameState.isShowRay());
             
             //ensure movement only happens when alive
         //ensure respawning only happens when dead

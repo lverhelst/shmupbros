@@ -333,6 +333,13 @@ public class GameState extends BasicGameState {
     }
 
     /**
+     * @param aShowRay the showRay to set
+     */
+    public static void setShowRay(boolean aShowRay) {
+        showRay = aShowRay;
+    }
+
+    /**
      * @param aShowName the showName to set
      */
     public static void setShowName(boolean aShowName) {
