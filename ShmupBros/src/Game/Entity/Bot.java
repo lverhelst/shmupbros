@@ -179,8 +179,8 @@ public class Bot extends Playable {
     
     public void applyFuzzy() {
         //cast the rays to use in fuzzy logic
-        primaryRay.cast(this, 5, 8);
-        secondaryRay.cast(this, - 5, 8);
+        primaryRay.cast(this, 5, 8, true);
+        secondaryRay.cast(this, -5, 8, false);
         boolean hit = targetRay.cast(this, target, 32);
         
         double distance1 = primaryRay.getDistance();
@@ -243,7 +243,8 @@ public class Bot extends Playable {
             right = Rright.evaluate(rotation);
             
             fireRate = ((small * 100) + (medium * 1) + (large * 1))/(small + medium + large);
-            turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);            
+            turnRate = ((left * 50) + (facing * 1) + (right * -50))/(left + facing + right);
+            fireRate = 0.0;
         } else {               
             if(rotationToNodeVector < 0)
                 rotationToNodeVector += 360;
@@ -339,11 +340,12 @@ public class Bot extends Playable {
             
             graphics.setColor(Color.cyan);
             graphics.fillRect(primaryRay.getX(), primaryRay.getY(), 8, 8);
-            graphics.drawLine(getX(), getY(), primaryRay.getX(), primaryRay.getY());
+            graphics.drawLine(primaryRay.getOriginx(), primaryRay.getOriginy(), primaryRay.getX(), primaryRay.getY());
+            
 
             graphics.setColor(Color.red);
             graphics.fillRect(secondaryRay.getX(), secondaryRay.getY(), 8, 8);
-            graphics.drawLine(getX(), getY(), secondaryRay.getX(), secondaryRay.getY());
+            graphics.drawLine(secondaryRay.getOriginx(), secondaryRay.getOriginy(), secondaryRay.getX(), secondaryRay.getY());
         }
         
         if(GameState.isShowDirections()){

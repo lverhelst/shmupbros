@@ -191,6 +191,6 @@ public class Playable extends Physical{
         if(System.nanoTime()/100 % 2 == 0)
             sprite.draw(getX()-getSize(), getY()-getSize(), color);
         else
-            sprite2.draw(getX()-getSize(), getY()-getSize(), color);       
+            sprite2.draw(getX()-getSize(), getY()-getSize(), color);      
     }
 }

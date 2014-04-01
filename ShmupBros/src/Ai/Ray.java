@@ -9,7 +9,7 @@ import Game.State.GameState;
  * @author Emery
  */
 public class Ray extends Physical {
-    private float distance;
+    private float distance, originx, originy;
     private Physical hit;
     private Entity caster;
     
@@ -28,10 +28,17 @@ public class Ray extends Physical {
      * @param size the size of the ray to cast
      * @return true if the ray collides with an entity, false if not
      */
-    public boolean cast(Physical caster, float angle, float size) {
+    public boolean cast(Physical caster, float angle, float size, boolean isLeft) {
         //retrieves the owners position and rotation
-        setX(caster.getX()); 
-        setY(caster.getY());
+        
+        double r = -22.62;
+        double theta = Math.toRadians(caster.getRotation() + (isLeft? -45:  45));
+        float x = (float)(r * Math.cos(theta) + caster.getX());
+        float y = (float)(r * Math.sin(theta) + caster.getY());
+        originx = x;
+        originy = y;
+        setX(x); 
+        setY(y);
         setRotation(caster.getRotation());
         setSize(size);
         
@@ -124,5 +131,19 @@ public class Ray extends Physical {
             hit = col;
             setCollidable(false);
         }
+    }
+
+    /**
+     * @return the originx
+     */
+    public float getOriginx() {
+        return originx;
+    }
+
+    /**
+     * @return the originy
+     */
+    public float getOriginy() {
+        return originy;
     }
 }
