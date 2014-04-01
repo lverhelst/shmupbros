@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /*
- * @author Leon I. Verhelst
+ * @author Leon I. Verhelst and Emery
  */
 public class Rule {
     private String set;

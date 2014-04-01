@@ -1,16 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package Game;
 
+import Ai.Rule;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
 /**
- *
  * @author Emery
  */
 public class Launcher extends javax.swing.JFrame {
@@ -19,9 +15,34 @@ public class Launcher extends javax.swing.JFrame {
      * Creates new form Launcher
      */
     public Launcher() {
-        initComponents();
-        Settings.loadConfig();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
+        //initiate
+        Settings.loadConfig();
+        initComponents();
+        
+        //set loaded settings
+        playerName.setText(Settings.playerName);
+        showPath.setSelected(Settings.showPath);
+        showRay.setSelected(Settings.showRay);
+        showSearchSpace.setSelected(Settings.showSearchSpace);
+        numberBots.setValue(Settings.numBots);
+        pack();
+    }
+    
+    /**
+     * Used to create the list of rules
+     * @return a list of rules
+     */
+    public String[] getList() {
+        String[] list = new String[Settings.rules.size()];
+        int i = 0;
+        
+        for(Rule rule: Settings.rules) {
+            list[i++] = rule.getSet() + " " + rule.getName();
+        }
+        
+        return list;
     }
     
     /**
@@ -33,103 +54,185 @@ public class Launcher extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        playerName = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jSpinner1 = new javax.swing.JSpinner();
+        showPath = new javax.swing.JRadioButton();
+        showRay = new javax.swing.JRadioButton();
+        showSearchSpace = new javax.swing.JRadioButton();
+        numberBots = new javax.swing.JSpinner();
+        ruleList = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        launch = new javax.swing.JButton();
+        save = new javax.swing.JButton();
+        ruleDisplay1 = new Game.RuleDisplay();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
-        jButton1.setText("Launch");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
+        jLabel1.setFont(new java.awt.Font("Bauhaus 93", 0, 14)); // NOI18N
         jLabel1.setText("Player Name:");
 
-        jTextField1.setText("Player 1");
+        playerName.setFont(new java.awt.Font("Bauhaus 93", 0, 14)); // NOI18N
+        playerName.setText("Player 1");
 
+        jLabel5.setFont(new java.awt.Font("Bauhaus 93", 0, 14)); // NOI18N
         jLabel5.setText("Number of Bots:");
 
-        jRadioButton1.setText("Show Path");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+        showPath.setFont(new java.awt.Font("Bauhaus 93", 0, 14)); // NOI18N
+        showPath.setText("Show Path");
+        showPath.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
+                showPathActionPerformed(evt);
             }
         });
 
-        jRadioButton2.setText("Show Ray");
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+        showRay.setFont(new java.awt.Font("Bauhaus 93", 0, 14)); // NOI18N
+        showRay.setText("Show Ray");
+        showRay.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
+                showRayActionPerformed(evt);
             }
         });
 
-        jRadioButton3.setText("Show Search Path");
-        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
+        showSearchSpace.setFont(new java.awt.Font("Bauhaus 93", 0, 14)); // NOI18N
+        showSearchSpace.setText("Show Search Path");
+        showSearchSpace.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton3ActionPerformed(evt);
+                showSearchSpaceActionPerformed(evt);
             }
         });
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0, 0, 10, 1));
+        numberBots.setFont(new java.awt.Font("Bauhaus 93", 0, 14)); // NOI18N
+        numberBots.setModel(new javax.swing.SpinnerNumberModel(0, 0, 10, 1));
+
+        ruleList.setFont(new java.awt.Font("Bauhaus 93", 0, 14)); // NOI18N
+        ruleList.setModel(new DefaultComboBoxModel(getList()));
+        ruleList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ruleListActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Bauhaus 93", 1, 48)); // NOI18N
+        jLabel2.setText("ShmupBros");
+
+        launch.setFont(new java.awt.Font("Bauhaus 93", 0, 14)); // NOI18N
+        launch.setText("Start Game");
+        launch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                launchActionPerformed(evt);
+            }
+        });
+
+        save.setFont(new java.awt.Font("Bauhaus 93", 0, 14)); // NOI18N
+        save.setText("Save Setting");
+        save.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(0, 40, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(launch, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(save, javax.swing.GroupLayout.Alignment.TRAILING)))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(launch)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(save)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        ruleDisplay1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+
+        javax.swing.GroupLayout ruleDisplay1Layout = new javax.swing.GroupLayout(ruleDisplay1);
+        ruleDisplay1.setLayout(ruleDisplay1Layout);
+        ruleDisplay1Layout.setHorizontalGroup(
+            ruleDisplay1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        ruleDisplay1Layout.setVerticalGroup(
+            ruleDisplay1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 200, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRadioButton3)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jRadioButton1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(668, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(ruleDisplay1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(showPath)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel5)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(numberBots, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel1)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(playerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(ruleList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(showRay)
+                                .addComponent(showSearchSpace))
+                            .addGap(90, 90, 90)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(85, 85, 85)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jRadioButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jRadioButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jRadioButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 264, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(playerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(numberBots, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(showPath)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(showRay)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(showSearchSpace)
+                        .addGap(20, 20, 20)
+                        .addComponent(ruleList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ruleDisplay1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void launchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_launchActionPerformed
+        Settings.playerName = playerName.getText();
+        Settings.showPath = showPath.isSelected();
+        Settings.showRay = showRay.isSelected();
+        Settings.showSearchSpace = showSearchSpace.isSelected();
+        Settings.numBots = (int)numberBots.getValue();        
+        
         try {
             AppGameContainer app = new AppGameContainer(new StateManager());
 
@@ -137,23 +240,42 @@ public class Launcher extends javax.swing.JFrame {
             app.setShowFPS(true);
             app.setAlwaysRender(true); // Display all frames even when not in focus
 
+            dispose();
             app.start();
         } catch (SlickException e) {
 
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_launchActionPerformed
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+    private void showPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPathActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
+    }//GEN-LAST:event_showPathActionPerformed
 
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+    private void showRayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showRayActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
+    }//GEN-LAST:event_showRayActionPerformed
 
-    private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
+    private void showSearchSpaceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showSearchSpaceActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton3ActionPerformed
+    }//GEN-LAST:event_showSearchSpaceActionPerformed
+
+    private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
+        Settings.playerName = playerName.getText();
+        Settings.showPath = showPath.isSelected();
+        Settings.showRay = showRay.isSelected();
+        Settings.showSearchSpace = showSearchSpace.isSelected();
+        Settings.numBots = (int)numberBots.getValue(); 
+        
+        Settings.saveConfig();
+    }//GEN-LAST:event_saveActionPerformed
+
+    private void ruleListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ruleListActionPerformed
+        int index = ruleList.getSelectedIndex();
+        
+        ruleDisplay1.changeRule(Settings.rules.get(index));
+        ruleDisplay1.revalidate();
+        ruleDisplay1.repaint();
+    }//GEN-LAST:event_ruleListActionPerformed
 
     /**
      * @param args the command line arguments
@@ -191,13 +313,18 @@ public class Launcher extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton launch;
+    private javax.swing.JSpinner numberBots;
+    private javax.swing.JTextField playerName;
+    private Game.RuleDisplay ruleDisplay1;
+    private javax.swing.JComboBox ruleList;
+    private javax.swing.JButton save;
+    private javax.swing.JRadioButton showPath;
+    private javax.swing.JRadioButton showRay;
+    private javax.swing.JRadioButton showSearchSpace;
     // End of variables declaration//GEN-END:variables
 }
