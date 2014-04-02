@@ -22,7 +22,7 @@ public class Settings {
     public static boolean showPath;
     public static boolean showRay;
     public static boolean showSearchSpace;
-    public static boolean switchTarget;
+    public static boolean survival;
     public static String playerName;
     public static Color color;
     public static int height;
@@ -73,7 +73,7 @@ public class Settings {
                         showSearchSpace = Boolean.parseBoolean(parts[1]);
                         break;   
                     case "Survival":
-                        switchTarget = Boolean.parseBoolean(parts[1]);
+                        survival = Boolean.parseBoolean(parts[1]);
                         break;    
                     case "Number of Bots":
                         numBots = Integer.parseInt(parts[1]);
@@ -137,7 +137,7 @@ public class Settings {
             bw.newLine();
             bw.write("Show Search Space=" + showSearchSpace);
             bw.newLine();
-            bw.write("Survival=" + switchTarget);
+            bw.write("Survival=" + survival);
             bw.newLine();
             bw.write("Number of Bots=" + numBots);
             bw.newLine();

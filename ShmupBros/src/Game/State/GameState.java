@@ -79,7 +79,7 @@ public class GameState extends BasicGameState {
         showSearchSpace = Settings.showSearchSpace;
         showName = false;
         showRay = Settings.showRay;
-        switchTarget = Settings.switchTarget;
+        switchTarget = Settings.survival;
         
         for(FuzzySet set: Settings.sets) {
             ruleSet.put(set.getName(), set);

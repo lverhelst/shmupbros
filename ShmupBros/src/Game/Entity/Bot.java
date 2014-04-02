@@ -111,15 +111,16 @@ public class Bot extends Playable {
      * Chooses random Entity as target
      */
     public void chooseRandTarget() {
-        
-        Random rng = new Random();
-        int size = GameState.getEntities().size();
-        int answer = rng.nextInt(size);
-        this.fireRate = 0.0;
-        //Will find a playable object which is alive randomly
-        for(Physical p : GameState.getEntities()){
-            if(p.getType() == TYPE.PLAYABLE && ((Playable)p).isAlive() && rng.nextInt(size) == answer && ((Playable)p) != this)
-                setTarget((Playable)p);
+        if(!Settings.survival) {
+            Random rng = new Random();
+            int size = GameState.getEntities().size();
+            int answer = rng.nextInt(size);
+            this.fireRate = 0.0;
+            //Will find a playable object which is alive randomly
+            for(Physical p : GameState.getEntities()){
+                if(p.getType() == TYPE.PLAYABLE && ((Playable)p).isAlive() && rng.nextInt(size) == answer && ((Playable)p) != this)
+                    setTarget((Playable)p);
+            }
         }
     }
     
