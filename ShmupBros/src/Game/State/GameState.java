@@ -48,7 +48,7 @@ public class GameState extends BasicGameState {
     private long curtime, lastpathfind;
     private TextField log;
     private Font m_font;
-    private static boolean showPath, showDirections, showSearchSpace, showName, showRay;
+    private static boolean showPath, showDirections, showSearchSpace, showName, showRay, switchTarget;
     
     
     TrueTypeFont font;  
@@ -79,43 +79,11 @@ public class GameState extends BasicGameState {
         showSearchSpace = Settings.showSearchSpace;
         showName = false;
         showRay = Settings.showRay;
+        switchTarget = Settings.switchTarget;
         
         for(FuzzySet set: Settings.sets) {
             ruleSet.put(set.getName(), set);
         }
-        /*
-        //distance rating
-        FuzzySet close = new FuzzySet("Distance","Close", new double[] {0,150,300}, new double[] {0,1,0});
-        FuzzySet middle = new FuzzySet("Distance","Middle", new double[] {0,250,350,500,650}, new double[] {0,0,1,1,0});
-        FuzzySet far = new FuzzySet("Distance","Far", new double[] {0,550 ,1000}, new double[] {0,0,1});
-        ruleSet.put(close.getName(), close);
-        ruleSet.put(middle.getName(), middle);
-        ruleSet.put(far.getName(), far);
-                
-        //angle to target rating
-        FuzzySet small = new FuzzySet("Angle","Small", new double[] {0,15,45}, new double[] {1,1,0});
-        FuzzySet medium = new FuzzySet("Angle","Medium", new double[] {0,30,50,90,110}, new double[] {0,0,1,1,0});
-        FuzzySet large = new FuzzySet("Angle","Large", new double[] {0,80,120}, new double[] {0,0,1});        
-        ruleSet.put(small.getName(), small);
-        ruleSet.put(medium.getName(), medium);
-        ruleSet.put(large.getName(), large);
-        
-        //turning rate
-        FuzzySet left = new FuzzySet("Turn","Left", new double[] {0,-180}, new double[] {0,1});
-        FuzzySet facing = new FuzzySet("Turn","Facing", new double[] {-45,-15,0,15,45}, new double[] {0,1,1,1,0});
-        FuzzySet right = new FuzzySet("Turn","Right", new double[] {0,180}, new double[] {0,1});        
-        ruleSet.put(left.getName(), left);
-        ruleSet.put(facing.getName(), facing);
-        ruleSet.put(right.getName(), right);
-                
-        //speed rule
-        FuzzySet slow = new FuzzySet("Speed","Slow", new double[] {0,10,15,30}, new double[] {0.75,1,1,0});
-        FuzzySet normal = new FuzzySet("Speed","Normal", new double[] {0,20,40,50,90}, new double[] {0,0,1,1,0});
-        FuzzySet fast = new FuzzySet("Speed","Fast", new double[] {0,30,80,100}, new double[] {0,0,1,1});        
-        ruleSet.put(slow.getName(), slow);
-        ruleSet.put(normal.getName(), normal);
-        ruleSet.put(fast.getName(), fast);  
-        */
     }
     
     /**
@@ -331,6 +299,13 @@ public class GameState extends BasicGameState {
     public static boolean isShowRay() {
         return showRay;
     }
+    
+    /**
+     * @return if a bot can switch targets 
+     */
+    public static boolean canSwitch() {
+        return switchTarget;
+    }
 
     /**
      * @param aShowRay the showRay to set
@@ -345,7 +320,7 @@ public class GameState extends BasicGameState {
     public static void setShowName(boolean aShowName) {
         showName = aShowName;
     }
-    
+        
     /**
       * Update the current player every 15 milliseconds
       * @param gc GameState container
