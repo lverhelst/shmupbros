@@ -23,7 +23,7 @@ public class Launcher extends javax.swing.JFrame {
         //initiate
         Settings.loadConfig();
         initComponents();
-        activeRule = Settings.rules.get(0);
+        activeRule = Settings.sets.get(0);
         
         //set loaded settings
         playerName.setText(Settings.playerName);
@@ -42,8 +42,8 @@ public class Launcher extends javax.swing.JFrame {
         String[] list = new String[Settings.rules.size()];
         int i = 0;
         
-        for(FuzzySet rule: Settings.rules) {
-            list[i++] = rule.getSet() + " " + rule.getName();
+        for(FuzzySet set: Settings.sets) {
+            list[i++] = set.getSet() + " " + set.getName();
         }
         
         return list;
@@ -295,8 +295,8 @@ public class Launcher extends javax.swing.JFrame {
     private void ruleListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ruleListActionPerformed
         int index = ruleList.getSelectedIndex();
         
-        numPoints.setValue(Settings.rules.get(index).getX_coord().length);
-        activeRule = Settings.rules.get(index);
+        numPoints.setValue(Settings.sets.get(index).getX_coord().length);
+        activeRule = Settings.sets.get(index);
         ruleDisplay1.changeRule(activeRule);
         ruleDisplay1.revalidate();
         ruleDisplay1.repaint();

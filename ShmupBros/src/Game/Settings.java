@@ -1,5 +1,6 @@
 package Game;
 
+import Ai.FuzzyRule;
 import Ai.FuzzySet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,7 +16,8 @@ import org.newdawn.slick.Color;
  * @author Emery
  */
 public class Settings {
-    public static ArrayList<FuzzySet> rules = new ArrayList();
+    public static ArrayList<FuzzySet> sets = new ArrayList();
+    public static ArrayList<FuzzyRule> rules = new ArrayList();
     public static boolean multiplayer;
     public static boolean showPath;
     public static boolean showRay;
@@ -88,8 +90,11 @@ public class Settings {
                             y_coords[i] = Double.parseDouble(y_vals[i]);
                         }
                         
-                        rules.add(new FuzzySet(set,name,x_coords,y_coords));
-                        break;                        
+                        sets.add(new FuzzySet(set,name,x_coords,y_coords));
+                        break; 
+                    case "Fuzzy Rule":
+                        rules.add(new FuzzyRule(parts[1]));
+                        break;
                 }
                 
                 line = br.readLine();
@@ -132,7 +137,7 @@ public class Settings {
             bw.newLine();
             
             //write out all rules
-            for(FuzzySet r: rules) {                
+            for(FuzzySet r: sets) {                
                 String x_coords = "";
                 String y_coords = "";
                 
@@ -149,6 +154,11 @@ public class Settings {
                 y_coords = y_coords.substring(0, y_coords.length() - 1);
                 
                 bw.write("Fuzzy Set:" + r.getSet() + "!" + r.getName() + "!" + x_coords + "!" + y_coords);
+                bw.newLine();
+            }
+            
+            for(FuzzyRule r: rules) {                
+                bw.write("Fuzzy Set:" + r.toString());
                 bw.newLine();
             }
             
