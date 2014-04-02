@@ -71,7 +71,7 @@ public class Settings {
                     case "Number of Bots":
                         numBots = Integer.parseInt(parts[1]);
                         break;      
-                    case "Rule":
+                    case "Fuzzy Set":
                         parts = parts[1].split("!");
                         String set = parts[0];
                         String name = parts[1];
@@ -146,7 +146,7 @@ public class Settings {
                 x_coords = x_coords.substring(0, x_coords.length() - 1);
                 y_coords = y_coords.substring(0, y_coords.length() - 1);
                 
-                bw.write("Rule:" + r.getSet() + "!" + r.getName() + "!" + x_coords + "!" + y_coords);
+                bw.write("Fuzzy Set:" + r.getSet() + "!" + r.getName() + "!" + x_coords + "!" + y_coords);
                 bw.newLine();
             }
             
