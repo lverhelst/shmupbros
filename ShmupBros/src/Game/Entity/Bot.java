@@ -305,6 +305,7 @@ public class Bot extends Playable {
         f.setTurn(left, facing, right);
         f.setAngle(smallAngle, normalAngle, largeAngle);
         f.setWeight(weight);
+        
         f.evalRule();
         
         System.out.println("pls" + slow);
@@ -321,6 +322,8 @@ public class Bot extends Playable {
         //if angle to node is normal -> normal
         normal = FuzzyOperator.fuzzyOR(normal, normalAngle);
         
+        //RULE:Normal{AND(Middle:Ray,[VAR]:Left)!AND([VAR]:x,AND(Middle:Ray1,[VAR]:Right))!OR([VAR]x,AND(Middle:Ray,Middle:Ray1))!OR([VAR]:X,[VAR]:Normal Angle)}
+        
         //fast logic------------------------------------------------------------
         //if ray 1 and 2 are far -> fast
         fast = FuzzyOperator.fuzzyOR(fast, FuzzyOperator.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2)));
@@ -330,6 +333,8 @@ public class Bot extends Playable {
         fast = FuzzyOperator.fuzzyAND(fast, facing);
         //if angle to node is small -> fast
         fast = FuzzyOperator.fuzzyOR(fast, smallAngle);
+        
+        //RULE:Fast{AND(Far:Ray,Far:Ray2)!AND([VAR]:x,[VAR]:facing)!OR([VAR]:x,[VAR]:Small Angle)}
         
 //        slow = Rslow.evaluate(slow);
 //        normal = Rnormal.evaluate(normal);
