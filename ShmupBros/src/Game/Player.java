@@ -143,7 +143,18 @@ public class Player {
                 if(e.getType() == TYPE.PLAYABLE){
                     p.add((Playable)e);                        
                 }
-            }
+            }  
+            int k = 0;
+             for(Playable pl: p){
+                 
+                if(pl.getClass() == Bot.class && k < 6){
+                       Bot cur = (Bot) pl;
+                       weights += k + ": " + pl.getIdentifier() + "\r\n   Slow Weight: " +  df.format(cur.getWeight()) + "\r\n   Middle Weight: " +  df.format(cur.getWeight2()) + 
+                               "\r\n   Fast Weight: " +  df.format(cur.getWeight3()) + "\r\n";
+                       k++;
+                   }
+             }
+            
             
             //orders the players based on scores
             Collections.sort(p, new Comparator<Playable>(){
@@ -151,16 +162,10 @@ public class Player {
                    return b.getKills() - a.getKills() ;
                } 
             });
-            int k = 0;
+          
             for(Playable pl: p){
                 score += i + ": " + pl.getIdentifier() + " " + ((Playable)pl).getKills() + " \\ " + ((Playable)pl).getDeaths() + "\r\n";
-                if(pl.getClass() == Bot.class && k < 6){
-                    Bot cur = (Bot) pl;
-                    weights += i + ": " + pl.getIdentifier() + "\r\n   Slow Weight: " +  df.format(cur.getWeight()) + "\r\n   Middle Weight: " +  df.format(cur.getWeight2()) + 
-                            "\r\n   Fast Weight: " +  df.format(cur.getWeight3()) + "\r\n";
-                    k++;
-                            
-                }
+                
                 i++;
                 
             }
