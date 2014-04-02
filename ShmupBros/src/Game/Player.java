@@ -39,7 +39,7 @@ public class Player {
         target.setY(512);
         time_alive = 0;
         last_respawned = System.currentTimeMillis(); 
-        df = new DecimalFormat("#.##");
+        df = new DecimalFormat("00.##");
     }
     
     /**
@@ -147,7 +147,7 @@ public class Player {
             int k = 0;
              for(Playable pl: p){
                  
-                if(pl.getClass() == Bot.class && k < 6){
+                if(pl.getClass() == Bot.class && k < 5){
                        Bot cur = (Bot) pl;
                        weights += k + ": " + pl.getIdentifier() + " MOVERATE:  " + df.format(cur.getMoveRate()) +  " \r\n   Slow Weight: " +  df.format(cur.getWeight()) + "\r\n   Middle Weight: " +  df.format(cur.getWeight2()) + 
                                

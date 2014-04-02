@@ -273,46 +273,10 @@ public class Bot extends Playable {
         
         if(Double.isNaN(turnRate))
             turnRate = -50; //Default turn right
-        //turnRate += (System.currentTimeMillis() % 2 == 0) ? 10 : -10;
-        //System.out.println("turn " + turnRate);
-     /*   
-        //slow logic------------------------------------------------------------
-        //if ray 1 is close and turning left -> slow  
-        slow = FuzzyOperator.fuzzyAND(Rclose.evaluate(distance1), left);
-        //if ray 2 is close and turning right -> slow
-        slow = FuzzyOperator.fuzzyOR(slow, FuzzyOperator.fuzzyAND(Rclose.evaluate(distance2), right));
-        //if ray 1 and 2 are close -> slow
-        slow = FuzzyOperator.fuzzyOR(slow, FuzzyOperator.fuzzyAND(Rclose.evaluate(distance1), Rclose.evaluate(distance2)));
-        //if angle to node is large -> slow
-        slow = FuzzyOperator.fuzzyOR(slow, largeAngle);
-        //if not facing -> slow
-        slow = FuzzyOperator.fuzzyOR(slow, FuzzyOperator.fuzzyNOT(facing));
-        */
-      /*  FuzzyRule fuzzy = new FuzzyRule("Close", "Ray", Rslow);
-        fuzzy.addFuzzySet("AND", "Left", "[Var]");
-        fuzzy.setDistance(distance1, distance2);
-        fuzzy.setTurn(left, facing, right);
-        fuzzy.setAngle(smallAngle, normalAngle, largeAngle);
-        fuzzy.setWeight(weight);
-        FuzzySet s = fuzzy.evaluate();*/
-        /*
-        = new FuzzyRule("RULE:Slow" +
-"{AND(Close:Ray,[VAR]:Left)!" +
-"OR([VAR]:x,AND(Close:Ray1,[VAR]:Right))!" +
-"OR([VAR]:x,AND(Close:Ray,Close:Ray1))!" +
-"OR([VAR]:x,[VAR]:Large Angle)!" +
-"OR([VAR]:x,NOT([VAR]:Facing))}");
-        f.setDistance(distance1, distance2);
-        f.setTurn(left, facing, right);
-        f.setAngle(smallAngle, normalAngle, largeAngle);
-        f.setWeight(weight);
         
-        f.evalRule();
         
-        System.out.println("pls" + slow);
-        */
         FuzzySet temp = null, last = null;
-         FuzzyRule f;
+        FuzzyRule f;
         for(int i = 0; i < Settings.rules.size(); i++){
             f = Settings.rules.get(i);
             f.setDistance(distance1, distance2);
@@ -326,89 +290,26 @@ public class Bot extends Playable {
                 f.setWeight(weight3);
             
             temp = f.evalRule();
-            
+                
             switch(f.getName()){
                 case "Slow": slow = f.getConsequent();
                     break;
                 case "Normal": normal = f.getConsequent();
                     break;
                 case "Fast" : fast = f.getConsequent();
-                    
             }
-            
             if(i != 0){
                 last = temp.aggregate(last);
             }else{
                 last = temp;
             }
         }
-        /*
-        //normal logic----------------------------------------------------------
-        //if ray 1 is middle and turning left -> normal  
-        normal = FuzzyOperator.fuzzyAND(Rmiddle.evaluate(distance1), left);
-        //if ray 2 is middle and turning right -> normal
-        normal = FuzzyOperator.fuzzyAND(normal, FuzzyOperator.fuzzyAND(Rmiddle.evaluate(distance2), right));
-        //if ray 1 and 2 are middle -> normal
-        normal = FuzzyOperator.fuzzyOR(normal, FuzzyOperator.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
-        //if angle to node is normal -> normal
-        normal = FuzzyOperator.fuzzyOR(normal, normalAngle);
-        
-        //RULE:Normal{AND(Middle:Ray,[VAR]:Left)!AND([VAR]:x,AND(Middle:Ray1,[VAR]:Right))!OR([VAR]x,AND(Middle:Ray,Middle:Ray1))!OR([VAR]:X,[VAR]:Normal Angle)}
-        
-        //fast logic------------------------------------------------------------
-        //if ray 1 and 2 are far -> fast
-        fast = FuzzyOperator.fuzzyOR(fast, FuzzyOperator.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2)));
-        //if ray 1 and 2 are normal -> fast
-        fast = FuzzyOperator.fuzzyOR(fast, FuzzyOperator.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
-        //if is facing -> fast  
-        fast = FuzzyOperator.fuzzyAND(fast, facing);
-        //if angle to node is small -> fast
-        fast = FuzzyOperator.fuzzyOR(fast, smallAngle);
-        
-        //RULE:Fast{AND(Far:Ray,Far:Ray2)!AND([VAR]:x,[VAR]:facing)!OR([VAR]:x,[VAR]:Small Angle)}
-        
-//        slow = Rslow.evaluate(slow);
-//        normal = Rnormal.evaluate(normal);
-//        fast = Rfast.evaluate(fast);
-       if(Double.isNaN(slow))
-           slow = 0.0;
-       if(Double.isNaN(normal))
-           normal = 0.0;
-       if(Double.isNaN(fast))
-           fast = 0.0; 
-       // double result = ((slow * getWeight()) + (normal * getWeight2()) + (fast * getWeight3()))/(slow + normal + fast);
-     //  System.out.println("Emery res: " + result + " \r\n    slow:" + slow + " "  + weight + " \r\n   normal:" + normal + "  " + weight2  +" \r\n   fast:" + fast + " " + weight3); 
-       
-       double result = 0;
-        
-        /***
-         * Mamdani's method
-         */  
-/*
-        FuzzySet tempa = Rslow.applyImplication(slow *  getWeight()); 
-        //medium speed
-        //distance medium
-        FuzzySet tempb = Rnormal.applyImplication(normal * getWeight2());
-        //fast speed
-        FuzzySet tempc = Rfast.applyImplication(fast * getWeight3());
-        
-        fin = tempc.aggregate(tempa).aggregate(tempb);
-        result = fin.defuzzifyRule();
-     /*   System.out.println("asdfsadf");
-        System.out.println(fin);
-        System.out.println("res" + result);
-        System.out.println("end");*/
-        
-        //if(result >= 80)
-        //    System.out.println( this.getIdentifier() + ":" + result);
-        //if(result < 15)
-         //      result = 15;
+     
         double result = 0.0;
-        
+        //Defuzzify!
         if(last != null) 
             result = last.defuzzifyRule();
         
-        //ystem.out.println("                        RESULT    " + result);
         moveRate = result;
     }
     
