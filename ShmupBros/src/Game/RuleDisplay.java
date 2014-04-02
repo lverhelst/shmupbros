@@ -27,7 +27,7 @@ public class RuleDisplay extends javax.swing.JPanel {
      */
     public RuleDisplay() {
         super();        
-        setRule(Settings.rules.get(0));
+        setRule(Settings.sets.get(0));
         
         this.addMouseListener(new MouseListener(){
             private double x_move;

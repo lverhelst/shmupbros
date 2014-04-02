@@ -80,8 +80,8 @@ public class GameState extends BasicGameState {
         showName = false;
         showRay = Settings.showRay;
         
-        for(FuzzySet rule: Settings.rules) {
-            ruleSet.put(rule.getName(), rule);
+        for(FuzzySet set: Settings.sets) {
+            ruleSet.put(set.getName(), set);
         }
         /*
         //distance rating
