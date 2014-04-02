@@ -149,13 +149,12 @@ public class Player {
                  
                 if(pl.getClass() == Bot.class && k < 6){
                        Bot cur = (Bot) pl;
-                       weights += k + ": " + pl.getIdentifier() + "\r\n   Slow Weight: " +  df.format(cur.getWeight()) + "\r\n   Middle Weight: " +  df.format(cur.getWeight2()) + 
+                       weights += k + ": " + pl.getIdentifier() + " MOVERATE:  " + df.format(cur.getMoveRate()) +  " \r\n   Slow Weight: " +  df.format(cur.getWeight()) + "\r\n   Middle Weight: " +  df.format(cur.getWeight2()) + 
+                               
                                "\r\n   Fast Weight: " +  df.format(cur.getWeight3()) + "\r\n";
                        k++;
                    }
              }
-            
-            
             //orders the players based on scores
             Collections.sort(p, new Comparator<Playable>(){
                public int compare(Playable a, Playable b){

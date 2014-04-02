@@ -146,8 +146,8 @@ public class Bot extends Playable {
     @Override public void Collide() {
         super.Collide();
         
-        System.out.println(slow + " " + normal + " " + fast);
-        System.err.println(getWeight() + " " + getWeight2() + " " + getWeight3());
+        //System.out.println(slow + " " + normal + " " + fast);
+        //System.err.println(getWeight() + " " + getWeight2() + " " + getWeight3());
         
         //reward
         weight += (getWeight() - (getWeight() * slow))/learnRate;
@@ -325,16 +325,18 @@ public class Bot extends Playable {
          * Leon's attempt
          */  
 
-        Rule tempa = Rslow.applyImplication(slow *  (getWeight()/100)); 
+        Rule tempa = Rslow.applyImplication(slow *  getWeight()); 
         //medium speed
         //distance medium
-        Rule tempb = Rnormal.applyImplication(normal * (getWeight2()/100));
+        Rule tempb = Rnormal.applyImplication(normal * getWeight2());
         //fast speed
-        Rule tempc = Rfast.applyImplication(fast * (getWeight3()/100));
+        Rule tempc = Rfast.applyImplication(fast * getWeight3());
         fin = tempc.aggregate(tempa).aggregate(tempb);
         result = fin.defuzzifyRule();
         //if(result >= 80)
         //    System.out.println( this.getIdentifier() + ":" + result);
+        if(result < 15)
+            result = 15;
         moveRate = result;
     }
     
@@ -410,7 +412,7 @@ public class Bot extends Playable {
         graphics.setColor(Color.white);
          DecimalFormat df = new DecimalFormat("#.##");
          if(GameState.isShowName()){
-            graphics.drawString(df.format(moveRate) + " ", getX() + 16, getY() + 16);
+            graphics.drawString(df.format(getMoveRate()) + " ", getX() + 16, getY() + 16);
         }
         super.render(graphics);
     }
