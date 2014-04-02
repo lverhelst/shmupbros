@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import org.newdawn.slick.Color;
 
@@ -71,7 +72,7 @@ public class Settings {
                     case "Number of Bots":
                         numBots = Integer.parseInt(parts[1]);
                         break;      
-                    case "Rule":
+                    case "Fuzzy Set":
                         parts = parts[1].split("!");
                         String set = parts[0];
                         String name = parts[1];
@@ -110,7 +111,8 @@ public class Settings {
      */
     public static boolean saveConfig() {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("config.ini"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter("config.ini"));            
+            DecimalFormat formatter =  new DecimalFormat("#.##");
             
             bw.write("Resolution:" + width + "," + height);
             bw.newLine();
@@ -135,18 +137,18 @@ public class Settings {
                 String y_coords = "";
                 
                 for(double x: r.getX_coord()) {
-                    x_coords += x + ",";
+                    x_coords += formatter.format(x) + ",";
                 }
                 
                 for(double y: r.getY_coord()) {
-                    y_coords += y + ",";
+                    y_coords += formatter.format(y) + ",";
                 }
                 
                 //remove last comma
                 x_coords = x_coords.substring(0, x_coords.length() - 1);
                 y_coords = y_coords.substring(0, y_coords.length() - 1);
                 
-                bw.write("Rule:" + r.getSet() + "!" + r.getName() + "!" + x_coords + "!" + y_coords);
+                bw.write("Fuzzy Set:" + r.getSet() + "!" + r.getName() + "!" + x_coords + "!" + y_coords);
                 bw.newLine();
             }
             
