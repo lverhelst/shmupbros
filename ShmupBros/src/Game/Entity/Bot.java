@@ -275,7 +275,7 @@ public class Bot extends Playable {
             turnRate = -50; //Default turn right
         //turnRate += (System.currentTimeMillis() % 2 == 0) ? 10 : -10;
         //System.out.println("turn " + turnRate);
-        
+     /*   
         //slow logic------------------------------------------------------------
         //if ray 1 is close and turning left -> slow  
         slow = FuzzyOperator.fuzzyAND(Rclose.evaluate(distance1), left);
@@ -287,7 +287,7 @@ public class Bot extends Playable {
         slow = FuzzyOperator.fuzzyOR(slow, largeAngle);
         //if not facing -> slow
         slow = FuzzyOperator.fuzzyOR(slow, FuzzyOperator.fuzzyNOT(facing));
-        
+        */
       /*  FuzzyRule fuzzy = new FuzzyRule("Close", "Ray", Rslow);
         fuzzy.addFuzzySet("AND", "Left", "[Var]");
         fuzzy.setDistance(distance1, distance2);
@@ -295,7 +295,7 @@ public class Bot extends Playable {
         fuzzy.setAngle(smallAngle, normalAngle, largeAngle);
         fuzzy.setWeight(weight);
         FuzzySet s = fuzzy.evaluate();*/
-        
+        /*
         FuzzyRule f = new FuzzyRule("RULE:Slow" +
 "{AND(Close:Ray,[VAR]:Left)!" +
 "OR([VAR]:x,AND(Close:Ray1,[VAR]:Right))!" +
@@ -310,12 +310,18 @@ public class Bot extends Playable {
         f.evalRule();
         
         System.out.println("pls" + slow);
-        
-        FuzzySet temp;
+        */
+        FuzzySet temp = null, last = null;
         for(int i = 0; i < Settings.rules.size(); i++){
-            temp = Settings.rules.get(i).evalRule;
+            temp = Settings.rules.get(i).evalRule();
+            if(i != 0){
+                temp = temp.aggregate(last);
+                last = temp;
+            }else{
+                last = temp;
+            }
         }
-        
+        /*
         //normal logic----------------------------------------------------------
         //if ray 1 is middle and turning left -> normal  
         normal = FuzzyOperator.fuzzyAND(Rmiddle.evaluate(distance1), left);
@@ -357,7 +363,7 @@ public class Bot extends Playable {
         /***
          * Mamdani's method
          */  
-
+/*
         FuzzySet tempa = Rslow.applyImplication(slow *  getWeight()); 
         //medium speed
         //distance medium
@@ -376,6 +382,9 @@ public class Bot extends Playable {
         //    System.out.println( this.getIdentifier() + ":" + result);
         //if(result < 15)
          //      result = 15;
+        double result = 0.0;
+        if(temp != null) 
+            result = temp.defuzzifyRule();
         moveRate = result;
     }
     
