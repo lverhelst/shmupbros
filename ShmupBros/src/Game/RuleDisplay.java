@@ -86,22 +86,25 @@ public class RuleDisplay extends javax.swing.JPanel {
      * @param points an int of the number of point
      */
     public void setPoints(int points) {
-        double[] x_new = new double[points];
-        double[] y_new = new double[points];
-                
-        for(int i = 0; i < points; ++i) {
-            x_new[i] = (x_max/points * i);
-            if(i < x_coords.length) {
-                y_new[i] = y_coords[i];
-            } else {                
-                y_new[i] = 1;
+        if(points !=  x_coords.length) {
+            double[] x_new = new double[points];
+            double[] y_new = new double[points];
+
+            for(int i = 0; i < points; ++i) {
+                x_new[i] = (x_max/points * i);
+                if(i < x_coords.length) {
+                    y_new[i] = y_coords[i];
+                } else {                
+                    y_new[i] = 1;
+                }
             }
+
+            x_coords = x_new;
+            y_coords = y_new;
+
+            rule.changeSet(x_coords, y_coords);
         }
         
-        x_coords = x_new;
-        y_coords = y_new;
-        
-        rule.changeSet(x_coords, y_coords);
         setBounds(x_coords);
     }
     
