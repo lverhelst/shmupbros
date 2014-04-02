@@ -1,5 +1,6 @@
 package Ai;
 
+import Game.State.GameState;
 import java.util.ArrayList;
 
 /**
@@ -7,13 +8,13 @@ import java.util.ArrayList;
  * @author Emery
  */
 public class FuzzyRule {
-    private ArrayList<FuzzySet> setList;
+    private ArrayList<String> setList;
     private ArrayList<String> varList;
     private ArrayList<String> opList;
     private FuzzySet then;
     
-    //distance vars
-    private double distance, distance2;
+    //distance vars and weight
+    private double distance, distance2, weight;
     //turn vars
     private double left, facing, right;
     //angle vars
@@ -21,9 +22,10 @@ public class FuzzyRule {
     
     /**
      * Used to create the base of the rule
-     * @param set the base rule
+     * @param set the base fuzzy set name
+     * @param var the variable to use
      */
-    public FuzzyRule(FuzzySet set, String var) {
+    public FuzzyRule(String set, String var) {
         setList = new ArrayList();
         varList = new ArrayList();
         opList = new ArrayList();
@@ -45,7 +47,7 @@ public class FuzzyRule {
      * @param var the variable to use (distance, distance2, angleTarget, angleNode)
      * @param set the fuzzy set to use
      */
-    public void addFuzzySet(String operator, String var, FuzzySet set) {
+    public void addFuzzySet(String operator, String set, String var) {
         setList.add(set);
         opList.add(operator);
         varList.add(var);
@@ -86,19 +88,42 @@ public class FuzzyRule {
     }
     
     /**
+     * Used to set the then result weight
+     * @param weight the weight used in then exp
+     */
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+    
+    /**
      * Used to evaluate the if - then rule
      * @return the resulting value
      */
     public FuzzySet evaluate() {
-        double var = getVariable(varList.get(0));
-        double result = setList.get(0).evaluate(var);
+        double result = getFuzzyValue(setList.get(0), varList.get(0));
         
         for(int i = 1; i < setList.size(); ++i) {
-            var = getVariable(varList.get(i));
-            result = applyOperator(setList.get(i).evaluate(var), result, opList.get(i-1));
+            result = applyOperator(getFuzzyValue(setList.get(i), varList.get(i)), result, opList.get(i-1));
         }
         
-        return then.applyImplication(result);
+        return then.applyImplication(result * weight);
+    }
+    
+    /**
+     * Used to get the needed fuzzy set value
+     * @param set the name of the fuzzy set
+     * @param var the variable to use to evaluate
+     * @return the fuzzy set value by that name
+     */
+    public double getFuzzyValue(String set, String var) {
+        double value = getVariable(var);
+        
+        if(!set.equals("[Var]")) {
+            FuzzySet fuzzySet = GameState.getRule(set);
+            return fuzzySet.evaluate(value);
+        }
+        
+        return value;
     }
     
     /**
