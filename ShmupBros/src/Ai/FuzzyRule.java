@@ -20,17 +20,77 @@ public class FuzzyRule {
     //angle vars
     private double small, normal, large;
     
+    //local calc var
+    private double x;
+    
+    //list of rules in order
+    String[] ruleList;
+    String name;
+    
     /**
      * Used to create the base of the rule
      * @param set the base fuzzy set name
      * @param var the variable to use
      */
-    public FuzzyRule(String set, String var) {
+    public FuzzyRule(String set, String var, FuzzySet then) {
         setList = new ArrayList();
         varList = new ArrayList();
         opList = new ArrayList();
         setList.add(set);
         varList.add(var);
+        this.then = then;
+    }
+    
+    public FuzzyRule(String rawRule){
+        name = rawRule.substring(rawRule.indexOf(":") + 1, rawRule.indexOf("{"));
+        String rawlist = rawRule.substring(rawRule.indexOf("{") + 1, rawRule.indexOf("}"));
+        ruleList = rawlist.split("!");                       
+    }
+    
+    public FuzzySet evalRule(){
+        x = 0;
+        for(String r : ruleList){
+            x = evalAntecedant(r);
+        }
+        FuzzySet slow = GameState.getRule(name);
+        
+        return slow.applyImplication(x * weight);
+    }
+    
+    public double evalAntecedant(String smallrule){
+        //base case
+        int count = 0;
+        for(int i = 0; i < smallrule.length(); i++){
+            if(smallrule.charAt(i) == '(')
+                count++;
+        }
+        
+        if(count == 0){
+            String begin = smallrule.substring(0, smallrule.indexOf(":"));
+            String end = smallrule.substring(smallrule.indexOf(":") + 1, smallrule.length());
+            //System.out.println(smallrule + " No brackets: " +  (double)getFuzzyValue(begin, end));
+            
+            return getFuzzyValue(begin, end);
+        }  
+        else{           
+            //get operator
+            String op = smallrule.substring(0, smallrule.indexOf("("));
+            smallrule = smallrule.substring(smallrule.indexOf("(") + 1, smallrule.length() - 1);
+           
+            if(op.equals("NOT")){
+                 double xy = applyOperator(evalAntecedant(smallrule.substring(0, smallrule.length())) ,0, op);
+                 // System.out.println("NOT " +  xy);
+                     return xy;
+            }
+            else{
+                //and /or
+                double a = evalAntecedant(smallrule.substring(0, smallrule.indexOf(",")));
+                double b = evalAntecedant(smallrule.substring(smallrule.indexOf(",") + 1, smallrule.length()));
+                double xz = applyOperator(a,b,op);
+               // System.out.println("a " +  a + " b " + b + " " + xz);
+                return xz;
+            }
+        }
     }
  
     /**
@@ -103,9 +163,8 @@ public class FuzzyRule {
         double result = getFuzzyValue(setList.get(0), varList.get(0));
         
         for(int i = 1; i < setList.size(); ++i) {
-            result = applyOperator(getFuzzyValue(setList.get(i), varList.get(i)), result, opList.get(i-1));
-        }
-        
+                result = applyOperator(getFuzzyValue(setList.get(i), varList.get(i)), result, opList.get(i-1));
+        }   
         return then.applyImplication(result * weight);
     }
     
@@ -117,10 +176,13 @@ public class FuzzyRule {
      */
     public double getFuzzyValue(String set, String var) {
         double value = getVariable(var);
-        
-        if(!set.equals("[Var]")) {
+
+        if(!set.equals("[VAR]")) {
             FuzzySet fuzzySet = GameState.getRule(set);
-            return fuzzySet.evaluate(value);
+            double xa = fuzzySet.evaluate(value);
+            //if(xa > 0 && xa < 1)
+              //  System.err.println(xa + " " + value + " " + set + " var "  +var );
+            return xa;
         }
         
         return value;
@@ -149,6 +211,8 @@ public class FuzzyRule {
                 return normal;
             case "Large Angle":
                 return large;
+            case "x":
+                return  x;
         }
         
         return 0;

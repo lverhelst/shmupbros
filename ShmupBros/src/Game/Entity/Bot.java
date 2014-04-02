@@ -287,12 +287,28 @@ public class Bot extends Playable {
         //if not facing -> slow
         slow = FuzzyOperator.fuzzyOR(slow, FuzzyOperator.fuzzyNOT(facing));
         
-        FuzzyRule fuzzy = new FuzzyRule("Close", "Ray");
-        fuzzy.addFuzzySet("AND", "Angle Node", "[Var]");
+      /*  FuzzyRule fuzzy = new FuzzyRule("Close", "Ray", Rslow);
+        fuzzy.addFuzzySet("AND", "Left", "[Var]");
         fuzzy.setDistance(distance1, distance2);
         fuzzy.setTurn(left, facing, right);
         fuzzy.setAngle(smallAngle, normalAngle, largeAngle);
         fuzzy.setWeight(weight);
+        FuzzySet s = fuzzy.evaluate();*/
+        
+        FuzzyRule f = new FuzzyRule("RULE:Slow" +
+"{AND(Close:Ray,[VAR]:Left)!" +
+"OR([VAR]:x,AND(Close:Ray1,[VAR]:Right))!" +
+"OR([VAR]:x,AND(Close:Ray,Close:Ray1))!" +
+"OR([VAR]:x,[VAR]:Large Angle)!" +
+"OR([VAR]:x,NOT([VAR]:Facing))}");
+        f.setDistance(distance1, distance2);
+        f.setTurn(left, facing, right);
+        f.setAngle(smallAngle, normalAngle, largeAngle);
+        f.setWeight(weight);
+        f.evalRule();
+        
+        System.out.println("pls" + slow);
+        
         
         
         //normal logic----------------------------------------------------------
@@ -342,10 +358,10 @@ public class Bot extends Playable {
         
         fin = tempc.aggregate(tempa).aggregate(tempb);
         result = fin.defuzzifyRule();
-        System.out.println("asdfsadf");
+     /*   System.out.println("asdfsadf");
         System.out.println(fin);
         System.out.println("res" + result);
-        System.out.println("end");
+        System.out.println("end");*/
         
         //if(result >= 80)
         //    System.out.println( this.getIdentifier() + ":" + result);
