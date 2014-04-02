@@ -89,7 +89,7 @@ public class FuzzyRule {
      * Used to evaluate the if - then rule
      * @return the resulting value
      */
-    public double evaluate() {
+    public FuzzySet evaluate() {
         double var = getVariable(varList.get(0));
         double result = setList.get(0).evaluate(var);
         
@@ -98,9 +98,7 @@ public class FuzzyRule {
             result = applyOperator(setList.get(i).evaluate(var), result, opList.get(i-1));
         }
         
-        then.applyImplication(result);
-        
-        return then.defuzzifyRule();
+        return then.applyImplication(result);
     }
     
     /**
