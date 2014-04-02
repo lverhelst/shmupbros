@@ -1,9 +1,7 @@
 package Game.Entity;
 
-import Ai.Ray;
 import Communications.MCManager;
 import Game.State.GameState;
-import java.util.ArrayList;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
