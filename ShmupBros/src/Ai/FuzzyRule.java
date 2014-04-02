@@ -44,15 +44,20 @@ public class FuzzyRule {
     public FuzzyRule(String rawRule){
         name = rawRule.substring(rawRule.indexOf(":") + 1, rawRule.indexOf("{"));
         String rawlist = rawRule.substring(rawRule.indexOf("{") + 1, rawRule.indexOf("}"));
-        ruleList = rawlist.split("!");                       
+        ruleList = rawlist.split("!");       
+       
     }
     
     public FuzzySet evalRule(){
         x = 0;
         for(String r : ruleList){
             x = evalAntecedant(r);
+            if(Double.isNaN(x))
+                x = 0.0;
         }
         FuzzySet slow = GameState.getRule(name);
+        System.out.println(x);
+        
         
         return slow.applyImplication(x * weight);
     }
@@ -181,7 +186,7 @@ public class FuzzyRule {
             FuzzySet fuzzySet = GameState.getRule(set);
             double xa = fuzzySet.evaluate(value);
             //if(xa > 0 && xa < 1)
-              //  System.err.println(xa + " " + value + " " + set + " var "  +var );
+               // System.err.println(xa + " " + value + " " + set + " var "  +var );
             return xa;
         }
         
@@ -194,6 +199,7 @@ public class FuzzyRule {
      * @return the value as a double
      */
     public double getVariable(String var) {
+        
         switch(var) {
             case "Ray":
                 return distance;

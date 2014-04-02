@@ -296,7 +296,7 @@ public class Bot extends Playable {
         fuzzy.setWeight(weight);
         FuzzySet s = fuzzy.evaluate();*/
         /*
-        FuzzyRule f = new FuzzyRule("RULE:Slow" +
+        = new FuzzyRule("RULE:Slow" +
 "{AND(Close:Ray,[VAR]:Left)!" +
 "OR([VAR]:x,AND(Close:Ray1,[VAR]:Right))!" +
 "OR([VAR]:x,AND(Close:Ray,Close:Ray1))!" +
@@ -312,11 +312,23 @@ public class Bot extends Playable {
         System.out.println("pls" + slow);
         */
         FuzzySet temp = null, last = null;
+         FuzzyRule f;
         for(int i = 0; i < Settings.rules.size(); i++){
-            temp = Settings.rules.get(i).evalRule();
+            f = Settings.rules.get(i);
+            f.setDistance(distance1, distance2);
+            f.setTurn(left, facing, right);
+            f.setAngle(smallAngle, normalAngle, largeAngle);
+            if(i == 0)
+                f.setWeight(weight);
+            else if (i == 1)
+                f.setWeight(weight2);
+            else
+                f.setWeight(weight3);
+            
+            temp = f.evalRule();
+            
             if(i != 0){
-                temp = temp.aggregate(last);
-                last = temp;
+                last = temp.aggregate(last);
             }else{
                 last = temp;
             }
@@ -385,6 +397,8 @@ public class Bot extends Playable {
         double result = 0.0;
         if(temp != null) 
             result = temp.defuzzifyRule();
+        
+        System.out.println("                        RESULT    " + result);
         moveRate = result;
     }
     
