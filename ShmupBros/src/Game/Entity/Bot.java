@@ -307,8 +307,7 @@ public class Bot extends Playable {
         //if angle to node is small -> fast
         fast = FuzzyOperator.fuzzyOR(fast, smallAngle);
         
-        if(fast == 1)
-            System.out.println(fast * getWeight3());
+   
         
 //        slow = Rslow.evaluate(slow);
 //        normal = Rnormal.evaluate(normal);
@@ -335,11 +334,17 @@ public class Bot extends Playable {
         //fast speed
         FuzzySet tempc = Rfast.applyImplication(fast * getWeight3());
         fin = tempc.aggregate(tempa).aggregate(tempb);
+        
         result = fin.defuzzifyRule();
+        System.out.println("asdfsadf");
+        System.out.println(fin);
+        System.out.println("res" + result);
+        System.out.println("end");
+        
         //if(result >= 80)
         //    System.out.println( this.getIdentifier() + ":" + result);
-        if(result < 15)
-               result = 15;
+        //if(result < 15)
+         //      result = 15;
         moveRate = result;
     }
     

@@ -139,44 +139,61 @@ public class FuzzySet {
         
       
             
-        while(thisind < getX_coord().length - 1 &&  otherind < otherRule.getX_coord().length -1){
-            //check intercepts
-            double x1 = getXIntercept(getX_coord()[thisind], getX_coord()[thisind + 1],
-                        getY_coord()[thisind], getY_coord()[thisind + 1],
-                    otherRule.getX_coord()[otherind], otherRule.getX_coord()[otherind + 1],
-                    otherRule.getY_coord()[otherind], otherRule.getY_coord()[otherind + 1]);
-            if(x1 != -1.0){
-                //System.out.println("Intersected");
-                addLargest(this, thisind, otherRule, otherind, x, y);
-                //did intersect
-                double m = (getY_coord()[thisind + 1] - getY_coord()[thisind])/(getX_coord()[thisind + 1] - getX_coord()[thisind]);
-                double b = getY_coord()[thisind] - m * getX_coord()[thisind];
-                double y1 =  m * x1 + b;
-                
-                if(Double.isNaN(x1)){
-                    x1 = 0.0;
+        while(thisind < getX_coord().length - 1 ||  otherind < otherRule.getX_coord().length -1){
+            //if this has more
+            if(thisind < getX_coord().length - 1 &&  otherind >= otherRule.getX_coord().length -1){
+                if(!x.contains(getX_coord()[thisind])){    
+                     x.add(getX_coord()[thisind]);
+                    y.add(getY_coord()[thisind]);
                 }
-                if(Double.isNaN(y1))
-                    y1 = 0.0;
-                
-                x.add(x1);
-                
-                y.add(y1);
-                
                 thisind++;
+            }
+            //if that has more
+            if(thisind >= getX_coord().length - 1 &&  otherind < otherRule.getX_coord().length -1){
+                if(!x.contains(otherRule.getX_coord()[otherind])){
+                    x.add(otherRule.getX_coord()[otherind]);
+                    y.add(otherRule.getY_coord()[otherind]);
+                }
                 otherind++;
-                addLargest(this, thisind, otherRule, otherind, x, y);
-                
-            }else{
-                //chose rule with biggest next y
-                //add to results list
-                addLargest(this, thisind, otherRule, otherind, x, y);
-                thisind++;
-                otherind++;
-                addLargest(this, thisind, otherRule, otherind, x, y);
+            }
+            if(thisind < getX_coord().length - 1 &&  otherind < otherRule.getX_coord().length -1){
+                //check intercepts
+                double x1 = getXIntercept(getX_coord()[thisind], getX_coord()[thisind + 1],
+                            getY_coord()[thisind], getY_coord()[thisind + 1],
+                        otherRule.getX_coord()[otherind], otherRule.getX_coord()[otherind + 1],
+                        otherRule.getY_coord()[otherind], otherRule.getY_coord()[otherind + 1]);
+                if(x1 != -1.0){
+                    //System.out.println("Intersected");
+                    addLargest(this, thisind, otherRule, otherind, x, y);
+                    //did intersect
+                    double m = (getY_coord()[thisind + 1] - getY_coord()[thisind])/(getX_coord()[thisind + 1] - getX_coord()[thisind]);
+                    double b = getY_coord()[thisind] - m * getX_coord()[thisind];
+                    double y1 =  m * x1 + b;
+
+                    if(Double.isNaN(x1)){
+                        x1 = 0.0;
+                    }
+                    if(Double.isNaN(y1))
+                        y1 = 0.0;
+
+                    x.add(x1);
+
+                    y.add(y1);
+
+                    thisind++;
+                    otherind++;
+                    addLargest(this, thisind, otherRule, otherind, x, y);
+
+                }else{
+                    //chose rule with biggest next y
+                    //add to results list
+                    addLargest(this, thisind, otherRule, otherind, x, y);
+                    thisind++;
+                    otherind++;
+                    addLargest(this, thisind, otherRule, otherind, x, y);
+                }
             }
         }
-        
         //save to arrays
         double[] retx = new double[x.size()];
         for(int i = 0; i < x.size(); i++)
