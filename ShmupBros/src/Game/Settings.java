@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import org.newdawn.slick.Color;
 
@@ -110,7 +111,8 @@ public class Settings {
      */
     public static boolean saveConfig() {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("config.ini"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter("config.ini"));            
+            DecimalFormat formatter =  new DecimalFormat("#.##");
             
             bw.write("Resolution:" + width + "," + height);
             bw.newLine();
@@ -135,11 +137,11 @@ public class Settings {
                 String y_coords = "";
                 
                 for(double x: r.getX_coord()) {
-                    x_coords += x + ",";
+                    x_coords += formatter.format(x) + ",";
                 }
                 
                 for(double y: r.getY_coord()) {
-                    y_coords += y + ",";
+                    y_coords += formatter.format(y) + ",";
                 }
                 
                 //remove last comma
