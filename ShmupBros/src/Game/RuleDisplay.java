@@ -1,6 +1,6 @@
 package Game;
 
-import Ai.Rule;
+import Ai.FuzzySet;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,7 +12,7 @@ import java.text.DecimalFormat;
  * @author Emery
  */
 public class RuleDisplay extends javax.swing.JPanel {
-    private Rule rule;
+    private FuzzySet rule;
     private double[] x_coords;
     private double[] y_coords;
     private double x_total;
@@ -23,7 +23,7 @@ public class RuleDisplay extends javax.swing.JPanel {
     private int index = -1;
     
     /**
-     * Creates new form RuleDisplay
+     * Creates new form FuzzySetDisplay
      */
     public RuleDisplay() {
         super();        
@@ -89,7 +89,7 @@ public class RuleDisplay extends javax.swing.JPanel {
      * Used to change the displayed rule
      * @param rule the rule to display
      */
-    public void changeRule(Rule rule) {  
+    public void changeRule(FuzzySet rule) {  
         setRule(rule);
     }
     
@@ -143,7 +143,7 @@ public class RuleDisplay extends javax.swing.JPanel {
      * private method which does the work of setting a rule
      * @param rule the rule to set
      */
-    private void setRule(Rule rule) {  
+    private void setRule(FuzzySet rule) {  
         this.rule = rule;
         x_coords = rule.getX_coord();
         y_coords = rule.getY_coord();

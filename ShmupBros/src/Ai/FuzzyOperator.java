@@ -4,7 +4,7 @@ package Ai;
  * This class is used to perform fuzzy logic on fuzzy values
  * @author Emery Berg and Leon Verhelst
  */
-public class FuzzyLogic {
+public class FuzzyOperator {
     
     /**
      * Fuzzy AND operation, gives the min of the two values

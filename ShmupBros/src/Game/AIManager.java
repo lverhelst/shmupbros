@@ -57,7 +57,7 @@ public class AIManager {
     public void update() {
         for(Bot bot: ai) {
             //spawn if dead
-            if(!bot.isAlive()){
+            if(!bot.isAlive() && System.currentTimeMillis() > bot.getDeathTime() + 500){
                 GameState.spawn(bot);
             }
             

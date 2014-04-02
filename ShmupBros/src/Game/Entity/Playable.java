@@ -21,7 +21,7 @@ public class Playable extends Physical{
     private Color color;
     private int kills, deaths;
     private static boolean  showName;
-    private long lastShot;
+    private long lastShot, deathTime;
     
     /**
      * Default constructor creates the vehicle for us in game
@@ -34,6 +34,7 @@ public class Playable extends Physical{
         color = new Color(256,256,256);
         rotationSpeed = 3;
         speed = 2;
+        deathTime = System.currentTimeMillis();
     }
     
     /**
@@ -101,11 +102,16 @@ public class Playable extends Physical{
             health = 0;
             GameState.addEntity(new Explosion(128, this));
             deaths++;
+            deathTime = System.currentTimeMillis();
         }
     }  
     
     public int getDeaths(){
         return deaths;
+    }
+    
+    public long getDeathTime(){
+        return deathTime;
     }
     
     /**

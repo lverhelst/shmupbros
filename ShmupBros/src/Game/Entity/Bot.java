@@ -2,9 +2,9 @@ package Game.Entity;
 
 import Game.AIManager.MyThread;
 import Ai.AStar;
-import Ai.FuzzyLogic;
+import Ai.FuzzyOperator;
 import Ai.Ray;
-import Ai.Rule;
+import Ai.FuzzySet;
 import Game.State.GameState;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -30,8 +30,7 @@ public class Bot extends Playable {
     private double weight, weight2, weight3;
     private double fireRate, turnRate, moveRate, learnRate;
     private double slow, normal, fast, left, facing, right;
-        
-    private Rule fin;
+    private FuzzySet fin;
     
     public Bot(float f){
         super(f);
@@ -49,10 +48,11 @@ public class Bot extends Playable {
         
         //used to give weights to fuzzy move logic
         weight = 1;
-        weight2 = 1;
-        weight3 = 1;
+        weight2 = 0.1;
+        weight3 = 0.1;
         
         learnRate = 16;
+        
     }
     
     /**
@@ -187,21 +187,21 @@ public class Bot extends Playable {
         double distance1 = primaryRay.getDistance();
         double distance2 = secondaryRay.getDistance();
         
-        Rule Rclose = GameState.getRule("Close");
-        Rule Rmiddle = GameState.getRule("Middle");
-        Rule Rfar = GameState.getRule("Far");
+        FuzzySet Rclose = GameState.getRule("Close");
+        FuzzySet Rmiddle = GameState.getRule("Middle");
+        FuzzySet Rfar = GameState.getRule("Far");
         
-        Rule Rsmall = GameState.getRule("Small");
-        Rule Rmedium = GameState.getRule("Medium");
-        Rule Rlarge = GameState.getRule("Large");
+        FuzzySet Rsmall = GameState.getRule("Small");
+        FuzzySet Rmedium = GameState.getRule("Medium");
+        FuzzySet Rlarge = GameState.getRule("Large");
         
-        Rule Rleft = GameState.getRule("Left");
-        Rule Rfacing = GameState.getRule("Facing");
-        Rule Rright = GameState.getRule("Right");
+        FuzzySet Rleft = GameState.getRule("Left");
+        FuzzySet Rfacing = GameState.getRule("Facing");
+        FuzzySet Rright = GameState.getRule("Right");
         
-        Rule Rslow = GameState.getRule("Slow");
-        Rule Rnormal = GameState.getRule("Normal");
-        Rule Rfast = GameState.getRule("Fast");
+        FuzzySet Rslow = GameState.getRule("Slow");
+        FuzzySet Rnormal = GameState.getRule("Normal");
+        FuzzySet Rfast = GameState.getRule("Fast");
         
         double rotationToNodeVector = 0;
         double smallAngle = 0, normalAngle = 0, largeAngle = 0;
@@ -277,35 +277,38 @@ public class Bot extends Playable {
         
         //slow logic------------------------------------------------------------
         //if ray 1 is close and turning left -> slow  
-        slow = FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), left);
+        slow = FuzzyOperator.fuzzyAND(Rclose.evaluate(distance1), left);
         //if ray 2 is close and turning right -> slow
-        slow = FuzzyLogic.fuzzyOR(slow, FuzzyLogic.fuzzyAND(Rclose.evaluate(distance2), right));
+        slow = FuzzyOperator.fuzzyOR(slow, FuzzyOperator.fuzzyAND(Rclose.evaluate(distance2), right));
         //if ray 1 and 2 are close -> slow
-        slow = FuzzyLogic.fuzzyOR(slow, FuzzyLogic.fuzzyAND(Rclose.evaluate(distance1), Rclose.evaluate(distance2)));
+        slow = FuzzyOperator.fuzzyOR(slow, FuzzyOperator.fuzzyAND(Rclose.evaluate(distance1), Rclose.evaluate(distance2)));
         //if angle to node is large -> slow
-        slow = FuzzyLogic.fuzzyOR(slow, largeAngle);
+        slow = FuzzyOperator.fuzzyOR(slow, largeAngle);
         //if not facing -> slow
-        slow = FuzzyLogic.fuzzyOR(slow, FuzzyLogic.fuzzyNOT(facing));
+        slow = FuzzyOperator.fuzzyOR(slow, FuzzyOperator.fuzzyNOT(facing));
         
         //normal logic----------------------------------------------------------
         //if ray 1 is middle and turning left -> normal  
-        normal = FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), left);
+        normal = FuzzyOperator.fuzzyAND(Rmiddle.evaluate(distance1), left);
         //if ray 2 is middle and turning right -> normal
-        normal = FuzzyLogic.fuzzyAND(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance2), right));
+        normal = FuzzyOperator.fuzzyAND(normal, FuzzyOperator.fuzzyAND(Rmiddle.evaluate(distance2), right));
         //if ray 1 and 2 are middle -> normal
-        normal = FuzzyLogic.fuzzyOR(normal, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
+        normal = FuzzyOperator.fuzzyOR(normal, FuzzyOperator.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
         //if angle to node is normal -> normal
-        normal = FuzzyLogic.fuzzyOR(normal, normalAngle);
+        normal = FuzzyOperator.fuzzyOR(normal, normalAngle);
         
         //fast logic------------------------------------------------------------
         //if ray 1 and 2 are far -> fast
-        fast = FuzzyLogic.fuzzyOR(fast, FuzzyLogic.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2)));
+        fast = FuzzyOperator.fuzzyOR(fast, FuzzyOperator.fuzzyAND(Rfar.evaluate(distance1), Rfar.evaluate(distance2)));
         //if ray 1 and 2 are normal -> fast
-        fast = FuzzyLogic.fuzzyOR(fast, FuzzyLogic.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
+        fast = FuzzyOperator.fuzzyOR(fast, FuzzyOperator.fuzzyAND(Rmiddle.evaluate(distance1), Rmiddle.evaluate(distance2)));
         //if is facing -> fast  
-        fast = FuzzyLogic.fuzzyAND(fast, facing);
+        fast = FuzzyOperator.fuzzyAND(fast, facing);
         //if angle to node is small -> fast
-        fast = FuzzyLogic.fuzzyOR(fast, smallAngle);
+        fast = FuzzyOperator.fuzzyOR(fast, smallAngle);
+        
+        if(fast == 1)
+            System.out.println(fast * getWeight3());
         
 //        slow = Rslow.evaluate(slow);
 //        normal = Rnormal.evaluate(normal);
@@ -316,27 +319,27 @@ public class Bot extends Playable {
            normal = 0.0;
        if(Double.isNaN(fast))
            fast = 0.0; 
-        double result = ((slow * getWeight()) + (normal * getWeight2()) + (fast * getWeight3()))/(slow + normal + fast);
+       // double result = ((slow * getWeight()) + (normal * getWeight2()) + (fast * getWeight3()))/(slow + normal + fast);
      //  System.out.println("Emery res: " + result + " \r\n    slow:" + slow + " "  + weight + " \r\n   normal:" + normal + "  " + weight2  +" \r\n   fast:" + fast + " " + weight3); 
        
-       
+       double result = 0;
         
         /***
-         * Leon's attempt
+         * Mamdani's method
          */  
 
-        Rule tempa = Rslow.applyImplication(slow *  getWeight()); 
+        FuzzySet tempa = Rslow.applyImplication(slow *  getWeight()); 
         //medium speed
         //distance medium
-        Rule tempb = Rnormal.applyImplication(normal * getWeight2());
+        FuzzySet tempb = Rnormal.applyImplication(normal * getWeight2());
         //fast speed
-        Rule tempc = Rfast.applyImplication(fast * getWeight3());
+        FuzzySet tempc = Rfast.applyImplication(fast * getWeight3());
         fin = tempc.aggregate(tempa).aggregate(tempb);
         result = fin.defuzzifyRule();
         //if(result >= 80)
         //    System.out.println( this.getIdentifier() + ":" + result);
         if(result < 15)
-            result = 15;
+               result = 15;
         moveRate = result;
     }
     

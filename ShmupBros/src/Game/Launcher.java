@@ -1,6 +1,6 @@
 package Game;
 
-import Ai.Rule;
+import Ai.FuzzySet;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
@@ -12,7 +12,7 @@ import org.newdawn.slick.SlickException;
  * @author Emery
  */
 public class Launcher extends javax.swing.JFrame {
-    public Rule activeRule;
+    public FuzzySet activeRule;
     
     /**
      * Creates new form Launcher
@@ -42,7 +42,7 @@ public class Launcher extends javax.swing.JFrame {
         String[] list = new String[Settings.rules.size()];
         int i = 0;
         
-        for(Rule rule: Settings.rules) {
+        for(FuzzySet rule: Settings.rules) {
             list[i++] = rule.getSet() + " " + rule.getName();
         }
         

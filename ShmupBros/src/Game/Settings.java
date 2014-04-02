@@ -1,6 +1,6 @@
 package Game;
 
-import Ai.Rule;
+import Ai.FuzzySet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -14,7 +14,7 @@ import org.newdawn.slick.Color;
  * @author Emery
  */
 public class Settings {
-    public static ArrayList<Rule> rules = new ArrayList();
+    public static ArrayList<FuzzySet> rules = new ArrayList();
     public static boolean multiplayer;
     public static boolean showPath;
     public static boolean showRay;
@@ -87,7 +87,7 @@ public class Settings {
                             y_coords[i] = Double.parseDouble(y_vals[i]);
                         }
                         
-                        rules.add(new Rule(set,name,x_coords,y_coords));
+                        rules.add(new FuzzySet(set,name,x_coords,y_coords));
                         break;                        
                 }
                 
@@ -130,7 +130,7 @@ public class Settings {
             bw.newLine();
             
             //write out all rules
-            for(Rule r: rules) {                
+            for(FuzzySet r: rules) {                
                 String x_coords = "";
                 String y_coords = "";
                 

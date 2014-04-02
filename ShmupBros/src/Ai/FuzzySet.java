@@ -7,7 +7,7 @@ import java.util.Arrays;
 /*
  * @author Leon I. Verhelst and Emery
  */
-public class Rule {
+public class FuzzySet {
     private String set;
     private String name;
     public double w;
@@ -31,7 +31,7 @@ public class Rule {
      * @param xs the x positions
      * @param ys the y value at x positions
      */
-    public Rule(String set, String name, double[] xs, double[]ys){
+    public FuzzySet(String set, String name, double[] xs, double[]ys){
         if(xs == null || ys == null || xs.length != ys.length)
             System.err.println("Invalid rule. Coordinate Values must mtch and cannot be null");
         
@@ -115,13 +115,13 @@ public class Rule {
      * @param value
      * @return A new truncated rule
      */
-    public Rule applyImplication(double value){
+    public FuzzySet applyImplication(double value){
         double[] newY = Arrays.copyOf(getY_coord(), getY_coord().length);
         for(int i = 0; i < newY.length; i++){
             if(newY[i] > value)
                 newY[i] = value;
         }
-        return new Rule(getSet(), "_" + this.name, getX_coord(), newY);   
+        return new FuzzySet(getSet(), "_" + this.name, getX_coord(), newY);   
     }
     
     /**
@@ -130,7 +130,7 @@ public class Rule {
      * @param otherRule
      * @return 
      */
-    public Rule aggregate(Rule otherRule){
+    public FuzzySet aggregate(FuzzySet otherRule){
         ArrayList<Double> x = new ArrayList<>();
         ArrayList<Double> y = new ArrayList<>();
         
@@ -186,10 +186,10 @@ public class Rule {
         for(int i = 0; i < y.size(); i++)
             rety[i] = y.get(i);
         
-        return new Rule("Result", this.name + otherRule.name, retx, rety);
+        return new FuzzySet("Result", this.name + otherRule.name, retx, rety);
     }
     
-    private void addLargest(Rule r1, int index1, Rule r2, int index2, ArrayList<Double> x, ArrayList<Double> y){
+    private void addLargest(FuzzySet r1, int index1, FuzzySet r2, int index2, ArrayList<Double> x, ArrayList<Double> y){
         //compare
         //chose rule with biggest first y
         //add to results list
