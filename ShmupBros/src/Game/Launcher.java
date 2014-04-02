@@ -295,9 +295,9 @@ public class Launcher extends javax.swing.JFrame {
     private void ruleListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ruleListActionPerformed
         int index = ruleList.getSelectedIndex();
         
-        numPoints.setValue(Settings.sets.get(index).getX_coord().length);
         activeRule = Settings.sets.get(index);
         ruleDisplay1.changeRule(activeRule);
+        numPoints.setValue(activeRule.getX_coord().length);
         ruleDisplay1.revalidate();
         ruleDisplay1.repaint();
     }//GEN-LAST:event_ruleListActionPerformed

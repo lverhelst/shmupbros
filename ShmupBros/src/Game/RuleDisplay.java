@@ -115,7 +115,7 @@ public class RuleDisplay extends javax.swing.JPanel {
     private void setRule(FuzzySet rule) {  
         this.rule = rule;
         x_coords = rule.getX_coord();
-        y_coords = rule.getY_coord();
+        y_coords = rule.getY_coord();        
         
         setBounds(x_coords);
     }
