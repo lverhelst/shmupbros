@@ -3,6 +3,7 @@ package Game.Entity;
 import Game.AIManager.MyThread;
 import Ai.AStar;
 import Ai.FuzzyOperator;
+import Ai.FuzzyRule;
 import Ai.Ray;
 import Ai.FuzzySet;
 import Game.State.GameState;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.newdawn.slick.geom.Polygon;
 
 /**
  * @author Leon Verhelst and Emery
@@ -203,7 +203,7 @@ public class Bot extends Playable {
         FuzzySet Rnormal = GameState.getRule("Normal");
         FuzzySet Rfast = GameState.getRule("Fast");
         
-        double rotationToNodeVector = 0;
+        double rotationToNodeVector = 0, rotationToTargetVector = 0;
         double smallAngle = 0, normalAngle = 0, largeAngle = 0;
         
         //check angle to A* path
@@ -227,20 +227,20 @@ public class Bot extends Playable {
         
         //check the firerate
         if(target != null && hit) {            
-            double rotationToTargetVector = getRotationToEntity(target); 
+            rotationToTargetVector = getRotationToEntity(target); 
             
             if(rotationToTargetVector < 0)
                 rotationToTargetVector += 360;
             
-            double rotation = (rotationToTargetVector - getRotation()) % 360;
+             rotationToTargetVector = (rotationToTargetVector - getRotation()) % 360;
             
-            double small = Rsmall.evaluate(rotation);
-            double medium = Rmedium.evaluate(rotation);
-            double large = Rlarge.evaluate(rotation);
+            double small = Rsmall.evaluate(rotationToTargetVector);
+            double medium = Rmedium.evaluate(rotationToTargetVector);
+            double large = Rlarge.evaluate(rotationToTargetVector);
             
-            left = Rleft.evaluate(rotation);
-            facing = Rfacing.evaluate(rotation);
-            right = Rright.evaluate(rotation);
+            left = Rleft.evaluate(rotationToTargetVector);
+            facing = Rfacing.evaluate(rotationToTargetVector);
+            right = Rright.evaluate(rotationToTargetVector);
             
             fireRate = ((small * 100) + (medium * 10) + (large * 1))/(small + medium + large);
             turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);
@@ -248,11 +248,11 @@ public class Bot extends Playable {
             if(rotationToNodeVector < 0)
                 rotationToNodeVector += 360;
             
-            double rotation = (rotationToNodeVector - getRotation()) % 360;
+            rotationToNodeVector = (rotationToNodeVector - getRotation()) % 360;
 
-            left = Rleft.evaluate(rotation);
-            facing = Rfacing.evaluate(rotation);
-            right = Rright.evaluate(rotation);
+            left = Rleft.evaluate(rotationToNodeVector);
+            facing = Rfacing.evaluate(rotationToNodeVector);
+            right = Rright.evaluate(rotationToNodeVector);
             
             if(distance1 < 20){
                 left = 0;
@@ -286,6 +286,14 @@ public class Bot extends Playable {
         slow = FuzzyOperator.fuzzyOR(slow, largeAngle);
         //if not facing -> slow
         slow = FuzzyOperator.fuzzyOR(slow, FuzzyOperator.fuzzyNOT(facing));
+        
+        FuzzyRule fuzzy = new FuzzyRule("Close", "Ray");
+        fuzzy.addFuzzySet("AND", "Angle Node", "[Var]");
+        fuzzy.setDistance(distance1, distance2);
+        fuzzy.setTurn(left, facing, right);
+        fuzzy.setAngle(smallAngle, normalAngle, largeAngle);
+        fuzzy.setWeight(weight);
+        
         
         //normal logic----------------------------------------------------------
         //if ray 1 is middle and turning left -> normal  
