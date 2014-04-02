@@ -10,6 +10,7 @@ import Game.State.GameState;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import Game.Map.Tile;
+import Game.Settings;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
@@ -310,7 +311,10 @@ public class Bot extends Playable {
         
         System.out.println("pls" + slow);
         
-        
+        FuzzySet temp;
+        for(int i = 0; i < Settings.rules.size(); i++){
+            temp = Settings.rules.get(i).evalRule;
+        }
         
         //normal logic----------------------------------------------------------
         //if ray 1 is middle and turning left -> normal  
