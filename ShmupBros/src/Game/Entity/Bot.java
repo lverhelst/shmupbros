@@ -48,10 +48,10 @@ public class Bot extends Playable {
         
         //used to give weights to fuzzy move logic
         weight = 1;
-        weight2 = 0.1;
-        weight3 = 0.1;
+        weight2 = 0.01;
+        weight3 = 0.01;
         
-        learnRate = 16;
+        learnRate = 32;
         
     }
     
@@ -307,8 +307,6 @@ public class Bot extends Playable {
         //if angle to node is small -> fast
         fast = FuzzyOperator.fuzzyOR(fast, smallAngle);
         
-   
-        
 //        slow = Rslow.evaluate(slow);
 //        normal = Rnormal.evaluate(normal);
 //        fast = Rfast.evaluate(fast);
@@ -333,8 +331,8 @@ public class Bot extends Playable {
         FuzzySet tempb = Rnormal.applyImplication(normal * getWeight2());
         //fast speed
         FuzzySet tempc = Rfast.applyImplication(fast * getWeight3());
-        fin = tempc.aggregate(tempa).aggregate(tempb);
         
+        fin = tempc.aggregate(tempa).aggregate(tempb);
         result = fin.defuzzifyRule();
         System.out.println("asdfsadf");
         System.out.println(fin);
