@@ -239,6 +239,15 @@ public class FuzzyRule {
     }
     
     @Override public String toString() {
-        return "";
+        String temp = "Rule:" + name + "{";
+        
+        for(int i = 0; i < ruleList.length; ++i) {
+            temp += ruleList[i];   
+            
+            if(i < ruleList.length - 1)
+                temp += "!";
+        }
+        
+        return temp + "}";
     }
 }
