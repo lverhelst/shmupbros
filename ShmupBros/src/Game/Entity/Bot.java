@@ -49,10 +49,10 @@ public class Bot extends Playable {
         
         //used to give weights to fuzzy move logic
         weight = 1;
-        weight2 = 0.01;
-        weight3 = 0.01;
+        weight2 = 0.5;
+        weight3 = 0.25;
         
-        learnRate = 32;
+        learnRate = 8;
         
     }
     
@@ -327,6 +327,15 @@ public class Bot extends Playable {
             
             temp = f.evalRule();
             
+            switch(f.getName()){
+                case "Slow": slow = f.getConsequent();
+                    break;
+                case "Normal": normal = f.getConsequent();
+                    break;
+                case "Fast" : fast = f.getConsequent();
+                    
+            }
+            
             if(i != 0){
                 last = temp.aggregate(last);
             }else{
@@ -395,10 +404,11 @@ public class Bot extends Playable {
         //if(result < 15)
          //      result = 15;
         double result = 0.0;
-        if(temp != null) 
-            result = temp.defuzzifyRule();
         
-        System.out.println("                        RESULT    " + result);
+        if(last != null) 
+            result = last.defuzzifyRule();
+        
+        //ystem.out.println("                        RESULT    " + result);
         moveRate = result;
     }
     

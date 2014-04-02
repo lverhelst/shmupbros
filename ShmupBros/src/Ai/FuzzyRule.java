@@ -56,7 +56,7 @@ public class FuzzyRule {
                 x = 0.0;
         }
         FuzzySet slow = GameState.getRule(name);
-        System.out.println(x);
+       // System.out.println(x);
         
         
         return slow.applyImplication(x * weight);
@@ -96,6 +96,14 @@ public class FuzzyRule {
                 return xz;
             }
         }
+    }
+    
+    public String getName(){
+        return name;
+    }
+    
+    public double getConsequent(){
+        return x;
     }
  
     /**
