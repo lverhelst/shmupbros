@@ -158,7 +158,7 @@ public class Settings {
             }
             
             for(FuzzyRule r: rules) {                
-                bw.write("Fuzzy Set=" + r.toString());
+                bw.write("Fuzzy Rule=" + r.toString());
                 bw.newLine();
             }
             
