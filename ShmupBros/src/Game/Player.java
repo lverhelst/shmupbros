@@ -1,6 +1,7 @@
 package Game;
 
 import Communications.MCManager;
+import Game.Entity.Bot;
 import Game.Entity.Physical;
 import Game.Entity.Playable;
 import Game.State.GameState;
@@ -11,6 +12,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import Game.Entity.Entity.TYPE;
+import java.text.DecimalFormat;
 
 /**
  * Player: Used to view and manage the local player and game
@@ -21,6 +23,7 @@ public class Player {
     private String name;
     private long last_respawned;
     private long time_alive;
+    private DecimalFormat df;
     
     /**
      * Default contructor which sets the defaults and the players name
@@ -35,7 +38,8 @@ public class Player {
         target.setX(512);
         target.setY(512);
         time_alive = 0;
-        last_respawned = System.currentTimeMillis();        
+        last_respawned = System.currentTimeMillis(); 
+        df = new DecimalFormat("#.##");
     }
     
     /**
@@ -131,6 +135,7 @@ public class Player {
          if(Controller.showScore){
             graphics.setColor(Color.white);
             String score = "Score:  K\\D\r\n";
+            String weights = "Weights\r\n";
             int i = 1;
             ArrayList<Playable> p = new ArrayList<>();
             
@@ -146,12 +151,21 @@ public class Player {
                    return b.getKills() - a.getKills() ;
                } 
             });
-            
+            int k = 0;
             for(Playable pl: p){
                 score += i + ": " + pl.getIdentifier() + " " + ((Playable)pl).getKills() + " \\ " + ((Playable)pl).getDeaths() + "\r\n";
-                   i++;
+                if(pl.getClass() == Bot.class && k < 6){
+                    Bot cur = (Bot) pl;
+                    weights += i + ": " + pl.getIdentifier() + "\r\n   Slow Weight: " +  df.format(cur.getWeight()) + "\r\n   Middle Weight: " +  df.format(cur.getWeight2()) + 
+                            "\r\n   Fast Weight: " +  df.format(cur.getWeight3()) + "\r\n";
+                    k++;
+                            
+                }
+                i++;
+                
             }
             drawString(graphics, score, 51, 51);
+            drawString(graphics, weights, 700, 51);
         }
     }
     
@@ -163,7 +177,13 @@ public class Player {
      * @param y the y location
      */
     private void drawString(Graphics g, String text, int x, int y) {
-        for (String line : text.split("\n"))
+        for (String line : text.split("\n")){
+            g.setColor(Color.black);
+            g.fillRect(x, y + 20, 200, 20);
+            
+            g.setColor(Color.white);
             g.drawString(line, x, y += 20);
+            
+        }
     }
 }

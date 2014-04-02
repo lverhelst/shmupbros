@@ -147,22 +147,22 @@ public class Bot extends Playable {
         super.Collide();
         
         System.out.println(slow + " " + normal + " " + fast);
-        System.err.println(weight + " " + weight2 + " " + weight3);
+        System.err.println(getWeight() + " " + getWeight2() + " " + getWeight3());
         
         //reward
-        weight += (weight - (weight * slow))/learnRate;
-        weight2 += (weight2 - (weight2 * normal))/learnRate;
-        weight3 += (weight3 - (weight3 * fast))/learnRate;
+        weight += (getWeight() - (getWeight() * slow))/learnRate;
+        weight2 += (getWeight2() - (getWeight2() * normal))/learnRate;
+        weight3 += (getWeight3() - (getWeight3() * fast))/learnRate;
         
         //punish
-        weight -= (weight * slow)/learnRate;
-        weight2 -= (weight2 * normal)/learnRate;
-        weight3 -= (weight3 * fast)/learnRate;
+        weight -= (getWeight() * slow)/learnRate;
+        weight2 -= (getWeight2() * normal)/learnRate;
+        weight3 -= (getWeight3() * fast)/learnRate;
         
         //bound weights
-        weight = Math.min(Math.max(weight, 0),1);
-        weight2 = Math.min(Math.max(weight2, 0),1);
-        weight3 = Math.min(Math.max(weight3, 0),1);
+        weight = Math.min(Math.max(getWeight(), 0),1);
+        weight2 = Math.min(Math.max(getWeight2(), 0),1);
+        weight3 = Math.min(Math.max(getWeight3(), 0),1);
     }
     
     /**
@@ -316,7 +316,7 @@ public class Bot extends Playable {
            normal = 0.0;
        if(Double.isNaN(fast))
            fast = 0.0; 
-        double result = ((slow * weight) + (normal * weight2) + (fast * weight3))/(slow + normal + fast);
+        double result = ((slow * getWeight()) + (normal * getWeight2()) + (fast * getWeight3()))/(slow + normal + fast);
      //  System.out.println("Emery res: " + result + " \r\n    slow:" + slow + " "  + weight + " \r\n   normal:" + normal + "  " + weight2  +" \r\n   fast:" + fast + " " + weight3); 
        
        
@@ -325,12 +325,12 @@ public class Bot extends Playable {
          * Leon's attempt
          */  
 
-        Rule tempa = Rslow.applyImplication(slow *  (weight/100)); //weight);
+        Rule tempa = Rslow.applyImplication(slow *  (getWeight()/100)); 
         //medium speed
         //distance medium
-        Rule tempb = Rnormal.applyImplication(normal * (weight2/100));//weight2);
+        Rule tempb = Rnormal.applyImplication(normal * (getWeight2()/100));
         //fast speed
-        Rule tempc = Rfast.applyImplication(fast * (weight3/100));//weight3);
+        Rule tempc = Rfast.applyImplication(fast * (getWeight3()/100));
         fin = tempc.aggregate(tempa).aggregate(tempb);
         result = fin.defuzzifyRule();
         //if(result >= 80)
@@ -406,26 +406,33 @@ public class Bot extends Playable {
             graphics.drawLine(this.getX(), this.getY(), x2, y2);
             graphics.drawRect(x2, y2, 3, 3);
         }
-        if(fin != null){
-            
-            Polygon poly = new Polygon(); 
-            //System.out.println("fin  \r\n  " + fin);
-            for(int i = 0; i < fin.getX_coord().length - 1; i++){
-                poly.addPoint((int)fin.getX_coord()[i] * 10, (int)fin.getY_coord()[i] * 1000);
-                
-               //graphics.drawLine((float)fin.getX_coord()[i] + this.getX(), (float)fin.getY_coord()[i] * 100 + this.getY(), (float)fin.getX_coord()[i + 1] + this.getX(),(float) fin.getY_coord()[i+1] * 100 + this.getY());
-            }
-            poly.setLocation(this.getX(), this.getY());
-            //graphics.draw(poly);
-           // graphics.fill(poly);
-       
-        }
-      //  graphics.drawString(moveRate + " ", getX() + 16, getY() + 16);    
-            graphics.setColor(Color.white);
+ 
+        graphics.setColor(Color.white);
          DecimalFormat df = new DecimalFormat("#.##");
          if(GameState.isShowName()){
             graphics.drawString(df.format(moveRate) + " ", getX() + 16, getY() + 16);
         }
         super.render(graphics);
+    }
+
+    /**
+     * @return the weight
+     */
+    public double getWeight() {
+        return weight;
+    }
+
+    /**
+     * @return the weight2
+     */
+    public double getWeight2() {
+        return weight2;
+    }
+
+    /**
+     * @return the weight3
+     */
+    public double getWeight3() {
+        return weight3;
     }
 }
