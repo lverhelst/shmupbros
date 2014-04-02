@@ -39,7 +39,7 @@ public class Launcher extends javax.swing.JFrame {
      * @return a list of rules
      */
     public String[] getList() {
-        String[] list = new String[Settings.rules.size()];
+        String[] list = new String[Settings.sets.size()];
         int i = 0;
         
         for(FuzzySet set: Settings.sets) {

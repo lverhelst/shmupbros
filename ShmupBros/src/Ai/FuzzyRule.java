@@ -245,7 +245,7 @@ public class FuzzyRule {
             temp += ruleList[i];   
             
             if(i < ruleList.length - 1)
-                temp += "!";
+                temp +=  "!";
         }
         
         return temp + "}";
