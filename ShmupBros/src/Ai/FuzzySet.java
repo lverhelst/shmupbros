@@ -14,13 +14,19 @@ public class FuzzySet {
     private double[] x_coord;
     private double[] y_coord;
     
-    public  double defuzzifyRule(){
+    /**
+     * Used to defuzzify the set using weight average
+     * @return the defuzzified value
+     */
+    public  double defuzzifySet(){
         double denominator = 0;
         double numerator = 0;
+        
         for(int i = 0; i < x_coord.length; i++){
             denominator += x_coord[i] * y_coord[i];
             numerator += y_coord[i];
         }
+        
         return denominator/numerator;
     }
     
@@ -75,7 +81,7 @@ public class FuzzySet {
                 //check for vertical line (undef -> defaults to earliest)
                 if(getX_coord()[i] == getX_coord()[i+1])
                     return getY_coord()[i];
-//                System.out.println(slope(i) + "  " + yintercept(i));
+                
                 return value * slope(i) + yintercept(i);
             }
             
@@ -128,15 +134,14 @@ public class FuzzySet {
      * returns the rule created by overlaying a rule atop this rule 
      * Uses Mamdani's MAX principle
      * @param otherRule
-     * @return 
+     * @return the rusulting fuzzyset
      */
     public FuzzySet aggregate(FuzzySet otherRule){
         ArrayList<Double> x = new ArrayList<>();
         ArrayList<Double> y = new ArrayList<>();
         
         int thisind = 0;
-        int otherind = 0;
-        
+        int otherind = 0;        
       
             
         while(thisind < getX_coord().length - 1 ||  otherind < otherRule.getX_coord().length -1){
@@ -206,6 +211,15 @@ public class FuzzySet {
         return new FuzzySet("Result", this.name + otherRule.name, retx, rety);
     }
     
+    /**
+     * 
+     * @param r1 the first set
+     * @param index1 the first index to check
+     * @param r2 the second set
+     * @param index2 the second index to check
+     * @param x the 1st list to check
+     * @param y the 2nd list to check
+     */
     private void addLargest(FuzzySet r1, int index1, FuzzySet r2, int index2, ArrayList<Double> x, ArrayList<Double> y){
         //compare
         //chose rule with biggest first y
@@ -223,7 +237,18 @@ public class FuzzySet {
         }
     } 
 
-    
+    /**
+     * Calculates the x-intercept given the following parameters
+     * @param x1
+     * @param x2
+     * @param y1
+     * @param y2
+     * @param x3
+     * @param x4
+     * @param y3
+     * @param y4
+     * @return 
+     */
     private double getXIntercept(double x1, double x2, double y1, double y2, double x3, double x4, double y3, double y4){
         //if either is vertical
         if(x1 == x2 || x3 == x4){

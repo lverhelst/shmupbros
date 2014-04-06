@@ -256,10 +256,11 @@ public class Launcher extends javax.swing.JFrame {
         Settings.showSearchSpace = showSearchSpace.isSelected();
         Settings.numBots = (int)numberBots.getValue();        
         
+        //starts the game
         try {
             AppGameContainer app = new AppGameContainer(new StateManager());
 
-            app.setDisplayMode(1024, 600, false);
+            app.setDisplayMode(Settings.width, Settings.height, false);
             app.setShowFPS(true);
             app.setAlwaysRender(true); // Display all frames even when not in focus
 

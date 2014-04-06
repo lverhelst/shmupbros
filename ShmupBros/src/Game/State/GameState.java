@@ -45,16 +45,13 @@ public class GameState extends BasicGameState {
     private Player player;
     private MCManager server; 
     private AIManager ai;
-    private long curtime, lastpathfind;
+    private long curtime;
     private TextField log;
     private Font m_font;
     private static boolean showPath, showDirections, showSearchSpace, showName, showRay, switchTarget;
-    
-    
-    TrueTypeFont font;  
-    
+    private TrueTypeFont font;  
     private boolean findpath = true;
-     ArrayList<Tile> path = new ArrayList<Tile>();        
+    ArrayList<Tile> path = new ArrayList<Tile>();        
     
     /**
     * Constructor which takes an integer parameter for state ID
@@ -67,13 +64,15 @@ public class GameState extends BasicGameState {
         
         int num_bots = Settings.numBots;
 
+        //create the number of bots requested
         for(int i = 0; i < num_bots; i++){
             Bot p = new Bot(32f);
             p.setIdentifier("BOT" + i);     
             ai.addAI(p);
             p.setTarget(player.getTarget());
         } 
-        
+    
+        //debug options
         showPath = Settings.showPath;
         showDirections = false;
         showSearchSpace = Settings.showSearchSpace;

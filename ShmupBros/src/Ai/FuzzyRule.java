@@ -28,19 +28,9 @@ public class FuzzyRule {
     String name;
     
     /**
-     * Used to create the base of the rule
-     * @param set the base fuzzy set name
-     * @param var the variable to use
+     * Constructor which takes a string of the raw rule and parses it into the needed structure
+     * @param rawRule the rawRule as a string
      */
-    public FuzzyRule(String set, String var, FuzzySet then) {
-        setList = new ArrayList();
-        varList = new ArrayList();
-        opList = new ArrayList();
-        setList.add(set);
-        varList.add(var);
-        this.then = then;
-    }
-    
     public FuzzyRule(String rawRule){
         name = rawRule.substring(rawRule.indexOf(":") + 1, rawRule.indexOf("{"));
         String rawlist = rawRule.substring(rawRule.indexOf("{") + 1, rawRule.indexOf("}"));
@@ -48,60 +38,82 @@ public class FuzzyRule {
        
     }
     
+    /**
+     * Used to generate the resulting fuzzy set after evaluation the antecendant
+     * applying the implication with the related weight.
+     * @return the resulting fuzzy set
+     */
     public FuzzySet evalRule(){
         x = 0;
+        
+        //evaluate the antecentdant
         for(String r : ruleList){
             x = evalAntecedant(r);
+            
+            //ensure the value is not NaN
             if(Double.isNaN(x))
                 x = 0.0;
         }
-        FuzzySet slow = GameState.getRule(name);
-       // System.out.println(x);
         
+        FuzzySet set = GameState.getRule(name);
         
-        return slow.applyImplication(x * weight);
+        //apply the implication
+        return set.applyImplication(x * weight);
     }
     
+    /**
+     * Used to evaluate the antecendant based on the rule passed in
+     * @param smallrule the rule as a string
+     * @return the resulting value as a double
+     */
     public double evalAntecedant(String smallrule){
         //base case
         int count = 0;
+        
+        //check nesting level
         for(int i = 0; i < smallrule.length(); i++){
             if(smallrule.charAt(i) == '(')
                 count++;
         }
         
+        //if no nesting
         if(count == 0){
             String begin = smallrule.substring(0, smallrule.indexOf(":"));
             String end = smallrule.substring(smallrule.indexOf(":") + 1, smallrule.length());
-            //System.out.println(smallrule + " No brackets: " +  (double)getFuzzyValue(begin, end));
             
             return getFuzzyValue(begin, end);
         }  
-        else{           
+        //if nesting
+        else {            
             //get operator
             String op = smallrule.substring(0, smallrule.indexOf("("));
             smallrule = smallrule.substring(smallrule.indexOf("(") + 1, smallrule.length() - 1);
            
+            //apply the not opperator
             if(op.equals("NOT")){
                  double xy = applyOperator(evalAntecedant(smallrule.substring(0, smallrule.length())) ,0, op);
-                 // System.out.println("NOT " +  xy);
-                     return xy;
+                    return xy;
             }
+            //apply other opperators (AND/OR)
             else{
-                //and /or
                 double a = evalAntecedant(smallrule.substring(0, smallrule.indexOf(",")));
                 double b = evalAntecedant(smallrule.substring(smallrule.indexOf(",") + 1, smallrule.length()));
                 double xz = applyOperator(a,b,op);
-               // System.out.println("a " +  a + " b " + b + " " + xz);
                 return xz;
             }
         }
     }
     
+    /**
+     * @return the name of the current rule
+     */
     public String getName(){
         return name;
     }
     
+    /**
+     * @return the resulting value
+     */
     public double getConsequent(){
         return x;
     }
@@ -193,8 +205,7 @@ public class FuzzyRule {
         if(!set.equals("[VAR]")) {
             FuzzySet fuzzySet = GameState.getRule(set);
             double xa = fuzzySet.evaluate(value);
-            //if(xa > 0 && xa < 1)
-               // System.err.println(xa + " " + value + " " + set + " var "  +var );
+            
             return xa;
         }
         
@@ -206,8 +217,7 @@ public class FuzzyRule {
      * @param var the name of the variable to retrieve
      * @return the value as a double
      */
-    public double getVariable(String var) {
-        
+    public double getVariable(String var) {        
         switch(var) {
             case "Ray":
                 return distance;
@@ -252,12 +262,17 @@ public class FuzzyRule {
         return 0;
     }
     
+    /**
+     * @return a string in the form needed for saving to file 
+     */
     @Override public String toString() {
         String temp = "Rule:" + name + "{";
         
+        //Generates the needed string for saving in the correct format
         for(int i = 0; i < ruleList.length; ++i) {
             temp += ruleList[i];   
             
+            //only seperate if another part remains
             if(i < ruleList.length - 1)
                 temp +=  "!";
         }

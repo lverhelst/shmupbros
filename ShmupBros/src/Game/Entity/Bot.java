@@ -2,7 +2,6 @@ package Game.Entity;
 
 import Game.AIManager.MyThread;
 import Ai.AStar;
-import Ai.FuzzyOperator;
 import Ai.FuzzyRule;
 import Ai.Ray;
 import Ai.FuzzySet;
@@ -27,17 +26,17 @@ public class Bot extends Playable {
     private static Lock lock = new ReentrantLock();
     
     //fuzzy logic attributes
-    private Ray primaryRay, secondaryRay, targetRay, frontRay;
+    private Ray primaryRay, secondaryRay, targetRay;
     private double weight, weight2, weight3;
     private double fireRate, turnRate, moveRate, learnRate;
     private double slow, normal, fast, left, facing, right;
-    private FuzzySet fin;
     
     public Bot(float f){
         super(f);
         super.setColor(Color.orange);
         path = new ArrayList<>();
         
+        //creates a holder for the A* path
         if(astar == null)
             astar = new AStar();              
         
@@ -45,13 +44,13 @@ public class Bot extends Playable {
         primaryRay = new Ray();
         secondaryRay = new Ray();
         targetRay = new Ray();
-        frontRay = new Ray();
         
         //used to give weights to fuzzy move logic
         weight = 1;
         weight2 = 0.5;
         weight3 = 0.25;
         
+        //sets the speed which the bot learns at
         learnRate = 8;
         
     }
@@ -72,6 +71,9 @@ public class Bot extends Playable {
         GameState.addText(this.getIdentifier() + " targeted " + target.getIdentifier());
     }
     
+    /**
+     * Generates a path to the bots target using A* pathing algorithm
+     */
     public void generatePathToTarget(){
         //generate route to target
         if(GameState.getMap() != null){
@@ -116,6 +118,7 @@ public class Bot extends Playable {
             int size = GameState.getEntities().size();
             int answer = rng.nextInt(size);
             this.fireRate = 0.0;
+            
             //Will find a playable object which is alive randomly
             for(Physical p : GameState.getEntities()){
                 if(p.getType() == TYPE.PLAYABLE && ((Playable)p).isAlive() && rng.nextInt(size) == answer && ((Playable)p) != this)
@@ -145,11 +148,12 @@ public class Bot extends Playable {
         return turnRate;
     }
     
+    /**
+     * Used to reward and punish the bot if they collide. Values which are high
+     * will be punished while low values will be rewarded
+     */
     @Override public void Collide() {
         super.Collide();
-        
-        //System.out.println(slow + " " + normal + " " + fast);
-        //System.err.println(getWeight() + " " + getWeight2() + " " + getWeight3());
         
         //reward
         weight += (getWeight() - (getWeight() * slow))/learnRate;
@@ -186,21 +190,26 @@ public class Bot extends Playable {
         boolean rhit = new Ray().cast(this, 1, 8, 0);
         boolean hit = targetRay.cast(this, target, 32);
         
+        //ray casts
         double distance1 = primaryRay.getDistance();
         double distance2 = secondaryRay.getDistance();
         
+        //distance
         FuzzySet Rclose = GameState.getRule("Close");
         FuzzySet Rmiddle = GameState.getRule("Middle");
         FuzzySet Rfar = GameState.getRule("Far");
         
+        //angle
         FuzzySet Rsmall = GameState.getRule("Small");
         FuzzySet Rmedium = GameState.getRule("Medium");
         FuzzySet Rlarge = GameState.getRule("Large");
         
+        //direction
         FuzzySet Rleft = GameState.getRule("Left");
         FuzzySet Rfacing = GameState.getRule("Facing");
         FuzzySet Rright = GameState.getRule("Right");
         
+        //speed
         FuzzySet Rslow = GameState.getRule("Slow");
         FuzzySet Rnormal = GameState.getRule("Normal");
         FuzzySet Rfast = GameState.getRule("Fast");
@@ -208,20 +217,24 @@ public class Bot extends Playable {
         double rotationToNodeVector = 0, rotationToTargetVector = 0;
         double smallAngle = 0, normalAngle = 0, largeAngle = 0;
         
-        //check angle to A* path
+        //check angle to A* path and evaluted angle speed consideration
         if(hasPath()) {            
             rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
             
-            if(path.size() > 2) { //&& bot can see node 2
+            //moves to next node if it exist (provides cleaner movement
+            if(path.size() > 2) {
                rotationToNodeVector = (rotationToNodeVector + getRotationToEntity(path.get(path.size() - 2)))/2;
+               
                if(Math.abs(rotationToNodeVector) < 5){
                    path.remove(path.size() - 1);
                    path.remove(path.size() - 2);
                }
             }
             
+            //calculate the value to use with the fuzzy sets
             double rotation = rotationToNodeVector - getRotation() % 180;
             
+            //the angle fuzzy set calculations
             smallAngle = Rsmall.evaluate(rotation);
             normalAngle = Rmedium.evaluate(rotation);
             largeAngle = Rlarge.evaluate(rotation);
@@ -231,27 +244,35 @@ public class Bot extends Playable {
         if(target != null && hit) {            
             rotationToTargetVector = getRotationToEntity(target); 
             
+            //converts the angle to a usable one
             if(rotationToTargetVector < 0)
                 rotationToTargetVector += 360;
             
-             rotationToTargetVector = (rotationToTargetVector - getRotation()) % 360;
+            //calucates the needed rotation to face target
+            rotationToTargetVector = (rotationToTargetVector - getRotation()) % 360;
             
+             //angle to target
             double small = Rsmall.evaluate(rotationToTargetVector);
             double medium = Rmedium.evaluate(rotationToTargetVector);
             double large = Rlarge.evaluate(rotationToTargetVector);
             
+            //direction to target
             left = Rleft.evaluate(rotationToTargetVector);
             facing = Rfacing.evaluate(rotationToTargetVector);
             right = Rright.evaluate(rotationToTargetVector);
             
+            //set fire rate and turning rate
             fireRate = ((small * 100) + (medium * 10) + (large * 1))/(small + medium + large);
             turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);
         } else {               
+            //converts the angle to a usable one
             if(rotationToNodeVector < 0)
                 rotationToNodeVector += 360;
             
+            //calucates the needed rotation to face node
             rotationToNodeVector = (rotationToNodeVector - getRotation()) % 360;
 
+            //direction to node
             left = Rleft.evaluate(rotationToNodeVector);
             facing = Rfacing.evaluate(rotationToNodeVector);
             right = Rright.evaluate(rotationToNodeVector);
@@ -259,30 +280,36 @@ public class Bot extends Playable {
             if(distance1 < 20){
                 left = 0;
                 right = 72;
-            }
-            else if(distance2 < 20){
+            } else if(distance2 < 20){
                 left = 70;
                 right = 0;
-            }
-                
-                
+            }                
+              
+            //sets fire rate and turning rate
             fireRate = 0.0;
             turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);   
         }
+        //if ray hit a target fire!!!
         if(rhit)
             fireRate = 80.0;
         
+        //when resulting value is NaN use a default value
         if(Double.isNaN(turnRate))
             turnRate = -50; //Default turn right
         
         
-        FuzzySet temp = null, last = null;
+        FuzzySet temp, last = null;
         FuzzyRule f;
+        
+        //move through the rules list contained in the config file and evaluate
         for(int i = 0; i < Settings.rules.size(); i++){
+            //initate the rule with needed values
             f = Settings.rules.get(i);
             f.setDistance(distance1, distance2);
             f.setTurn(left, facing, right);
             f.setAngle(smallAngle, normalAngle, largeAngle);
+            
+            //set the related weights
             if(i == 0)
                 f.setWeight(weight);
             else if (i == 1)
@@ -292,6 +319,7 @@ public class Bot extends Playable {
             
             temp = f.evalRule();
                 
+            //apply the related rules together
             switch(f.getName()){
                 case "Slow": slow = f.getConsequent();
                     break;
@@ -299,6 +327,8 @@ public class Bot extends Playable {
                     break;
                 case "Fast" : fast = f.getConsequent();
             }
+            
+            //aggragate the rules together until the last rule is reached
             if(i != 0){
                 last = temp.aggregate(last);
             }else{
@@ -309,35 +339,43 @@ public class Bot extends Playable {
         double result = 0.0;
         //Defuzzify!
         if(last != null) 
-            result = last.defuzzifyRule();
+            result = last.defuzzifySet();
         
         moveRate = result;
     }
     
+    /**
+     * Renders the bot and the related debugging tools which have been added
+     * @param graphics the graphics object
+     */
     @Override public void render(Graphics graphics){
         //used to display where the rays collide
         if(hasPath() && GameState.isShowRay()) {
             Tile tile = path.get(path.size() - 1);
             graphics.setColor(Color.yellow);
 
+            //caluclate the line positions for the node
             float theta = (float)Math.toRadians(getRotationToEntity(tile));
             float r = (float)getDistanceToEntity(tile) ;
             float x2 = (float)((r * Math.cos(theta)) + this.getX());
             float y2 =(float)((r * Math.sin(theta)) + this.getY());
 
+            //draw the line to the node
             graphics.drawLine(this.getX(), this.getY(), x2, y2);
             graphics.fillRect(tile.getX(), tile.getY(), 8, 8);
-            
+                        
+            //draw the line to the first ray hit
             graphics.setColor(Color.cyan);
             graphics.fillRect(primaryRay.getX(), primaryRay.getY(), 8, 8);
             graphics.drawLine(primaryRay.getOriginx(), primaryRay.getOriginy(), primaryRay.getX(), primaryRay.getY());
             
-
+            //draw the line to the second ray hit
             graphics.setColor(Color.red);
             graphics.fillRect(secondaryRay.getX(), secondaryRay.getY(), 8, 8);
             graphics.drawLine(secondaryRay.getOriginx(), secondaryRay.getOriginy(), secondaryRay.getX(), secondaryRay.getY());
         }
         
+        //old debuging tool, no longer used
         if(GameState.isShowDirections()){
             graphics.setColor(Color.cyan);
 

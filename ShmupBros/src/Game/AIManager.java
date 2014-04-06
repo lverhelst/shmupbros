@@ -47,10 +47,6 @@ public class AIManager {
         threads.add(new MyThread(bot));       
     }
     
-    public Bot getBot(int i){
-        return ai.get(i);
-    }
-    
     /**
      * Updates the all AI controlled bots
      */
@@ -61,11 +57,12 @@ public class AIManager {
                 GameState.spawn(bot);
             }
             
+            //checks the bots values for moving, turning and attacking
             move(bot);
             turn(bot);
-            attack(bot);
+            attack(bot);            
             
-            
+            //threads used for path generation
             if(threads.peek().getState() == Thread.State.NEW)
                  threads.peek().start(); 
             else if(threads.peek().getState() == Thread.State.TERMINATED){
@@ -82,9 +79,6 @@ public class AIManager {
     public void move(Bot bot) {
         double speed = bot.getMoveRate();
         
-//        System.out.println(speed);
-        
-        //if result1 (speed) -> 1.0, up is done more often
         if(rand.nextDouble() * 100 < speed)
             Controller.update(bot, Controller.MOVE.UP);
     }
@@ -95,8 +89,6 @@ public class AIManager {
      */
     public void turn(Bot bot) {
         double speed = bot.getTurnRate();
-                
-//        System.out.println("turn: " + speed);
                         
         if(speed < 15)
             Controller.update(bot, Controller.MOVE.ROTLEFT);
@@ -111,25 +103,36 @@ public class AIManager {
     public void attack(Bot bot) {
         double speed = bot.getFireRate();        
                  
-        //if result1 (speed) -> 1.0, up is done more often
         if(rand.nextDouble() * 100 < speed)
             Controller.update(bot, Controller.MOVE.FIRE);
     }
     
+    /**
+     * Inner class for threading the pathing process
+     */
     public class MyThread extends Thread {
         private final Bot bot;
         public long last_locked;
         
+        /**
+         * Default constructor which takes the related bot as a parameter
+         * @param b the bot to use
+         */
         MyThread(final Bot b){
             bot = b;
             this.setName(b.getIdentifier() + " Thread");
         }
         
+        /**
+         * Runs the path generation
+         */
         @Override public void run(){
-               // System.out.println(bot.getIdentifier() + " is running");
                 bot.generatePathToTarget();
        }
         
+        /**
+         * @return the threads name as a String
+         */
         @Override public String toString(){
             return this.getName();
         }
