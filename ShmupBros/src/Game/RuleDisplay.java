@@ -54,10 +54,15 @@ public class RuleDisplay extends javax.swing.JPanel {
             public void mouseReleased(MouseEvent e) {
                 if(index != -1) {
                     x_move = ((e.getX())/x_scale) + x_min;
+                    x_move = Math.min(Math.max(x_move, x_min), x_max);
                     y_move = (1 - e.getY()/y_scale)*2;
+                    y_move = Math.min(Math.max(y_move, 0), 1);
 
-                    x_coords[index] = Math.min(Math.max(x_move, x_min), x_max);
-                    y_coords[index] = Math.min(Math.max(y_move, 0), 1);
+                    if((index + 1 < x_coords.length && x_move < x_coords[index + 1]) &&
+                            (index - 1 >= 0 && x_move > x_coords[index - 1])) {
+                        x_coords[index] = x_move;
+                    }
+                    y_coords[index] = y_move;
 
                     RuleDisplay.this.revalidate();
                     RuleDisplay.this.repaint();
