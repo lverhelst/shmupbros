@@ -38,7 +38,7 @@ public class RuleDisplay extends javax.swing.JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                x_move = e.getX()/x_scale;
+                x_move = ((e.getX())/x_scale) + x_min;
                 y_move = (1 - e.getY()/y_scale)*2;
                 
                 for(int i = 0; i < x_coords.length; ++i) {
@@ -53,7 +53,7 @@ public class RuleDisplay extends javax.swing.JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if(index != -1) {
-                    x_move = e.getX()/x_scale;
+                    x_move = ((e.getX())/x_scale) + x_min;
                     y_move = (1 - e.getY()/y_scale)*2;
 
                     x_coords[index] = Math.min(Math.max(x_move, x_min), x_max);
@@ -91,7 +91,7 @@ public class RuleDisplay extends javax.swing.JPanel {
             double[] y_new = new double[points];
 
             for(int i = 0; i < points; ++i) {
-                x_new[i] = (x_max/points * i);
+                x_new[i] = ((x_max - x_min)/points * i);
                 if(i < x_coords.length) {
                     y_new[i] = y_coords[i];
                 } else {                
@@ -151,11 +151,11 @@ public class RuleDisplay extends javax.swing.JPanel {
         DecimalFormat formatter =  new DecimalFormat("#.##");
         
         
-        x_scale = (getWidth()/x_max) * 0.98;
+        x_scale = (getWidth()/(x_max - x_min)) * 0.98;
         y_scale = getHeight()/2; 
         g2.setColor(new Color(0.75f,0f,0f));
         
-        int last_x = (int)(x_coords[0] * x_scale) + 4;
+        int last_x = (int)((x_coords[0] - x_min) * x_scale) + 4;
         int last_y = (int)(1 - y_coords[0] * y_scale/2) + getHeight()/2;
         g2.drawString("[" + formatter.format(x_coords[0]) + "," + formatter.format(y_coords[0]) + "]", last_x, last_y);
         
@@ -165,7 +165,7 @@ public class RuleDisplay extends javax.swing.JPanel {
         g2.fillOval(last_x-4, last_y-4, 8, 8);
         
         for(int i = 1; i < x_coords.length; ++i) {
-            int x = (int)(x_coords[i] * x_scale) + 4;
+            int x = (int)((x_coords[i] - x_min)* x_scale) + 4;
             int y = (int)(1 - y_coords[i] * y_scale/2) + getHeight()/2;
             
             g2.setColor(new Color(0.75f,0f,0f));
