@@ -262,6 +262,7 @@ public class Bot extends Playable {
             right = Rright.evaluate(rotationToTargetVector);
             
             //set fire rate and turning rate
+            //Weighted average defuzzification
             fireRate = ((small * 100) + (medium * 10) + (large * 1))/(small + medium + large);
             turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);
         } else {               
@@ -277,6 +278,11 @@ public class Bot extends Playable {
             facing = Rfacing.evaluate(rotationToNodeVector);
             right = Rright.evaluate(rotationToNodeVector);
             
+            //Force a large turn if too close to walls
+            //Avoids getting stuck on walls
+            //This manually forces the fuzzy defuzzification to turn
+            //This only happens in the case where the bot is very very very very close to the wall 
+            //(Less than 1 32 * 32 block, less than 20px)
             if(distance1 < 20){
                 left = 0;
                 right = 72;
@@ -287,6 +293,7 @@ public class Bot extends Playable {
               
             //sets fire rate and turning rate
             fireRate = 0.0;
+            //Weighted average defuzzification
             turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);   
         }
         //if ray hit a target fire!!!
@@ -328,7 +335,8 @@ public class Bot extends Playable {
                 case "Fast" : fast = f.getConsequent();
             }
             
-            //aggragate the rules together until the last rule is reached
+            //aggragate the rules's fuzzy sets together until the last rule is reached
+            //this result will be defuzzified
             if(i != 0){
                 last = temp.aggregate(last);
             }else{
@@ -338,6 +346,7 @@ public class Bot extends Playable {
      
         double result = 0.0;
         //Defuzzify!
+        //this used Centroid Defuzzification
         if(last != null) 
             result = last.defuzzifySet();
         
