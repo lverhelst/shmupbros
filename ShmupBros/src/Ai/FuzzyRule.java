@@ -181,6 +181,7 @@ public class FuzzyRule {
     }
     
     /**
+     * DEPRECATED (USE EVALRULE())
      * Used to evaluate the if - then rule
      * @return the resulting value
      */
