@@ -134,7 +134,7 @@ public class Playable extends Physical{
      * Respawn the player 
      */
     public void respawn() { 
-
+        
         health = TOTAL_HEALTH;
         setCollidable(true);
     }

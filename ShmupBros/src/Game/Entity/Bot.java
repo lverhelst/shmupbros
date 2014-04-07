@@ -24,12 +24,14 @@ public class Bot extends Playable {
     private Playable target; 
     private static AStar astar;
     private static Lock lock = new ReentrantLock();
+    Random rng = new Random();
     
     //fuzzy logic attributes
-    private Ray primaryRay, secondaryRay, targetRay;
+    private Ray primaryRay, secondaryRay, targetRay, frontRay;
     private double weight, weight2, weight3;
     private double fireRate, turnRate, moveRate, learnRate;
     private double slow, normal, fast, left, facing, right;
+    private long lastChoseTarget;
     
     public Bot(float f){
         super(f);
@@ -44,6 +46,7 @@ public class Bot extends Playable {
         primaryRay = new Ray();
         secondaryRay = new Ray();
         targetRay = new Ray();
+        frontRay = new Ray();
         
         //used to give weights to fuzzy move logic
         weight = 1;
@@ -52,7 +55,7 @@ public class Bot extends Playable {
         
         //sets the speed which the bot learns at
         learnRate = 8;
-        
+        lastChoseTarget = 0;
     }
     
     /**
@@ -84,7 +87,7 @@ public class Bot extends Playable {
             //This ensures high performance
             if (lock.tryLock()) {
                try {
-                   // long running process       
+                   // pathfind   
                     ((MyThread)Thread.currentThread()).last_locked = System.nanoTime();
                     path = astar.pathFind(this, target);  
                                       
@@ -113,8 +116,9 @@ public class Bot extends Playable {
      * Chooses random Entity as target
      */
     public void chooseRandTarget() {
-        if(!Settings.survival) {
-            Random rng = new Random();
+        if(!Settings.survival && lastChoseTarget < System.currentTimeMillis() + 1000) {
+            lastChoseTarget = System.currentTimeMillis();
+            
             int size = GameState.getEntities().size();
             int answer = rng.nextInt(size);
             this.fireRate = 0.0;
@@ -124,6 +128,7 @@ public class Bot extends Playable {
                 if(p.getType() == TYPE.PLAYABLE && ((Playable)p).isAlive() && rng.nextInt(size) == answer && ((Playable)p) != this)
                     setTarget((Playable)p);
             }
+            
         }
     }
     
@@ -179,7 +184,12 @@ public class Bot extends Playable {
         
         if(!target.isAlive())
             chooseRandTarget();
-        
+        if(!isAlive())
+        {
+            moveRate =0.0;
+            turnRate =0.0;
+            fireRate =0.0;
+        }
         applyFuzzy();
     }
     
@@ -187,18 +197,14 @@ public class Bot extends Playable {
         //cast the rays to use in fuzzy logic
         primaryRay.cast(this, 5, 8, 1);
         secondaryRay.cast(this, -5, 8, 2);
-        boolean rhit = new Ray().cast(this, 1, 8, 0);
+        boolean rhit = frontRay.cast(this, 1, 8, 0);
         boolean hit = targetRay.cast(this, target, 32);
         
         //ray casts
         double distance1 = primaryRay.getDistance();
         double distance2 = secondaryRay.getDistance();
         
-        //distance
-        FuzzySet Rclose = GameState.getRule("Close");
-        FuzzySet Rmiddle = GameState.getRule("Middle");
-        FuzzySet Rfar = GameState.getRule("Far");
-        
+        //LOAD FUZZY SETS FROM GAMESTATE
         //angle
         FuzzySet Rsmall = GameState.getRule("Small");
         FuzzySet Rmedium = GameState.getRule("Medium");
@@ -209,38 +215,13 @@ public class Bot extends Playable {
         FuzzySet Rfacing = GameState.getRule("Facing");
         FuzzySet Rright = GameState.getRule("Right");
         
-        //speed
-        FuzzySet Rslow = GameState.getRule("Slow");
-        FuzzySet Rnormal = GameState.getRule("Normal");
-        FuzzySet Rfast = GameState.getRule("Fast");
-        
         double rotationToNodeVector = 0, rotationToTargetVector = 0;
         double smallAngle = 0, normalAngle = 0, largeAngle = 0;
         
-        //check angle to A* path and evaluted angle speed consideration
-        if(hasPath()) {            
-            rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
-            
-            //moves to next node if it exist (provides cleaner movement
-            if(path.size() > 2) {
-               rotationToNodeVector = (rotationToNodeVector + getRotationToEntity(path.get(path.size() - 2)))/2;
-               
-               if(Math.abs(rotationToNodeVector) < 5){
-                   path.remove(path.size() - 1);
-                   path.remove(path.size() - 2);
-               }
-            }
-            
-            //calculate the value to use with the fuzzy sets
-            double rotation = rotationToNodeVector - getRotation() % 180;
-            
-            //the angle fuzzy set calculations
-            smallAngle = Rsmall.evaluate(rotation);
-            normalAngle = Rmedium.evaluate(rotation);
-            largeAngle = Rlarge.evaluate(rotation);
-        }
         
         //check the firerate
+        //if the bot has a target, and the bot can see it's target
+        //then turn to target, try shoot target if facing
         if(target != null && hit) {            
             rotationToTargetVector = getRotationToEntity(target); 
             
@@ -250,11 +231,12 @@ public class Bot extends Playable {
             
             //calucates the needed rotation to face target
             rotationToTargetVector = (rotationToTargetVector - getRotation()) % 360;
+
+            //the angle fuzzy set calculations
+            smallAngle = Rsmall.evaluate(rotationToTargetVector);
+            normalAngle = Rmedium.evaluate(rotationToTargetVector);
+            largeAngle = Rlarge.evaluate(rotationToTargetVector);
             
-             //angle to target
-            double small = Rsmall.evaluate(rotationToTargetVector);
-            double medium = Rmedium.evaluate(rotationToTargetVector);
-            double large = Rlarge.evaluate(rotationToTargetVector);
             
             //direction to target
             left = Rleft.evaluate(rotationToTargetVector);
@@ -263,9 +245,32 @@ public class Bot extends Playable {
             
             //set fire rate and turning rate
             //Weighted average defuzzification
-            fireRate = ((small * 100) + (medium * 10) + (large * 1))/(small + medium + large);
-            turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);
-        } else {               
+            fireRate = ((smallAngle * 100) + (normalAngle * 10) + (largeAngle * 1))/(smallAngle + normalAngle + largeAngle);
+           
+        } else 
+            //pathfind
+            //check angle to A* path and evaluted angle speed consideration
+          if(hasPath()) {            
+            rotationToNodeVector = getRotationToEntity(path.get(path.size() - 1));
+
+            //moves to next node if it exist (provides cleaner movement
+            if(path.size() > 2) {
+                rotationToNodeVector = (rotationToNodeVector + getRotationToEntity(path.get(path.size() - 2)))/2;
+
+                if(Math.abs(rotationToNodeVector) < 5){
+                    path.remove(path.size() - 1);
+                    path.remove(path.size() - 2);
+                }
+            }
+
+            //calculate the value to use with the fuzzy sets
+            double rotation = rotationToNodeVector - getRotation() % 180;
+
+            //the angle fuzzy set calculations
+            smallAngle = Rsmall.evaluate(rotation);
+            normalAngle = Rmedium.evaluate(rotation);
+            largeAngle = Rlarge.evaluate(rotation);
+            
             //converts the angle to a usable one
             if(rotationToNodeVector < 0)
                 rotationToNodeVector += 360;
@@ -277,25 +282,32 @@ public class Bot extends Playable {
             left = Rleft.evaluate(rotationToNodeVector);
             facing = Rfacing.evaluate(rotationToNodeVector);
             right = Rright.evaluate(rotationToNodeVector);
-            
-            //Force a large turn if too close to walls
-            //Avoids getting stuck on walls
-            //This manually forces the fuzzy defuzzification to turn
-            //This only happens in the case where the bot is very very very very close to the wall 
-            //(Less than 1 32 * 32 block, less than 20px)
-            if(distance1 < 20){
-                left = 0;
-                right = 72;
-            } else if(distance2 < 20){
-                left = 70;
-                right = 0;
-            }                
-              
+          
             //sets fire rate and turning rate
             fireRate = 0.0;
-            //Weighted average defuzzification
-            turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);   
+          
+        }else{
+              //if the bot cannot see it's target and the bot doesn't have a target, or a path to its target
+              //choose another target?
+              //move randomly?
+              //chooseRandTarget();
         }
+          
+        //Force a large turn if too close to walls
+        //Avoids getting stuck on walls
+        //This manually forces the fuzzy defuzzification to turn
+        //This only happens in the case where the bot is very very very very close to the wall 
+        //<20 px, which is les than a single block
+        if(distance1 < 20){
+                left = 0;
+                right = 72;
+                
+          } else if(distance2 < 20){
+                left = 70;
+                right = 0;
+            }   
+        //Weighted average defuzzification
+         turnRate = ((left * 75) + (facing * 1) + (right * -75))/(left + facing + right);
         //if ray hit a target fire!!!
         if(rhit)
             fireRate = 80.0;
